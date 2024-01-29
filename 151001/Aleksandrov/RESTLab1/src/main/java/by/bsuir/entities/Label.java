@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Label {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
 }

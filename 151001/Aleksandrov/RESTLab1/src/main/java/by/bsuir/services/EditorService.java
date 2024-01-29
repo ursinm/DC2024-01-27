@@ -1,24 +1,29 @@
 package by.bsuir.services;
 
-import by.bsuir.dto.EditorRequestTo;
+import by.bsuir.dao.EditorDao;
 import by.bsuir.dto.EditorResponseTo;
-import by.bsuir.entities.Editor;
+import by.bsuir.mapper.EditorListMapper;
 import by.bsuir.mapper.EditorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class EditorService {
     @Autowired
     EditorMapper editorMapper;
+    @Autowired
+    EditorDao editorDao;
+    @Autowired
+    EditorListMapper editorListMapper;
 
-    public EditorResponseTo editorResponseMapping(Editor editor){
-        return editorMapper.editorToEditorResponse(editor);
+    public EditorResponseTo getEditorById(Long id) {
+        return editorMapper.editorToEditorResponse(editorDao.getEditorById(id));
     }
 
-    public Editor editorRequestMapping(EditorRequestTo editor){
-        return editorMapper.editorRequestToEditor(editor);
+    public List<EditorResponseTo> getEditors() {
+        return editorListMapper.toEditorResponseList(editorDao.getEditors());
     }
 
 }

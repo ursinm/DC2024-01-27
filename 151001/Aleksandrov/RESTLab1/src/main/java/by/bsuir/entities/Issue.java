@@ -10,10 +10,10 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Issue {
-    Long id;
-    Long editorId;
-    String title;
-    String content;
-    Timestamp created;
-    Timestamp modified;
+    private Long id;
+    private Long editorId;
+    private String title;
+    private String content;
+    private Timestamp created;
+    private Timestamp modified;
 }

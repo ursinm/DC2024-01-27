@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
-    Long id;
-    Long issueId;
-    String text;
+    private Long id;
+    private Long issueId;
+    private String text;
 }
