@@ -1,4 +1,4 @@
-package entities;
+package by.bsuir.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
