@@ -1,7 +1,6 @@
 package by.bsuir.controllers;
 
 import by.bsuir.dto.EditorResponseTo;
-import by.bsuir.entities.Editor;
 import by.bsuir.services.EditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,7 @@ public class EditorController {
     EditorService editorService;
 
     @GetMapping
-    public List<EditorResponseTo> getEditors(){
+    public List<EditorResponseTo> getEditors() {
         return editorService.getEditors();
     }
     @GetMapping("/{id}")

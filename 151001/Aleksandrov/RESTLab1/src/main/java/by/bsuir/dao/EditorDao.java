@@ -1,11 +1,12 @@
 package by.bsuir.dao;
 
 import by.bsuir.entities.Editor;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 public interface EditorDao {
+    Editor createEditor(String login, String password, String firstname, String lastname);
+
     List<Editor> getEditors();
 
     Editor getEditorById(Long Id);

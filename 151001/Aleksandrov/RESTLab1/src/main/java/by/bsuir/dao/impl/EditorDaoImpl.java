@@ -17,6 +17,11 @@ public class EditorDaoImpl implements EditorDao {
     private EntityManager entityManager;
 
     @Override
+    public Editor createEditor(String login, String password, String firstname, String lastname) {
+        return null;
+    }
+
+    @Override
     public List<Editor> getEditors() {
         String query = "SELECT e FROM Editor e";
         return entityManager.createQuery(query, Editor.class).getResultList();

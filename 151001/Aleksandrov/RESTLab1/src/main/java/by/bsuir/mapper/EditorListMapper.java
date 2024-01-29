@@ -10,5 +10,5 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = EditorMapper.class)
 public interface EditorListMapper {
     List<Editor> toEditorList(List<EditorRequestTo> editors);
-    List<EditorResponseTo> toEditorResponseList(List<Editor> models);
+    List<EditorResponseTo> toEditorResponseList(List<Editor> editors);
 }
