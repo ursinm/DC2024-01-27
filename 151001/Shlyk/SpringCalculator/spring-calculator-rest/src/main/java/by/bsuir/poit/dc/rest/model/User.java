@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Paval Shlyk
  * @since 31/01/2024
@@ -45,4 +48,8 @@ public class User {
 
     @Column(name = "last_name", length = 64, nullable = false)
     private String lastName;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<News> news = new ArrayList<>();
 }

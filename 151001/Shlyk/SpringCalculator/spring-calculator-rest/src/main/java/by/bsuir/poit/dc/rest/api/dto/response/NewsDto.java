@@ -11,6 +11,7 @@ public record NewsDto(
     String title,
     String content,
     Timestamp created,
-    Timestamp modified
+    Timestamp modified,
+    UserDto author
 ) implements Serializable {
 }

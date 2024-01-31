@@ -30,4 +30,5 @@ public class Note {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id", referencedColumnName = "id")
     private News news;
+
 }

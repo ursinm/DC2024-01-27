@@ -46,7 +46,7 @@ public class News {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    private User author;
 
     @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
     @Builder.Default
@@ -56,6 +56,12 @@ public class News {
     public void beforeInsert() {
 	var timestamp = Timestamp.from(Instant.now());
 	this.created = timestamp;
+	this.modified = timestamp;
+    }
+
+    @PostUpdate
+    public void beforeUpdate() {
+	var timestamp = Timestamp.from(Instant.now());
 	this.modified = timestamp;
     }
 }

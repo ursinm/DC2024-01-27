@@ -1,0 +1,23 @@
+package by.bsuir.poit.dc.rest.services;
+
+import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
+import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
+import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
+import jakarta.validation.Valid;
+
+/**
+ * @author Paval Shlyk
+ * @since 31/01/2024
+ */
+public interface UserService {
+    UserDto create(@Valid UpdateUserDto dto);
+
+    UserDto getById(long userId);
+
+    void update(long userId, @Valid UpdateUserDto dto);
+
+    /*
+    return true if user was deleted
+     */
+    boolean deleteUser(long userId);
+}

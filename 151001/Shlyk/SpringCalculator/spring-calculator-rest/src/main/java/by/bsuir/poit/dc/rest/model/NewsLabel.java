@@ -17,16 +17,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewsLabel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long id;
+    @EmbeddedId
+    private NewsLabelId id;
 
     @ManyToOne
+    @MapsId("newsId")
     @JoinColumn(name = "news_id", referencedColumnName = "id")
     private News news;
 
     @ManyToOne
+    @MapsId("labelId")
     @JoinColumn(name = "label_id", referencedColumnName = "id")
     private Label label;
 }
