@@ -2,48 +2,43 @@ package by.bsuir.dao.impl;
 
 import by.bsuir.dao.EditorDao;
 import by.bsuir.entities.Editor;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
 
-@Transactional
 @Repository
 public class EditorDaoImpl implements EditorDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private long counter = 0;
+    private final Map<Long, Editor> map = new HashMap<>();
 
     @Override
-    public Editor createEditor(String login, String password, String firstname, String lastname) {
-        return null;
+    public Editor save(Editor entity) {
+        counter++;
+        map.put(counter, entity);
+        entity.setId(counter);
+        return entity;
     }
 
     @Override
-    public List<Editor> getEditors() {
-        String query = "SELECT e FROM Editor e";
-        return entityManager.createQuery(query, Editor.class).getResultList();
+    public void delete(long id) {
+        map.remove(id);
     }
 
     @Override
-    public Editor getEditorById(Long id) {
-        return entityManager.find(Editor.class, id);
+    public List<Editor> findAll() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
-    public Editor updateEditor(Long id, Editor newEditor) {
-        return null;
+    public Optional<Editor> findById(long id) {
+        return Optional.ofNullable(map.get(id));
     }
 
     @Override
-    public void deleteEditor(Long id) {
-
-    }
-
-    @Override
-    public Editor getEditorByIssueId(Long issueId) {
-        return null;
+    public Editor update(Editor entity, long id) {
+        entity.setId(id);
+        map.put(id, entity);
+        return entity;
     }
 }

@@ -7,6 +7,6 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface IssueMapper {
-    Issue IssueRequestToIssue (IssueRequestTo issueRequestTo);
-    IssueResponseTo IssueToIssueResponse(Issue issue);
+    Issue issueRequestToIssue (IssueRequestTo issueRequestTo);
+    IssueResponseTo issueToIssueResponse(Issue issue);
 }

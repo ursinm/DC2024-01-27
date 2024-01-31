@@ -1,41 +1,42 @@
 package by.bsuir.dao.impl;
 
 import by.bsuir.dao.LabelDao;
-import by.bsuir.entities.Issue;
 import by.bsuir.entities.Label;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class LabelDaoImpl implements LabelDao {
+
+    private long counter = 0;
+    private final Map<Long, Label> map = new HashMap<>();
     @Override
-    public Label createLabel(String label, Issue issue) {
-        return null;
+    public Label save(Label entity) {
+        counter++;
+        map.put(counter, entity);
+        entity.setId(counter);
+        return entity;
+    }
+    @Override
+    public void delete(long id){
+        map.remove(id);
     }
 
     @Override
-    public List<Label> getLabels() {
-        return null;
+    public List<Label> findAll() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
-    public Label getLabelById(Long Id) {
-        return null;
+    public Optional<Label> findById(long id) {
+        return Optional.ofNullable(map.get(id));
     }
 
     @Override
-    public Label updateLabel(Long id, Label newLabel) {
-        return null;
-    }
-
-    @Override
-    public void deleteLabel(Long id) {
-
-    }
-
-    @Override
-    public List<Label> getLabelsByIssueId(Long issueId) {
-        return null;
+    public Label update(Label entity, long id) {
+        entity.setId(id);
+        map.put(id, entity);
+        return entity;
     }
 }

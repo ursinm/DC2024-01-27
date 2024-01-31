@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EditorResponseTo {
-    String firstname;
-    String lastname;
+    private String firstname;
+    private String lastname;
 }

@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface LabelMapper {
-    Label LabelRequestToLabel (LabelRequestTo labelRequestTo);
-    LabelResponseTo LabelToLabelResponse(Label label);
+    Label labelRequestToLabel (LabelRequestTo labelRequestTo);
+    LabelResponseTo labelToLabelResponse(Label label);
 }
 

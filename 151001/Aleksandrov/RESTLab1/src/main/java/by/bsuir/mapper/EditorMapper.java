@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface EditorMapper {
-    Editor editorRequestToEditor (EditorRequestTo editorRequestTo);
+    Editor editorRequestToEditor(EditorRequestTo editorRequestTo);
+
     EditorResponseTo editorToEditorResponse(Editor editor);
 }
+

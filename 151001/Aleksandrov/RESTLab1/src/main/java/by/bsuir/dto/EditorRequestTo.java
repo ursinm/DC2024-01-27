@@ -1,8 +1,15 @@
 package by.bsuir.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EditorRequestTo {
-    String login;
-    String password;
-    String firstname;
-    String lastname;
+    private String login;
+    private String password;
+    private String firstname;
+    private String lastname;
 }

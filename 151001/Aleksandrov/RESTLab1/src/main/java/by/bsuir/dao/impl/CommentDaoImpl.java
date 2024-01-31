@@ -2,40 +2,41 @@ package by.bsuir.dao.impl;
 
 import by.bsuir.dao.CommentDao;
 import by.bsuir.entities.Comment;
-import by.bsuir.entities.Issue;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class CommentDaoImpl implements CommentDao {
+    private long counter = 0;
+    private final Map<Long, Comment> map = new HashMap<>();
     @Override
-    public Comment createComment(String content, Issue issue) {
-        return null;
+    public Comment save(Comment entity) {
+        counter++;
+        map.put(counter, entity);
+        entity.setId(counter);
+        return entity;
     }
 
     @Override
-    public List<Comment> getComments() {
-        return null;
+    public void delete(long id) {
+        map.remove(id);
     }
 
     @Override
-    public Comment getCommentById(Long Id) {
-        return null;
+    public List<Comment> findAll() {
+        return new ArrayList<>(map.values());
     }
 
     @Override
-    public Comment updateComment(Long id, Comment newComment) {
-        return null;
+    public Optional<Comment> findById(long id) {
+        return Optional.ofNullable(map.get(id));
     }
 
     @Override
-    public void deleteComment(Long id) {
-
-    }
-
-    @Override
-    public List<Comment> getCommentsByIssueId(Long issueId) {
-        return null;
+    public Comment update(Comment entity, long id) {
+        entity.setId(id);
+        map.put(id, entity);
+        return entity;
     }
 }
