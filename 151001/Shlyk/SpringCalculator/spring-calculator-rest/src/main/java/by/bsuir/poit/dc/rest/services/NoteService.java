@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
  * @since 31/01/2024
  */
 public interface NoteService {
-    void create(long newsId, @Valid UpdateNoteDto dto);
-
     void update(long noteId, @Valid UpdateNoteDto dto);
 
     NoteDto getById(long noteId);

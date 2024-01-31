@@ -12,4 +12,5 @@ public class ResourceModifyingException extends RuntimeException {
     public ResourceModifyingException(Throwable t) {
 	super(t);
     }
+
 }

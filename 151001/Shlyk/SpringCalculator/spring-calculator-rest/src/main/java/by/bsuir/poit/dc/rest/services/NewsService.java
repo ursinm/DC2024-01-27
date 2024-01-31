@@ -1,6 +1,8 @@
 package by.bsuir.poit.dc.rest.services;
 
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
+import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
+import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
@@ -21,9 +23,11 @@ public interface NewsService {
 
     boolean delete(long newsId);
 
-    void attachLabelById(long newsId, long labelId);
+    void createNote(long newsId, @Valid UpdateNoteDto dto);
 
-    void detachLabelById(long newsId, long labelId);
+    void attachLabelById(long newsId, @Valid UpdateNewsLabelDto dto);
+
+    boolean detachLabelById(long newsId, long labelId);
 
     List<NewsDto> getNewsByUserId(long userId);
 

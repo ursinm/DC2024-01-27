@@ -49,7 +49,7 @@ public class User {
     @Column(name = "last_name", length = 64, nullable = false)
     private String lastName;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
     @Builder.Default
     private List<News> news = new ArrayList<>();
 }

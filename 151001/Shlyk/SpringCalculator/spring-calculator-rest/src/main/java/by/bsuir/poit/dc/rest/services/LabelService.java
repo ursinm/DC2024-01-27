@@ -21,5 +21,5 @@ public interface LabelService {
 
     List<LabelDto> getAll();
 
-    void delete(long labelId);
+    boolean delete(long labelId);
 }

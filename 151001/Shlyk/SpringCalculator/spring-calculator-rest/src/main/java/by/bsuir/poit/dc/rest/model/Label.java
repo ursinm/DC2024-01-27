@@ -23,6 +23,9 @@ public class Label {
     @Column(name = "id")
     private Long id;
     @Size(min = 2, max = 34)
-    @Column(name = "name", length = 34, nullable = false)
+    @Column(name = "name",
+	length = 34,
+	nullable = false,
+	unique = true)
     private String name;
 }
