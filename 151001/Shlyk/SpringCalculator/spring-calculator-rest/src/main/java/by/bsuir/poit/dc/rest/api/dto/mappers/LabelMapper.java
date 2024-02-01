@@ -5,6 +5,8 @@ import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.model.Label;
 import org.mapstruct.*;
 
+import java.util.List;
+
 /**
  * @author Paval Shlyk
  * @since 31/01/2024
@@ -19,5 +21,9 @@ public abstract class LabelMapper {
     @Mapping(target = "id", ignore = true)
     public abstract Label partialUpdate(@MappingTarget Label label, UpdateLabelDto dto);
 
+    @Named("toDto")
     public abstract LabelDto toDto(Label label);
+
+    @IterableMapping(qualifiedByName = "toDto")
+    public abstract List<LabelDto> toDtoList(List<Label> labels);
 }

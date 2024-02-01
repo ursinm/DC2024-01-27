@@ -1,9 +1,10 @@
 package by.bsuir.poit.dc.rest.services;
 
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
-import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 /**
  * @author Paval Shlyk
@@ -14,7 +15,12 @@ public interface UserService {
 
     UserDto getById(long userId);
 
-    void update(long userId, @Valid UpdateUserDto dto);
+    UserDto getUserByNewsId(long newsId);
+
+    @Deprecated
+    List<UserDto> getAll();
+
+    UserDto update(long userId, @Valid UpdateUserDto dto);
 
     /*
     return true if user was deleted

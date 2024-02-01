@@ -5,6 +5,8 @@ import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
 import by.bsuir.poit.dc.rest.model.User;
 import org.mapstruct.*;
 
+import java.util.List;
+
 /**
  * @author Paval Shlyk
  * @since 31/01/2024
@@ -21,5 +23,9 @@ public abstract class UserMapper {
     @Mapping(target = "news", ignore = true)
     public abstract User partialUpdate(@MappingTarget User user, UpdateUserDto dto);
 
+    @Named("toDto")
     public abstract UserDto toDto(User user);
+
+    @IterableMapping(qualifiedByName = "toDto")
+    public abstract List<UserDto> toDtoList(List<User> users);
 }

@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author Paval Shlyk
  * @since 31/01/2024
@@ -40,13 +42,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserByNewsId(long newsId) {
+	return userRepository
+		   .findByNewsId(newsId)
+		   .map(userMapper::toDto)
+		   .orElseThrow(() -> newUserNotFoundByNewsException(newsId));
+    }
+
+    @Override
+    public List<UserDto> getAll() {
+	return userMapper.toDtoList(userRepository.findAll());
+    }
+
+    @Override
     @Transactional
-    public void update(long userId, UpdateUserDto dto) {
+    public UserDto update(long userId, UpdateUserDto dto) {
 	User user = userRepository
 			.findById(userId)
 			.orElseThrow(() -> newUserNotFoundException(userId));
 	User updatedUser = userMapper.partialUpdate(user, dto);
-	userRepository.save(updatedUser);
+	User savedUser = userRepository.save(updatedUser);
+	return userMapper.toDto(savedUser);
     }
 
     @Override
@@ -62,10 +78,17 @@ public class UserServiceImpl implements UserService {
 	return isDeleted;
     }
 
+    private static ResourceNotFoundException newUserNotFoundByNewsException(long newsId) {
+	final String msg = STR."Failed to find any user by news id = \{newsId}";
+	log.warn(msg);
+	return new ResourceNotFoundException(msg, 48);
+
+    }
+
     private static ResourceNotFoundException newUserNotFoundException(long userId) {
 	final String msg = STR."Failed to find user by id=\{userId}";
 	log.warn(msg);
-	return new ResourceNotFoundException(msg);
+	return new ResourceNotFoundException(msg, 42);
 
     }
 }

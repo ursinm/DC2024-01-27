@@ -16,12 +16,10 @@ import by.bsuir.poit.dc.rest.dao.NewsRepository;
 import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.News;
 import by.bsuir.poit.dc.rest.model.NewsLabel;
-import by.bsuir.poit.dc.rest.model.NewsLabelId;
 import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NewsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,19 +43,21 @@ public class NewsServiceImpl implements NewsService {
     private final NewsLabelMapper newsLabelMapper;
 
     @Override
-    public void create(UpdateNewsDto dto) {
+    public NewsDto create(UpdateNewsDto dto) {
 	News entity = newsMapper.toEntity(dto);
-	News _ = newsRepository.save(entity);
+	News savedEntity = newsRepository.save(entity);
+	return newsMapper.toDto(savedEntity);
     }
 
     @Override
     @Transactional
-    public void update(long newsId, UpdateNewsDto dto) {
+    public NewsDto update(long newsId, UpdateNewsDto dto) {
 	News entity = newsRepository
 			  .findById(newsId)
 			  .orElseThrow(() -> newNewsNotFoundException(newsId));
 	News updatedEntity = newsMapper.partialUpdate(entity, dto);
-	News _ = newsRepository.save(updatedEntity);
+	News savedEntity = newsRepository.save(updatedEntity);
+	return newsMapper.toDto(savedEntity);
     }
 
     @Override
@@ -66,6 +66,13 @@ public class NewsServiceImpl implements NewsService {
 		   .findById(newsId)
 		   .map(newsMapper::toDto)
 		   .orElseThrow(() -> newNewsNotFoundException(newsId));
+    }
+
+    @Override
+    public List<NewsDto> getAll() {
+	return newsRepository.findAll().stream()
+		   .map(newsMapper::toDto)
+		   .toList();
     }
 
     @Override
@@ -82,14 +89,17 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @Transactional
-    public void createNote(long newsId, UpdateNoteDto dto) {
+    public NoteDto createNote(long newsId, UpdateNoteDto dto) {
+	if (!newsRepository.existsById(newsId)) {
+	    throw newNewsNotFoundException(newsId);
+	}
 	News news = newsRepository
 			.findById(newsId)
 			.orElseThrow(() -> newNewsNotFoundException(newsId));
 	Note noteEntity = noteMapper.toEntity(dto, newsId);
 	news.addNote(noteEntity);
 //	newsRepository.save(news);
+	return noteMapper.toDto(noteEntity);
     }
 
     @Override
@@ -128,6 +138,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public List<NewsDto> getNewsByLabel(String label) {
+	//todo:!
+	return null;
+    }
+
+    @Override
     public List<NoteDto> getNotesByNewsId(long newsId) {
 	News news = newsRepository
 			.findWithNotesById(newsId)
@@ -151,14 +167,12 @@ public class NewsServiceImpl implements NewsService {
     private static ResourceNotFoundException newNewsNotFoundException(long newsId) {
 	final String msg = STR."Failed to find news by id = \{newsId}";
 	log.warn(msg);
-	return new ResourceNotFoundException(msg);
-
+	return new ResourceNotFoundException(msg, 44);
     }
 
     private static ResourceNotFoundException newUserNotFoundException(long userId) {
-	final String msg = STR."Failed to find find news for user with id = \{userId}, because user is not exists";
+	final String msg = STR."Failed to find news for user with id = \{userId}, because user is not exists";
 	log.warn(msg);
-	return new ResourceNotFoundException(msg);
-
+	return new ResourceNotFoundException(msg, 43);
     }
 }

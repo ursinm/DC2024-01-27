@@ -23,23 +23,24 @@ import java.util.List;
 @Slf4j
 public class LabelServiceImpl implements LabelService {
     private final LabelRepository labelRepository;
-
     private final LabelMapper labelMapper;
 
     @Override
-    public void create(UpdateLabelDto dto) {
+    public LabelDto create(UpdateLabelDto dto) {
 	Label entity = labelMapper.toEntity(dto);
-	Label _ = labelRepository.save(entity);
+	Label savedEntity = labelRepository.save(entity);
+	return labelMapper.toDto(savedEntity);
     }
 
     @Override
     @Transactional
-    public void update(long labelId, UpdateLabelDto dto) {
+    public LabelDto update(long labelId, UpdateLabelDto dto) {
 	Label entity = labelRepository
 			   .findById(labelId)
 			   .orElseThrow(() -> newLabelNotFountException(labelId));
 	Label updatedEntity = labelMapper.partialUpdate(entity, dto);
-	Label _ = labelRepository.save(updatedEntity);
+	Label savedEntity = labelRepository.save(updatedEntity);
+	return labelMapper.toDto(savedEntity);
     }
 
     @Override
@@ -81,14 +82,14 @@ public class LabelServiceImpl implements LabelService {
     private static ResourceNotFoundException newLabelNotFountException(String name) {
 	final String msg = STR."Failed to find label by name = \{name}";
 	log.warn(msg);
-	return new ResourceNotFoundException(msg);
+	return new ResourceNotFoundException(msg, 47);
 
     }
 
     private static ResourceNotFoundException newLabelNotFountException(long labelId) {
 	final String msg = STR."Failed to find label by id = \{labelId}";
 	log.warn(msg);
-	return new ResourceNotFoundException(msg);
+	return new ResourceNotFoundException(msg, 48);
 
     }
 }

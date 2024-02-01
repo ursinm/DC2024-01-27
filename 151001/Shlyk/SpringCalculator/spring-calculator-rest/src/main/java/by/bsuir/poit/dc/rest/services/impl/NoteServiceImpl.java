@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author Paval Shlyk
  * @since 31/01/2024
@@ -25,12 +27,13 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Transactional
-    public void update(long noteId, UpdateNoteDto dto) {
+    public NoteDto update(long noteId, UpdateNoteDto dto) {
 	Note entity = noteRepository
 			  .findById(noteId)
 			  .orElseThrow(() -> newNoteNotFountException(noteId));
 	Note updatedEntity = noteMapper.partialUpdate(entity, dto);
-	Note _ = noteRepository.save(updatedEntity);
+	Note savedEntity = noteRepository.save(updatedEntity);
+	return noteMapper.toDto(savedEntity);
     }
 
     @Override
@@ -39,6 +42,13 @@ public class NoteServiceImpl implements NoteService {
 		   .findById(noteId)
 		   .map(noteMapper::toDto)
 		   .orElseThrow(() -> newNoteNotFountException(noteId));
+    }
+
+    @Override
+    public List<NoteDto> getAll() {
+	return noteRepository.findAll().stream()
+		   .map(noteMapper::toDto)
+		   .toList();
     }
 
     @Override
@@ -57,7 +67,7 @@ public class NoteServiceImpl implements NoteService {
     private static ResourceNotFoundException newNoteNotFountException(long noteId) {
 	final String msg = STR."Failed to find news' note by id = \{noteId}";
 	log.warn(msg);
-	return new ResourceNotFoundException(msg);
+	return new ResourceNotFoundException(msg, 45);
 
     }
 }

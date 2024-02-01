@@ -15,21 +15,25 @@ import java.util.List;
  * @since 31/01/2024
  */
 public interface NewsService {
-    void create(@Valid UpdateNewsDto dto);
+    NewsDto create(@Valid UpdateNewsDto dto);
 
-    void update(long newsId, @Valid UpdateNewsDto dto);
+    NewsDto update(long newsId, @Valid UpdateNewsDto dto);
 
     NewsDto getById(long newsId);
+    @Deprecated
+    List<NewsDto> getAll();
 
     boolean delete(long newsId);
 
-    void createNote(long newsId, @Valid UpdateNoteDto dto);
+    NoteDto createNote(long newsId, @Valid UpdateNoteDto dto);
 
     void attachLabelById(long newsId, @Valid UpdateNewsLabelDto dto);
 
     boolean detachLabelById(long newsId, long labelId);
 
     List<NewsDto> getNewsByUserId(long userId);
+
+    List<NewsDto> getNewsByLabel(String label);
 
     List<NoteDto> getNotesByNewsId(long newsId);
 

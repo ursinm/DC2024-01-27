@@ -24,6 +24,7 @@ public abstract class NewsMapper {
     @Autowired
     private UserMapper userMapper;
 
+    @Mapping(target = "labels", ignore = true)
     @Mapping(target = "author", source = "authorId", qualifiedByName = "getUserRef")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
@@ -34,6 +35,7 @@ public abstract class NewsMapper {
     @Mapping(target = "author", source = "author", qualifiedByName = "mapUser")
     public abstract NewsDto toDto(News news);
 
+    @Mapping(target = "labels", ignore = true)
     @Mapping(target = "author", ignore = true)//author cannot be changed
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)

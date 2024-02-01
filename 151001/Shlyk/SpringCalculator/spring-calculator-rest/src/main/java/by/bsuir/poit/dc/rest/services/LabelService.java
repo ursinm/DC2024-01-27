@@ -11,13 +11,14 @@ import java.util.List;
  * @since 31/01/2024
  */
 public interface LabelService {
-    void create(@Valid UpdateLabelDto dto);
+    LabelDto create(@Valid UpdateLabelDto dto);
 
-    void update(long labelId, @Valid UpdateLabelDto dto);
+    LabelDto update(long labelId, @Valid UpdateLabelDto dto);
 
     LabelDto getById(long labelId);
 
     LabelDto getByName(String name);
+
 
     List<LabelDto> getAll();
 
