@@ -1,5 +1,8 @@
 package by.bsuir.poit.dc.rest.api.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 
 /**
@@ -9,6 +12,8 @@ import lombok.Builder;
 @Builder
 public record ErrorDto(
     int errorCode,
-    String errorMessage
+    String errorMessage,
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Nullable String[] errors
 ) {
 }
