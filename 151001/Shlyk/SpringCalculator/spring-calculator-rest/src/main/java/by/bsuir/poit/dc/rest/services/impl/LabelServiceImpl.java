@@ -61,9 +61,9 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public List<LabelDto> getAll() {
-	return labelRepository.findAll().stream()
-		   .map(labelMapper::toDto)
-		   .toList();
+	return labelMapper.toDtoList(
+	    labelRepository.findAll()
+	);
     }
 
     @Override

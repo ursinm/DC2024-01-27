@@ -14,3 +14,9 @@ spring:
     name: 'Spring Rest Calculator'
 server:
   port: 24110 #or another port
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api/v1/docs
+  swagger-ui:
+    path: /api/v1/ui-docs.html

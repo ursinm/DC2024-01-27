@@ -3,14 +3,18 @@ package by.bsuir.poit.dc.rest.services.impl;
 import by.bsuir.poit.dc.rest.api.dto.mappers.UserMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.User;
 import by.bsuir.poit.dc.rest.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
 
@@ -76,6 +80,14 @@ public class UserServiceImpl implements UserService {
 	    isDeleted = false;
 	}
 	return isDeleted;
+    }
+
+    @ExceptionHandler(DataAccessException.class)
+    public void catchDataAccessException(DataAccessException e) {
+	final String frontMsg = "Failed to modify user state (insert or update it)";
+	final String msg = STR."\{frontMsg} \{e.getMessage()}";
+	log.warn(msg);
+	throw new ResourceModifyingException(frontMsg, 51);
     }
 
     private static ResourceNotFoundException newUserNotFoundByNewsException(long newsId) {

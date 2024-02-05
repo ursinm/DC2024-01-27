@@ -1,6 +1,7 @@
 package by.bsuir.poit.dc.rest.api.controllers;
 
 import by.bsuir.poit.dc.rest.api.dto.request.ErrorDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Paval Shlyk
@@ -29,13 +31,30 @@ public class CommonControllerExceptionAdvice {
 	return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getError());
     }
 
+    @ExceptionHandler({ResourceBusyException.class})
+    public ResponseEntity<ErrorDto> catchBusyException(ResourceBusyException e) {
+	return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getError());
+    }
+
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorDto> catchValidationException(MethodArgumentNotValidException e) {
 	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.errorOf(e));
     }
 
+    @ExceptionHandler({Throwable.class})
+    public ResponseEntity<ErrorDto> catchThrowable(Throwable t) {
+	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorOf(t));
+    }
+
+    private ErrorDto errorOf(Throwable t) {
+	return ErrorDto.builder()
+		   .errorMessage("Server doesn't know how to deal your request. Sorry...(")
+		   .errors(new String[]{t.getMessage()})
+		   .build();
+    }
+
     private ErrorDto errorOf(MethodArgumentNotValidException e) {
-	ArrayList<String> messages = new ArrayList<>();
+	List<String> messages = new ArrayList<>();
 	for (ObjectError error : e.getAllErrors()) {
 	    String message;
 	    if (error instanceof FieldError fieldError) {

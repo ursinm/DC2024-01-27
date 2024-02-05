@@ -20,6 +20,7 @@ public interface NewsService {
     NewsDto update(long newsId, @Valid UpdateNewsDto dto);
 
     NewsDto getById(long newsId);
+
     @Deprecated
     List<NewsDto> getAll();
 

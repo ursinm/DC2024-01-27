@@ -6,6 +6,8 @@ import org.mapstruct.MapperConfig;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-@MapperConfig
+@MapperConfig(
+    uses = NewsMapperConfig.class
+)
 public interface CentralMapperConfig {
 }

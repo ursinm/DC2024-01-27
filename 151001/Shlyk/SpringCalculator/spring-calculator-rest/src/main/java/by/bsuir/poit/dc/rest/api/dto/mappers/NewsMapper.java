@@ -17,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(unmappedTargetPolicy = ReportingPolicy.ERROR,
     componentModel = MappingConstants.ComponentModel.SPRING,
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {CentralMapperConfig.class})
+    config = CentralMapperConfig.class)
 public abstract class NewsMapper {
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
 
@@ -43,10 +41,6 @@ public abstract class NewsMapper {
     @Mapping(target = "notes", ignore = true)
     public abstract News partialUpdate(@MappingTarget News news, UpdateNewsDto dto);
 
-    @Named("getUserRef")
-    protected User getUserRef(long userId) {
-	return userRepository.getReferenceById(userId);
-    }
 
     @Named("mapUser")
     protected UserDto mapUser(User user) {

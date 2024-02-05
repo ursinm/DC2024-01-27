@@ -10,12 +10,12 @@ import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
-import by.bsuir.poit.dc.rest.dao.NewsLabelRepository;
-import by.bsuir.poit.dc.rest.dao.NewsRepository;
-import by.bsuir.poit.dc.rest.dao.UserRepository;
+import by.bsuir.poit.dc.rest.dao.*;
 import by.bsuir.poit.dc.rest.model.News;
 import by.bsuir.poit.dc.rest.model.NewsLabel;
+import by.bsuir.poit.dc.rest.model.NewsLabelId;
 import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NewsService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +33,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class NewsServiceImpl implements NewsService {
+    private final LabelRepository labelRepository;
+    private final NoteRepository noteRepository;
     private final UserRepository userRepository;
     private final NewsLabelRepository newsLabelRepository;
     private final NewsRepository newsRepository;
@@ -93,24 +95,23 @@ public class NewsServiceImpl implements NewsService {
 	if (!newsRepository.existsById(newsId)) {
 	    throw newNewsNotFoundException(newsId);
 	}
-	News news = newsRepository
-			.findById(newsId)
-			.orElseThrow(() -> newNewsNotFoundException(newsId));
 	Note noteEntity = noteMapper.toEntity(dto, newsId);
-	news.addNote(noteEntity);
-//	newsRepository.save(news);
-	return noteMapper.toDto(noteEntity);
+	Note savedNote = noteRepository.save(noteEntity);
+	return noteMapper.toDto(savedNote);
     }
 
     @Override
     @Transactional
     public void attachLabelById(long newsId, UpdateNewsLabelDto dto) {
-	News news = newsRepository
-			.findById(newsId)
-			.orElseThrow(() -> newNewsNotFoundException(newsId));
-	NewsLabel label = newsLabelMapper.toEntity(newsId, dto);
-	news.addLabel(label);
-//	newsLabelRepository.save(entity)
+	if (!newsRepository.existsById(newsId)) {
+	    throw newNewsNotFoundException(newsId);
+	}
+	NewsLabel entity = newsLabelMapper.toEntity(newsId, dto);
+	//this entity already holds id
+	if (newsLabelRepository.existsById(entity.getId())) {
+	    throw newLabelNewsAlreadyPresent(entity.getId());
+	}
+	NewsLabel _ = newsLabelRepository.save(entity);
     }
 
     @Override
@@ -139,8 +140,11 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public List<NewsDto> getNewsByLabel(String label) {
-	//todo:!
-	return null;
+	List<NewsLabel> news = newsLabelRepository.findAllByLabelName(label);
+	return news.stream()
+		   .map(NewsLabel::getNews)
+		   .map(newsMapper::toDto)
+		   .toList();
     }
 
     @Override
@@ -168,6 +172,13 @@ public class NewsServiceImpl implements NewsService {
 	final String msg = STR."Failed to find news by id = \{newsId}";
 	log.warn(msg);
 	return new ResourceNotFoundException(msg, 44);
+    }
+
+    private static ResourceBusyException newLabelNewsAlreadyPresent(NewsLabelId id) {
+	final String msg = STR."The news label is already present by newsId=\{id.getLabelId()} and labelId=\{id.getLabelId()}";
+	log.warn(msg);
+	return new ResourceBusyException(msg, 52);
+
     }
 
     private static ResourceNotFoundException newUserNotFoundException(long userId) {

@@ -34,6 +34,7 @@
         <lombok.version>1.18.30</lombok.version>
         <lombok-mapstruct-bindings.version>0.2.0</lombok-mapstruct-bindings.version>
         <guava.version>33.0.0-jre</guava.version>
+        <spring-openapi.version>2.1.0</spring-openapi.version>
     </properties>
     <dependencies>
         <dependency>
@@ -87,6 +88,11 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${spring-openapi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.errorprone</groupId>

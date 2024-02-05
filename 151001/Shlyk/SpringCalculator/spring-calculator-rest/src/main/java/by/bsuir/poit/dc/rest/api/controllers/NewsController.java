@@ -2,12 +2,15 @@ package by.bsuir.poit.dc.rest.api.controllers;
 
 import by.bsuir.poit.dc.rest.api.dto.groups.Create;
 import by.bsuir.poit.dc.rest.api.dto.groups.Update;
+import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
+import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.services.NewsService;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +40,11 @@ public class NewsController {
 
     @GetMapping("")
     public List<NewsDto> getNews(
+	@RequestParam(value = "label", required = false) String label
     ) {
+	if (label != null) {
+	    return newsService.getNewsByLabel(label);
+	}
 	return newsService.getAll();
     }
 
@@ -75,6 +82,7 @@ public class NewsController {
 	return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+
     @GetMapping("/{newsId}/notes")
     public List<NoteDto> getNewsNotes(
 	@PathVariable long newsId
@@ -82,11 +90,29 @@ public class NewsController {
 	return newsService.getNotesByNewsId(newsId);
     }
 
+    @PostMapping("/{newsId}/labels")
+    public void createNewsLabel(
+	@PathVariable long newsId,
+	@RequestBody @Validated(Create.class) UpdateNewsLabelDto dto
+    ) {
+	newsService.attachLabelById(newsId, dto);
+    }
+
     @GetMapping("/{newsId}/labels")
     public List<LabelDto> getNewsLabels(
 	@PathVariable long newsId
     ) {
 	return newsService.getLabelsByNewsId(newsId);
+    }
+
+    @DeleteMapping("/{newsId}/labels/{labelId}")
+    public ResponseEntity<?> deleteNewsLabel(
+	@PathVariable long newsId,
+	@PathVariable long labelId
+    ) {
+	boolean isDeleted = newsService.detachLabelById(newsId, labelId);
+	var status = isDeleted ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
+	return ResponseEntity.status(status).build();
     }
 
 }
