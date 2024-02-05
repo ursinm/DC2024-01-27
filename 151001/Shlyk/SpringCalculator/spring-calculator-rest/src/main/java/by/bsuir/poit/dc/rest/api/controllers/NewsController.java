@@ -2,7 +2,7 @@ package by.bsuir.poit.dc.rest.api.controllers;
 
 import by.bsuir.poit.dc.rest.api.dto.groups.Create;
 import by.bsuir.poit.dc.rest.api.dto.groups.Update;
-import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
+import by.bsuir.poit.dc.rest.api.dto.request.ErrorDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
@@ -10,7 +10,6 @@ import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.services.NewsService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Paval Shlyk
@@ -39,13 +37,23 @@ public class NewsController {
     }
 
     @GetMapping("")
-    public List<NewsDto> getNews(
-	@RequestParam(value = "label", required = false) String label
+    public ResponseEntity<?> getNews(
+	@RequestParam(value = "label", required = false) String label,
+	@RequestParam(value = "userId", required = false) Long userId
     ) {
-	if (label != null) {
-	    return newsService.getNewsByLabel(label);
+	//todo: add custom parameters handler to perform such functionality
+	if (label != null && userId != null) {
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(conflictParameters());
 	}
-	return newsService.getAll();
+	List<NewsDto> newsList;
+	if (label != null) {
+	    newsList = newsService.getNewsByLabel(label);
+	} else if (userId != null) {
+	    newsList = newsService.getNewsByUserId(userId);
+	} else {
+	    newsList = newsService.getAll();
+	}
+	return ResponseEntity.ok(newsList);
     }
 
     @GetMapping("/{newsId}")
@@ -113,6 +121,13 @@ public class NewsController {
 	boolean isDeleted = newsService.detachLabelById(newsId, labelId);
 	var status = isDeleted ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
 	return ResponseEntity.status(status).build();
+    }
+
+    private static ErrorDto conflictParameters() {
+	return ErrorDto.builder()
+		   .errorCode(122)
+		   .errorMessage("The provided parameters should be passed separately")
+		   .build();
     }
 
 }

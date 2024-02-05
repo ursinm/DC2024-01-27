@@ -4,11 +4,12 @@ import by.bsuir.poit.dc.rest.api.dto.mappers.config.CentralMapperConfig;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
-import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.News;
 import by.bsuir.poit.dc.rest.model.User;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author Paval Shlyk
@@ -31,6 +32,7 @@ public abstract class NewsMapper {
     public abstract News toEntity(UpdateNewsDto dto);
 
     @Mapping(target = "author", source = "author", qualifiedByName = "mapUser")
+    @Named("toDto")
     public abstract NewsDto toDto(News news);
 
     @Mapping(target = "labels", ignore = true)
@@ -46,4 +48,7 @@ public abstract class NewsMapper {
     protected UserDto mapUser(User user) {
 	return userMapper.toDto(user);
     }
+
+    @IterableMapping(qualifiedByName = "toDto")
+    public abstract List<NewsDto> toDtoList(List<News> list);
 }

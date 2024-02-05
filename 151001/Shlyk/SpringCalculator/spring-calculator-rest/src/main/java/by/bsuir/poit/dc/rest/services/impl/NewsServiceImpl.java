@@ -33,7 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class NewsServiceImpl implements NewsService {
-    private final LabelRepository labelRepository;
+    //    private final LabelRepository labelRepository;
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
     private final NewsLabelRepository newsLabelRepository;
@@ -107,6 +107,9 @@ public class NewsServiceImpl implements NewsService {
 	    throw newNewsNotFoundException(newsId);
 	}
 	NewsLabel entity = newsLabelMapper.toEntity(newsId, dto);
+//	if (!labelRepository.existsById(entity.getId().getLabelId())) {
+//	    throw newLabelNotFoundException(entity.getLabel().getId());
+//	}
 	//this entity already holds id
 	if (newsLabelRepository.existsById(entity.getId())) {
 	    throw newLabelNewsAlreadyPresent(entity.getId());
@@ -130,12 +133,12 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public List<NewsDto> getNewsByUserId(long userId) {
-	if (userRepository.existsById(userId)) {
+	if (!userRepository.existsById(userId)) {
 	    throw newUserNotFoundException(userId);
 	}
-	return newsRepository.findAllByAuthorId(userId).stream()
-		   .map(newsMapper::toDto)
-		   .toList();
+	return newsMapper.toDtoList(
+	    newsRepository.findAllByAuthorId(userId)
+	);
     }
 
     @Override
@@ -172,6 +175,13 @@ public class NewsServiceImpl implements NewsService {
 	final String msg = STR."Failed to find news by id = \{newsId}";
 	log.warn(msg);
 	return new ResourceNotFoundException(msg, 44);
+    }
+    @SuppressWarnings("unused")
+    private static ResourceNotFoundException newLabelNotFoundException(long labelId) {
+	final String msg = STR."Failed to find label by id = \{labelId}";
+	log.warn(msg);
+	return new ResourceNotFoundException(msg, 55);
+
     }
 
     private static ResourceBusyException newLabelNewsAlreadyPresent(NewsLabelId id) {
