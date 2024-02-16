@@ -14,6 +14,8 @@ public class AuthorRequestTo {
         this.lastName = lastName;
     }
 
+    private Long id;
+
     private String login;
 
     private String password;

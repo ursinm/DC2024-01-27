@@ -12,9 +12,10 @@ public class ErrorController {
 
     @ExceptionHandler( ApiException.class )
     public ResponseEntity<ApiExceptionInfo> handleApiException(ApiException e) {
-        ApiExceptionInfo apiExceptionInfo = e.getApiExceptionInfo();
-        return new ResponseEntity<>(apiExceptionInfo,
-                HttpStatusCode.valueOf(apiExceptionInfo.getHttpStatusCode()));
+        return new ResponseEntity<>(
+                new ApiExceptionInfo(e.getErrorMessage(), e.getHttpStatusCode()),
+                HttpStatusCode.valueOf(e.getHttpStatusCode())
+        );
     }
 
 }

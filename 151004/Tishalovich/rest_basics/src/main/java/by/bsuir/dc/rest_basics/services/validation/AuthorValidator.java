@@ -36,44 +36,40 @@ public class AuthorValidator {
 
     private void checkLoginLen(int loginLen) throws ApiException {
         if (!(2 <= loginLen) || !(loginLen <= 64)) {
-            ApiExceptionInfo apiExceptionInfo = new ApiExceptionInfo(
+            throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_LOGIN_LEN.getSubCode(),
                     "Author's login len must be from 2 to 64"
             );
-            throw new ApiException(apiExceptionInfo);
         }
     }
 
     private void checkPasswordLen(int passwordLen) throws ApiException {
         if (!(8 <= passwordLen) || !(passwordLen <= 128)) {
-            ApiExceptionInfo apiExceptionInfo = new ApiExceptionInfo(
+            throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_PASSWORD_LEN.getSubCode(),
                     "Author's password len must be from 8 to 128"
             );
-            throw new ApiException(apiExceptionInfo);
         }
     }
     private void checkFirstNameLen(int firstNameLen) throws ApiException {
         if (!(2 <= firstNameLen) || !(firstNameLen <= 64)) {
-            ApiExceptionInfo apiExceptionInfo = new ApiExceptionInfo(
+            throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_FIRST_NAME_LEN.getSubCode(),
                     "Author's first name len must be from 2 to 64"
             );
-            throw new ApiException(apiExceptionInfo);
         }
     }
 
     private void checkLastNameLen(int lastNameLen) throws ApiException {
         if (!(2 <= lastNameLen) || !(lastNameLen <= 64)) {
-            ApiExceptionInfo apiExceptionInfo = new ApiExceptionInfo(
+            throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_LAST_NAME_LEN.getSubCode(),
                     "Author's last name len must be from 2 to 64"
             );
-            throw new ApiException(apiExceptionInfo);
         }
     }
 

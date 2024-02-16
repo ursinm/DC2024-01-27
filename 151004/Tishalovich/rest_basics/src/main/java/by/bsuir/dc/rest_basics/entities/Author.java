@@ -1,5 +1,6 @@
 package by.bsuir.dc.rest_basics.entities;
 
+import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Author {
-
-    private long id;
+public class Author extends AbstractEntity {
 
     private String login;
 

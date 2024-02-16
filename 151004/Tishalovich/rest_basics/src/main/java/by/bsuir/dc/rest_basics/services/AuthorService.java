@@ -2,8 +2,6 @@ package by.bsuir.dc.rest_basics.services;
 
 import by.bsuir.dc.rest_basics.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.dtos.response.AuthorResponseTo;
-import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
-
 import java.util.List;
 
 public interface AuthorService {
@@ -12,10 +10,10 @@ public interface AuthorService {
 
     List<AuthorResponseTo> getAll();
 
-    AuthorResponseTo get(long id) throws ApiException;
+    AuthorResponseTo get(Long id);
 
-    AuthorResponseTo update(long id, AuthorRequestTo author);
+    AuthorResponseTo update(AuthorRequestTo author);
 
-    AuthorResponseTo delete(long id);
+    AuthorResponseTo delete(Long id);
 
 }

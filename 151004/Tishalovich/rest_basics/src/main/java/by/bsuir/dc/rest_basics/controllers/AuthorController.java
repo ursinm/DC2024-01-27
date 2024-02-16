@@ -2,7 +2,6 @@ package by.bsuir.dc.rest_basics.controllers;
 
 import by.bsuir.dc.rest_basics.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.dtos.response.AuthorResponseTo;
-import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
 import by.bsuir.dc.rest_basics.services.AuthorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,8 @@ public class AuthorController {
             @RequestParam(value = "login") String login,
             @RequestParam(value = "password") String password,
             @RequestParam(value = "first_name") String firstName,
-            @RequestParam(value = "last_name") String lastName
-    ) {
+            @RequestParam(value = "last_name") String lastName) {
+
         AuthorRequestTo authorRequestTo = new AuthorRequestTo(
                 login,
                 password,
@@ -39,7 +38,7 @@ public class AuthorController {
     }
 
     @GetMapping("api/v1.0/authors/{id}")
-    public AuthorResponseTo getAuthor(@PathVariable long id) throws ApiException {
+    public AuthorResponseTo getAuthor(@PathVariable long id) {
         return authorService.get(id);
     }
 
@@ -50,8 +49,8 @@ public class AuthorController {
     }
 
     @PutMapping("api/v1.0/authors")
-    public AuthorResponseTo updateAuthor(@RequestParam(value = "id") long id) {
-        return authorService.delete(id);
+    public AuthorResponseTo updateAuthor(@RequestBody AuthorRequestTo author) {
+        return authorService.update(author);
     }
 
 }

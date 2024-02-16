@@ -4,9 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class ApiException extends Exception {
 
-    private ApiExceptionInfo apiExceptionInfo;
+    private final int statusCode;
+
+    private final String errorMessage;
+
+    public ApiException(int httpStatusCode, int subStatusCode, String errorMessage) {
+        statusCode = httpStatusCode*100 + subStatusCode;
+        this.errorMessage = errorMessage;
+    }
+
+    public int getHttpStatusCode() {
+        return statusCode/100;
+    }
 
 }

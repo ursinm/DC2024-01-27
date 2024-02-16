@@ -1,14 +1,15 @@
 package by.bsuir.dc.rest_basics.services.impl;
 
-import by.bsuir.dc.rest_basics.dal.AuthorDao;
+import by.bsuir.dc.rest_basics.dal.common.MemoryRepository;
 import by.bsuir.dc.rest_basics.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.dtos.response.AuthorResponseTo;
 import by.bsuir.dc.rest_basics.entities.Author;
 import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
-import by.bsuir.dc.rest_basics.services.exceptions.ApiExceptionInfo;
 import by.bsuir.dc.rest_basics.services.AuthorService;
 import by.bsuir.dc.rest_basics.services.exceptions.AuthorSubCode;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -20,18 +21,19 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-    private final AuthorDao authorDao;
+    private final MemoryRepository<Author> authorDao;
 
     @Override
     public AuthorResponseTo create(AuthorRequestTo authorRequestTo) {
         Author author = AuthorMapper.INSTANCE.requestToModel(authorRequestTo);
-        author = authorDao.save(author);
-        return AuthorMapper.INSTANCE.modelToResponse(author);
+        Optional<Author> savingRes = authorDao.save(author);
+        Author savedAuthor = savingRes.orElseThrow();
+        return AuthorMapper.INSTANCE.modelToResponse(savedAuthor);
     }
 
     @Override
     public List<AuthorResponseTo> getAll() {
-        Iterable<Author> authors = authorDao.findAll();
+        Iterable<Author> authors = authorDao.getAll();
         return StreamSupport
                 .stream(authors.spliterator(), false)
                 .map(AuthorMapper.INSTANCE::modelToResponse)
@@ -39,35 +41,53 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorResponseTo get(long id) throws ApiException {
-        Optional<Author> author = authorDao.findById(id);
+    @SneakyThrows(ApiException.class)
+    public AuthorResponseTo get(Long id) {
+        Optional<Author> author = authorDao.getById(id);
 
         if (author.isEmpty()) {
             throw new ApiException(
-                    new ApiExceptionInfo(
-                            HttpStatus.NOT_FOUND.value(),
-                            AuthorSubCode.WRONG_ID.getSubCode(),
-                            "There is no author with id = " + id));
+                    HttpStatus.NOT_FOUND.value(),
+                    AuthorSubCode.WRONG_ID.getSubCode(),
+                    "There is no author with id = " + id
+            );
         }
 
         return AuthorMapper.INSTANCE.modelToResponse(author.get());
     }
 
     @Override
-    public AuthorResponseTo update(long id, AuthorRequestTo authorRequestTo) {
+    @SneakyThrows(ApiException.class)
+    public AuthorResponseTo update(AuthorRequestTo authorRequestTo) {
         Author author = AuthorMapper.INSTANCE
                 .requestToModel(authorRequestTo);
 
-        author = authorDao.updateById(author, id);
+        Optional<Author> updateRes = authorDao.update(author);
+        if (updateRes.isEmpty()) {
+            throw new ApiException(
+                    HttpStatus.NOT_FOUND.value(),
+                    AuthorSubCode.WRONG_ID.getSubCode(),
+                    "There is no author with id = " + authorRequestTo.getId()
+            );
+        }
 
         return AuthorMapper.INSTANCE
-                .modelToResponse(author);
+                .modelToResponse(updateRes.get());
     }
 
     @Override
-    public AuthorResponseTo delete(long id) {
-        return AuthorMapper.INSTANCE
-                .modelToResponse(authorDao.delete(id));
+    @SneakyThrows(ApiException.class)
+    public AuthorResponseTo delete(Long id) {
+        Optional<Author> deletingRes = authorDao.delete(id);
+        Author author = deletingRes.orElseThrow(
+                () -> new ApiException(
+                        HttpStatus.NOT_FOUND.value(),
+                        AuthorSubCode.WRONG_ID.getSubCode(),
+                        "There is no author with such id"
+                )
+        );
+
+        return AuthorMapper.INSTANCE.modelToResponse(author);
     }
 
 }
