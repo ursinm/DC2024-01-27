@@ -1,8 +1,10 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
+import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.LabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.LabelRepository;
 import by.bsuir.poit.dc.rest.model.Label;
@@ -34,6 +36,9 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newLabelModifyingException",
+	args = "labelId")
     public LabelDto update(long labelId, UpdateLabelDto dto) {
 	Label entity = labelRepository
 			   .findById(labelId)
@@ -79,6 +84,15 @@ public class LabelServiceImpl implements LabelService {
 	return isDeleted;
     }
 
+    private static ResourceModifyingException newLabelModifyingException(
+	long labelId,
+	Throwable e) {
+	final String frontMessage = STR."Failed to modify label by id=\{labelId}";
+	final String msg = STR."Failed to modify label by id=\{labelId} with cause=\{e.getMessage()}";
+	log.warn(msg);
+	return new ResourceModifyingException(frontMessage, 50);
+    }
+
     private static ResourceNotFoundException newLabelNotFountException(String name) {
 	final String msg = STR."Failed to find label by name = \{name}";
 	log.warn(msg);
@@ -90,6 +104,5 @@ public class LabelServiceImpl implements LabelService {
 	final String msg = STR."Failed to find label by id = \{labelId}";
 	log.warn(msg);
 	return new ResourceNotFoundException(msg, 48);
-
     }
 }

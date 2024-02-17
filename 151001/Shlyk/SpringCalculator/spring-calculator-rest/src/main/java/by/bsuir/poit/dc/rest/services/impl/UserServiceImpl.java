@@ -1,5 +1,6 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
+import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.UserMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
@@ -10,10 +11,8 @@ import by.bsuir.poit.dc.rest.model.User;
 import by.bsuir.poit.dc.rest.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
 
@@ -29,6 +28,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @CatchThrows(
+	call = "newUserAlreadyExistsException"
+    )
     public UserDto create(UpdateUserDto dto) {
 	//todo: userMapper should accept also hashing strategy to construct User entity
 	User entity = userMapper.toEntity(dto);
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CatchThrows(call = "newUserModifyingException", args = "userId")
     public UserDto update(long userId, UpdateUserDto dto) {
 	User user = userRepository
 			.findById(userId)
@@ -81,12 +84,18 @@ public class UserServiceImpl implements UserService {
 	return isDeleted;
     }
 
-    @ExceptionHandler(DataAccessException.class)
-    public void catchDataAccessException(DataAccessException e) {
-	final String frontMsg = "Failed to modify user state (insert or update it)";
+    public ResourceModifyingException newUserModifyingException(long userId, Throwable e) {
+	final String frontMsg = STR."Failed to modify user by id=\{userId}";
 	final String msg = STR."\{frontMsg} \{e.getMessage()}";
 	log.warn(msg);
-	throw new ResourceModifyingException(frontMsg, 51);
+	return new ResourceModifyingException(frontMsg, 51);
+    }
+
+    public ResourceModifyingException newUserAlreadyExistsException(Throwable e) {
+	final String msg = STR."Failed to create new user. It's already exists";
+	log.warn(msg);
+	return new ResourceModifyingException(msg, 32);
+
     }
 
     private static ResourceNotFoundException newUserNotFoundByNewsException(long newsId) {
