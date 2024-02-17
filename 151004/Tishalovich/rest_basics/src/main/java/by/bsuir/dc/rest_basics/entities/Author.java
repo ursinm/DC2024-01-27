@@ -1,13 +1,10 @@
 package by.bsuir.dc.rest_basics.entities;
 
 import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Author extends AbstractEntity {
@@ -20,4 +17,10 @@ public class Author extends AbstractEntity {
 
     private String lastName;
 
+    //public Author(Long id, String login, String password, String firstName, String lastName) {
+    //    setId(id);
+    //    this.password = password;
+    //    this.firstName = firstName;
+    //    this.lastName = lastName;
+    //}
 }

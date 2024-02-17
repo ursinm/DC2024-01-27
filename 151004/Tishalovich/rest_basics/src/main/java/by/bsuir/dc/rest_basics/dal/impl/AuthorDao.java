@@ -25,7 +25,7 @@ public class AuthorDao extends MemoryRepository<Author> {
             memoryAuthor.setPassword(author.getPassword());
         }
 
-        return Optional.of(author);
+        return Optional.of(memoryAuthor);
     }
 
 }
