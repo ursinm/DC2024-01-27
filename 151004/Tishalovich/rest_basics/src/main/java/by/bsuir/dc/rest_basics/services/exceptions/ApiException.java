@@ -1,6 +1,6 @@
 package by.bsuir.dc.rest_basics.services.exceptions;
 
-import lombok.AllArgsConstructor;
+import com.google.common.base.Objects;
 import lombok.Getter;
 
 @Getter
@@ -17,6 +17,19 @@ public class ApiException extends Exception {
 
     public int getHttpStatusCode() {
         return statusCode/100;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ApiException that = (ApiException) o;
+        return statusCode == that.statusCode && errorMessage.equals(that.errorMessage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(statusCode, errorMessage);
     }
 
 }

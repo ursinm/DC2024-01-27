@@ -1,4 +1,20 @@
 package by.bsuir.dc.rest_basics.services.exceptions;
 
-public record ApiExceptionInfo(String errorMessage, int statusCode) {
+import lombok.*;
+
+@Getter
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
+public class ApiExceptionInfo {
+
+    private String errorMessage;
+
+    private int statusCode;
+
+    public ApiExceptionInfo(int httpCode, int subCode, String errorMessage) {
+        statusCode = httpCode*100 + subCode;
+        this.errorMessage = errorMessage;
+    }
+
 }

@@ -10,6 +10,11 @@ public enum AuthorSubCode {
     WRONG_FIRST_NAME_LEN(3),
     WRONG_LAST_NAME_LEN(4),
 
+    NO_LOGIN_PROVIDED(5),
+    NO_PASSWORD_PROVIDED(6),
+    NO_FIRST_NAME_PROVIDED(7),
+    NO_LAST_NAME_PROVIDED(8),
+
     //404 - Not found
     WRONG_ID(1);
 

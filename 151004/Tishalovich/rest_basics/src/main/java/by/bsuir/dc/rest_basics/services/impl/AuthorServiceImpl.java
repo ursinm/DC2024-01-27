@@ -1,15 +1,14 @@
 package by.bsuir.dc.rest_basics.services.impl;
 
-import by.bsuir.dc.rest_basics.dal.common.MemoryRepository;
-import by.bsuir.dc.rest_basics.dtos.request.AuthorRequestTo;
-import by.bsuir.dc.rest_basics.dtos.response.AuthorResponseTo;
+import by.bsuir.dc.rest_basics.dal.impl.AuthorDao;
+import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
+import by.bsuir.dc.rest_basics.entities.dtos.response.AuthorResponseTo;
 import by.bsuir.dc.rest_basics.entities.Author;
 import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
 import by.bsuir.dc.rest_basics.services.AuthorService;
 import by.bsuir.dc.rest_basics.services.exceptions.AuthorSubCode;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
 
-    private final MemoryRepository<Author> authorDao;
+    private final AuthorDao authorDao;
 
     @Override
     public AuthorResponseTo create(AuthorRequestTo authorRequestTo) {
@@ -83,7 +82,7 @@ public class AuthorServiceImpl implements AuthorService {
                 () -> new ApiException(
                         HttpStatus.NOT_FOUND.value(),
                         AuthorSubCode.WRONG_ID.getSubCode(),
-                        "There is no author with such id"
+                        "There is no author with id = " + id
                 )
         );
 

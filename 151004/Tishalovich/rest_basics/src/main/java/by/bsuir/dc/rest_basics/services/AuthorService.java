@@ -1,7 +1,7 @@
 package by.bsuir.dc.rest_basics.services;
 
-import by.bsuir.dc.rest_basics.dtos.request.AuthorRequestTo;
-import by.bsuir.dc.rest_basics.dtos.response.AuthorResponseTo;
+import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
+import by.bsuir.dc.rest_basics.entities.dtos.response.AuthorResponseTo;
 import java.util.List;
 
 public interface AuthorService {

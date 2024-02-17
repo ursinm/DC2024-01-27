@@ -1,7 +1,7 @@
 package by.bsuir.dc.rest_basics.controllers;
 
-import by.bsuir.dc.rest_basics.dtos.request.AuthorRequestTo;
-import by.bsuir.dc.rest_basics.dtos.response.AuthorResponseTo;
+import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
+import by.bsuir.dc.rest_basics.entities.dtos.response.AuthorResponseTo;
 import by.bsuir.dc.rest_basics.services.AuthorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,20 +16,8 @@ public class AuthorController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("api/v1.0/authors")
-    public AuthorResponseTo createAuthor(
-            @RequestParam(value = "login") String login,
-            @RequestParam(value = "password") String password,
-            @RequestParam(value = "first_name") String firstName,
-            @RequestParam(value = "last_name") String lastName) {
-
-        AuthorRequestTo authorRequestTo = new AuthorRequestTo(
-                login,
-                password,
-                firstName,
-                lastName
-        );
-
-        return authorService.create(authorRequestTo);
+    public AuthorResponseTo createAuthor(@RequestBody AuthorRequestTo author) {
+        return authorService.create(author);
     }
 
     @GetMapping("api/v1.0/authors")
@@ -38,18 +26,19 @@ public class AuthorController {
     }
 
     @GetMapping("api/v1.0/authors/{id}")
-    public AuthorResponseTo getAuthor(@PathVariable long id) {
+    public AuthorResponseTo getAuthor(@PathVariable Long id) {
         return authorService.get(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("api/v1.0/authors")
-    public AuthorResponseTo deleteAuthor(@RequestParam(value = "id") long id) {
+    @DeleteMapping("api/v1.0/authors/{id}")
+    public AuthorResponseTo deleteAuthor(@PathVariable(value = "id") Long id) {
         return authorService.delete(id);
     }
 
-    @PutMapping("api/v1.0/authors")
-    public AuthorResponseTo updateAuthor(@RequestBody AuthorRequestTo author) {
+    @PutMapping("api/v1.0/authors/{id}")
+    public AuthorResponseTo updateAuthor(@PathVariable("id") Long id, @RequestBody AuthorRequestTo author) {
+        author.setId(id);
         return authorService.update(author);
     }
 
