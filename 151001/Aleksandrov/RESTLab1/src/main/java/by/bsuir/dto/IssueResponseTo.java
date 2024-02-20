@@ -13,6 +13,6 @@ public class IssueResponseTo {
     private Long id;
     private String title;
     private String content;
-    private String editorId;
+    private Long editorId;
     private Long labelId;
 }

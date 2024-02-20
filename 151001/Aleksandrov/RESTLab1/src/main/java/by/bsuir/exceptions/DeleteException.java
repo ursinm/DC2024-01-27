@@ -1,4 +1,4 @@
-package by.bsuir.exceptions.issue;
+package by.bsuir.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class IssueDeleteException extends RuntimeException{
+@AllArgsConstructor
+public class DeleteException extends RuntimeException{
     private String message;
-    private int status;
+    private Long status;
 }

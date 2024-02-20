@@ -1,4 +1,4 @@
-package by.bsuir.exceptions.issue;
+package by.bsuir.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssueUpdateException extends RuntimeException{
+public class UpdateException extends RuntimeException{
     private String message;
-    private int status;
+    private Long status;
 }

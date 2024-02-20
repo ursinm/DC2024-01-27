@@ -1,12 +1,9 @@
 package by.bsuir.dao.impl;
 
 import by.bsuir.dao.IssueDao;
-import by.bsuir.entities.Comment;
 import by.bsuir.entities.Issue;
-import by.bsuir.exceptions.editor.EditorDeleteException;
-import by.bsuir.exceptions.editor.EditorUpdateException;
-import by.bsuir.exceptions.issue.IssueDeleteException;
-import by.bsuir.exceptions.issue.IssueUpdateException;
+import by.bsuir.exceptions.DeleteException;
+import by.bsuir.exceptions.UpdateException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +14,7 @@ public class IssueDaoImpl implements IssueDao {
 
     private long counter = 0;
     private final Map<Long, Issue> map = new HashMap<>();
+
     @Override
     public Issue save(Issue entity) {
         counter++;
@@ -26,9 +24,9 @@ public class IssueDaoImpl implements IssueDao {
     }
 
     @Override
-    public void delete(long id) throws IssueDeleteException{
-        if (map.remove(id) == null){
-            throw new IssueDeleteException("The editor has not been deleted", 400);
+    public void delete(long id) throws DeleteException {
+        if (map.remove(id) == null) {
+            throw new DeleteException("The issue has not been deleted", 40003L);
         }
     }
 
@@ -43,7 +41,7 @@ public class IssueDaoImpl implements IssueDao {
     }
 
     @Override
-    public Issue update(Issue updatedIssue) throws IssueUpdateException {
+    public Issue update(Issue updatedIssue) throws UpdateException {
         Long id = updatedIssue.getId();
 
         if (map.containsKey(id)) {
@@ -51,7 +49,7 @@ public class IssueDaoImpl implements IssueDao {
             BeanUtils.copyProperties(updatedIssue, existingIssue);
             return existingIssue;
         } else {
-            throw new IssueUpdateException("Update failed", 400);
+            throw new UpdateException("Issue update failed", 40002L);
         }
     }
 }

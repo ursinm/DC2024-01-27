@@ -2,10 +2,8 @@ package by.bsuir.dao.impl;
 
 import by.bsuir.dao.CommentDao;
 import by.bsuir.entities.Comment;
-import by.bsuir.exceptions.comment.CommentDeleteException;
-import by.bsuir.exceptions.comment.CommentUpdateException;
-import by.bsuir.exceptions.editor.EditorDeleteException;
-import by.bsuir.exceptions.editor.EditorUpdateException;
+import by.bsuir.exceptions.DeleteException;
+import by.bsuir.exceptions.UpdateException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +23,9 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     @Override
-    public void delete(long id) throws CommentDeleteException {
+    public void delete(long id) throws DeleteException {
         if (map.remove(id) == null){
-            throw new CommentDeleteException("The editor has not been deleted", 400);
+            throw new DeleteException("The comment has not been deleted", 40003L);
         }
     }
 
@@ -42,7 +40,7 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     @Override
-    public Comment update(Comment updatedComment) throws CommentUpdateException {
+    public Comment update(Comment updatedComment) throws UpdateException {
         Long id = updatedComment.getId();
 
         if (map.containsKey(id)) {
@@ -50,7 +48,7 @@ public class CommentDaoImpl implements CommentDao {
             BeanUtils.copyProperties(updatedComment, existingComment);
             return existingComment;
         } else {
-            throw new CommentUpdateException("Update failed", 400);
+            throw new UpdateException("Comment update failed", 40002L);
         }
     }
 }

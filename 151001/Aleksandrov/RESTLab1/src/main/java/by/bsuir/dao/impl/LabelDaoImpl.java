@@ -1,12 +1,9 @@
 package by.bsuir.dao.impl;
 
 import by.bsuir.dao.LabelDao;
-import by.bsuir.entities.Comment;
 import by.bsuir.entities.Label;
-import by.bsuir.exceptions.comment.CommentDeleteException;
-import by.bsuir.exceptions.editor.EditorUpdateException;
-import by.bsuir.exceptions.label.LabelDeleteException;
-import by.bsuir.exceptions.label.LabelUpdateException;
+import by.bsuir.exceptions.DeleteException;
+import by.bsuir.exceptions.UpdateException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +14,7 @@ public class LabelDaoImpl implements LabelDao {
 
     private long counter = 0;
     private final Map<Long, Label> map = new HashMap<>();
+
     @Override
     public Label save(Label entity) {
         counter++;
@@ -24,10 +22,11 @@ public class LabelDaoImpl implements LabelDao {
         entity.setId(counter);
         return entity;
     }
+
     @Override
-    public void delete(long id) throws LabelDeleteException {
-        if (map.remove(id) == null){
-            throw new LabelDeleteException("The editor has not been deleted", 400);
+    public void delete(long id) throws DeleteException {
+        if (map.remove(id) == null) {
+            throw new DeleteException("The label has not been deleted", 40003L);
         }
     }
 
@@ -42,7 +41,7 @@ public class LabelDaoImpl implements LabelDao {
     }
 
     @Override
-    public Label update(Label updatedLabel) throws LabelUpdateException {
+    public Label update(Label updatedLabel) throws UpdateException {
         Long id = updatedLabel.getId();
 
         if (map.containsKey(id)) {
@@ -50,7 +49,7 @@ public class LabelDaoImpl implements LabelDao {
             BeanUtils.copyProperties(updatedLabel, existingLabel);
             return existingLabel;
         } else {
-            throw new LabelUpdateException("Update failed", 400);
+            throw new UpdateException("Label update failed", 40002L);
         }
     }
 }

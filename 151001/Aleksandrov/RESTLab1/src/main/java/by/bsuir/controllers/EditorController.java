@@ -2,8 +2,6 @@ package by.bsuir.controllers;
 
 import by.bsuir.dto.EditorRequestTo;
 import by.bsuir.dto.EditorResponseTo;
-import by.bsuir.exceptions.editor.EditorDeleteException;
-import by.bsuir.exceptions.editor.EditorUpdateException;
 import by.bsuir.services.EditorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +20,7 @@ public class EditorController {
     public ResponseEntity<List<EditorResponseTo>> getEditors() {
         return ResponseEntity.status(200).body(editorService.getEditors());
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<EditorResponseTo> getEditor(@PathVariable Long id) {
         return ResponseEntity.status(200).body(editorService.getEditorById(id));
@@ -29,11 +28,7 @@ public class EditorController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEditor(@PathVariable Long id) {
-        try {
-            editorService.deleteEditor(id);
-        } catch (EditorDeleteException exception){
-            return ResponseEntity.status(exception.getStatus()).build();
-        }
+        editorService.deleteEditor(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -44,11 +39,7 @@ public class EditorController {
     }
 
     @PutMapping
-    public ResponseEntity<EditorResponseTo> updateEditor(@RequestBody EditorRequestTo editor){
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(editorService.updateEditor(editor));
-        } catch (EditorUpdateException exception){
-            return ResponseEntity.status(exception.getStatus()).build();
-        }
+    public ResponseEntity<EditorResponseTo> updateEditor(@RequestBody EditorRequestTo editor) {
+        return ResponseEntity.status(HttpStatus.OK).body(editorService.updateEditor(editor));
     }
 }
