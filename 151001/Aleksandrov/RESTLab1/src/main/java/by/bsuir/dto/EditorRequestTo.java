@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditorRequestTo {
+    private Long id;
     private String login;
     private String password;
     private String firstname;

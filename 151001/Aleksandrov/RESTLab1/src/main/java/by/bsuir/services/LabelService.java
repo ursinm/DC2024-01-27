@@ -39,8 +39,8 @@ public class LabelService {
         labelDao.delete(id);
     }
 
-    public LabelResponseTo updateLabel(LabelRequestTo label, Long id){
+    public LabelResponseTo updateLabel(LabelRequestTo label){
         Label labelToUpdate = labelMapper.labelRequestToLabel(label);
-        return labelMapper.labelToLabelResponse(labelDao.update(labelToUpdate, id));
+        return labelMapper.labelToLabelResponse(labelDao.update(labelToUpdate));
     }
 }

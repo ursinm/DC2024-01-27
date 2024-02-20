@@ -2,6 +2,9 @@ package by.bsuir.dao.impl;
 
 import by.bsuir.dao.EditorDao;
 import by.bsuir.entities.Editor;
+import by.bsuir.exceptions.editor.EditorDeleteException;
+import by.bsuir.exceptions.editor.EditorUpdateException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -21,8 +24,10 @@ public class EditorDaoImpl implements EditorDao {
     }
 
     @Override
-    public void delete(long id) {
-        map.remove(id);
+    public void delete(long id) throws EditorDeleteException{
+        if (map.remove(id) == null){
+            throw new EditorDeleteException("The editor has not been deleted", 400);
+        }
     }
 
     @Override
@@ -36,9 +41,15 @@ public class EditorDaoImpl implements EditorDao {
     }
 
     @Override
-    public Editor update(Editor entity, long id) {
-        entity.setId(id);
-        map.put(id, entity);
-        return entity;
+    public Editor update(Editor updatedEditor) throws EditorUpdateException {
+        Long id = updatedEditor.getId();
+
+        if (map.containsKey(id)) {
+            Editor existingEditor = map.get(id);
+            BeanUtils.copyProperties(updatedEditor, existingEditor);
+            return existingEditor;
+        } else {
+            throw new EditorUpdateException("Update failed", 400);
+        }
     }
 }

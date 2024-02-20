@@ -1,9 +1,15 @@
 package by.bsuir.controllers;
 
+import by.bsuir.dto.EditorResponseTo;
 import by.bsuir.dto.LabelRequestTo;
 import by.bsuir.dto.LabelResponseTo;
+import by.bsuir.exceptions.editor.EditorDeleteException;
+import by.bsuir.exceptions.editor.EditorUpdateException;
+import by.bsuir.exceptions.label.LabelDeleteException;
 import by.bsuir.services.LabelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,24 +21,36 @@ public class LabelController {
     LabelService labelService;
 
     @GetMapping
-    public List<LabelResponseTo> getLabels() {
-        return labelService.getLabels();
+    public ResponseEntity<List<LabelResponseTo>> getLabels() {
+        return ResponseEntity.status(200).body(labelService.getLabels());
     }
     @GetMapping("/{id}")
-    public LabelResponseTo getLabel(@PathVariable Long id) {
-        return labelService.getLabelById(id);
+    public ResponseEntity<LabelResponseTo> getLabel(@PathVariable Long id) {
+        return ResponseEntity.status(200).body(labelService.getLabelById(id));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteLabel(@PathVariable Long id){labelService.deleteLabel(id);}
-
-    @PostMapping
-    public LabelResponseTo saveLabel(@RequestBody LabelRequestTo label){
-        return labelService.saveLabel(label);
+    public ResponseEntity<Void> deleteLabel(@PathVariable Long id){
+        try {
+            labelService.deleteLabel(id);
+        } catch (LabelDeleteException exception){
+            return ResponseEntity.status(exception.getStatus()).build();
+        }
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}")
-    public LabelResponseTo updateLabel(@RequestBody LabelRequestTo label, @PathVariable Long id){
-        return labelService.updateLabel(label, id);
+    @PostMapping
+    public ResponseEntity<LabelResponseTo> saveLabel(@RequestBody LabelRequestTo label){
+        LabelResponseTo savedLabel = labelService.saveLabel(label);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedLabel);
+    }
+
+    @PutMapping()
+    public ResponseEntity<LabelResponseTo> updateLabel(@RequestBody LabelRequestTo label){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(labelService.updateLabel(label));
+        } catch (EditorUpdateException exception){
+            return ResponseEntity.status(exception.getStatus()).build();
+        }
     }
 }

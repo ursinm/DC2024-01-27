@@ -1,7 +1,13 @@
 package by.bsuir.dao.impl;
 
 import by.bsuir.dao.IssueDao;
+import by.bsuir.entities.Comment;
 import by.bsuir.entities.Issue;
+import by.bsuir.exceptions.editor.EditorDeleteException;
+import by.bsuir.exceptions.editor.EditorUpdateException;
+import by.bsuir.exceptions.issue.IssueDeleteException;
+import by.bsuir.exceptions.issue.IssueUpdateException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -20,8 +26,10 @@ public class IssueDaoImpl implements IssueDao {
     }
 
     @Override
-    public void delete(long id) {
-        map.remove(id);
+    public void delete(long id) throws IssueDeleteException{
+        if (map.remove(id) == null){
+            throw new IssueDeleteException("The editor has not been deleted", 400);
+        }
     }
 
     @Override
@@ -35,9 +43,15 @@ public class IssueDaoImpl implements IssueDao {
     }
 
     @Override
-    public Issue update(Issue entity, long id) {
-        entity.setId(id);
-        map.put(id, entity);
-        return entity;
+    public Issue update(Issue updatedIssue) throws IssueUpdateException {
+        Long id = updatedIssue.getId();
+
+        if (map.containsKey(id)) {
+            Issue existingIssue = map.get(id);
+            BeanUtils.copyProperties(updatedIssue, existingIssue);
+            return existingIssue;
+        } else {
+            throw new IssueUpdateException("Update failed", 400);
+        }
     }
 }

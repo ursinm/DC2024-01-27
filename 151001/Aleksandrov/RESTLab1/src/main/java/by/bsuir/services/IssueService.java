@@ -39,8 +39,8 @@ public class IssueService {
         issueDao.delete(id);
     }
 
-    public IssueResponseTo updateIssue(IssueRequestTo issue, Long id){
+    public IssueResponseTo updateIssue(IssueRequestTo issue){
         Issue issueToUpdate = issueMapper.issueRequestToIssue(issue);
-        return issueMapper.issueToIssueResponse(issueDao.update(issueToUpdate, id));
+        return issueMapper.issueToIssueResponse(issueDao.update(issueToUpdate));
     }
 }

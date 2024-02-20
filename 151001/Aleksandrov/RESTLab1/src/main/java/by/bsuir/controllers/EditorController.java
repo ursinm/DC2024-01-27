@@ -2,8 +2,12 @@ package by.bsuir.controllers;
 
 import by.bsuir.dto.EditorRequestTo;
 import by.bsuir.dto.EditorResponseTo;
+import by.bsuir.exceptions.editor.EditorDeleteException;
+import by.bsuir.exceptions.editor.EditorUpdateException;
 import by.bsuir.services.EditorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,24 +19,36 @@ public class EditorController {
     EditorService editorService;
 
     @GetMapping
-    public List<EditorResponseTo> getEditors() {
-        return editorService.getEditors();
+    public ResponseEntity<List<EditorResponseTo>> getEditors() {
+        return ResponseEntity.status(200).body(editorService.getEditors());
     }
     @GetMapping("/{id}")
-    public EditorResponseTo getEditor(@PathVariable Long id) {
-        return editorService.getEditorById(id);
+    public ResponseEntity<EditorResponseTo> getEditor(@PathVariable Long id) {
+        return ResponseEntity.status(200).body(editorService.getEditorById(id));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEditor(@PathVariable Long id){editorService.deleteEditor(id);}
-
-    @PostMapping
-    public EditorResponseTo saveEditor(@RequestBody EditorRequestTo editor){
-        return editorService.saveEditor(editor);
+    public ResponseEntity<Void> deleteEditor(@PathVariable Long id) {
+        try {
+            editorService.deleteEditor(id);
+        } catch (EditorDeleteException exception){
+            return ResponseEntity.status(exception.getStatus()).build();
+        }
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}")
-    public EditorResponseTo updateEditor(@RequestBody EditorRequestTo editor, @PathVariable Long id){
-        return editorService.updateEditor(editor, id);
+    @PostMapping
+    public ResponseEntity<EditorResponseTo> saveEditor(@RequestBody EditorRequestTo editor) {
+        EditorResponseTo savedEditor = editorService.saveEditor(editor);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedEditor);
+    }
+
+    @PutMapping
+    public ResponseEntity<EditorResponseTo> updateEditor(@RequestBody EditorRequestTo editor){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(editorService.updateEditor(editor));
+        } catch (EditorUpdateException exception){
+            return ResponseEntity.status(exception.getStatus()).build();
+        }
     }
 }

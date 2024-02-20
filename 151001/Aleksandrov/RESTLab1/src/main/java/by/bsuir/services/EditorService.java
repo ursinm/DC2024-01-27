@@ -4,6 +4,8 @@ import by.bsuir.dao.EditorDao;
 import by.bsuir.dto.EditorRequestTo;
 import by.bsuir.dto.EditorResponseTo;
 import by.bsuir.entities.Editor;
+import by.bsuir.exceptions.editor.EditorDeleteException;
+import by.bsuir.exceptions.editor.EditorUpdateException;
 import by.bsuir.mapper.EditorListMapper;
 import by.bsuir.mapper.EditorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +37,13 @@ public class EditorService {
         return editorMapper.editorToEditorResponse(editorDao.save(editorToSave));
     }
 
-    public void deleteEditor(Long id){
+    public void deleteEditor(Long id) throws EditorDeleteException {
         editorDao.delete(id);
     }
 
-    public EditorResponseTo updateEditor(EditorRequestTo editor, Long id){
+    public EditorResponseTo updateEditor(EditorRequestTo editor) throws EditorUpdateException {
         Editor editorToUpdate = editorMapper.editorRequestToEditor(editor);
-        return editorMapper.editorToEditorResponse(editorDao.update(editorToUpdate, id));
+        return editorMapper.editorToEditorResponse(editorDao.update(editorToUpdate));
     }
 
 }

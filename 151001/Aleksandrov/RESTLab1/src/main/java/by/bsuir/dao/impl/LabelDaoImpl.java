@@ -1,7 +1,13 @@
 package by.bsuir.dao.impl;
 
 import by.bsuir.dao.LabelDao;
+import by.bsuir.entities.Comment;
 import by.bsuir.entities.Label;
+import by.bsuir.exceptions.comment.CommentDeleteException;
+import by.bsuir.exceptions.editor.EditorUpdateException;
+import by.bsuir.exceptions.label.LabelDeleteException;
+import by.bsuir.exceptions.label.LabelUpdateException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -19,8 +25,10 @@ public class LabelDaoImpl implements LabelDao {
         return entity;
     }
     @Override
-    public void delete(long id){
-        map.remove(id);
+    public void delete(long id) throws LabelDeleteException {
+        if (map.remove(id) == null){
+            throw new LabelDeleteException("The editor has not been deleted", 400);
+        }
     }
 
     @Override
@@ -34,9 +42,15 @@ public class LabelDaoImpl implements LabelDao {
     }
 
     @Override
-    public Label update(Label entity, long id) {
-        entity.setId(id);
-        map.put(id, entity);
-        return entity;
+    public Label update(Label updatedLabel) throws LabelUpdateException {
+        Long id = updatedLabel.getId();
+
+        if (map.containsKey(id)) {
+            Label existingLabel = map.get(id);
+            BeanUtils.copyProperties(updatedLabel, existingLabel);
+            return existingLabel;
+        } else {
+            throw new LabelUpdateException("Update failed", 400);
+        }
     }
 }

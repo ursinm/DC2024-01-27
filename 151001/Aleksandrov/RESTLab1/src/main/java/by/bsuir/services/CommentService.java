@@ -39,8 +39,8 @@ public class CommentService {
         commentDao.delete(id);
     }
 
-    public CommentResponseTo updateComment(CommentRequestTo comment, Long id){
+    public CommentResponseTo updateComment(CommentRequestTo comment){
         Comment commentToUpdate = commentMapper.commentRequestToComment(comment);
-        return commentMapper.commentToCommentResponse(commentDao.update(commentToUpdate, id));
+        return commentMapper.commentToCommentResponse(commentDao.update(commentToUpdate));
     }
 }
