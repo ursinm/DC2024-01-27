@@ -1,13 +1,12 @@
 package by.bsuir.dc.rest_basics.author;
 
 import by.bsuir.dc.rest_basics.configuration.MyTestConfiguration;
-import by.bsuir.dc.rest_basics.configuration.TestAuthorDao;
 import by.bsuir.dc.rest_basics.entities.Author;
 import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.entities.dtos.response.AuthorResponseTo;
 import by.bsuir.dc.rest_basics.services.exceptions.ApiExceptionInfo;
-import by.bsuir.dc.rest_basics.services.exceptions.AuthorSubCode;
-import by.bsuir.dc.rest_basics.services.impl.AuthorMapper;
+import by.bsuir.dc.rest_basics.services.exceptions.GeneralSubCode;
+import by.bsuir.dc.rest_basics.services.impl.mappers.AuthorMapper;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -63,6 +62,7 @@ class AuthorControllerTests {
     @Test
     public void create() {
         AuthorRequestTo authorRequestTo = new AuthorRequestTo(
+                null,
                 "SomeLogin",
                 "SomePassword",
                 "First Name",
@@ -83,9 +83,12 @@ class AuthorControllerTests {
                 .extract()
                     .as(AuthorResponseTo.class);
 
-        authorRequestTo.setId(id);
-        AuthorResponseTo expectedAuthorResponseTo = TestAuthorMapper
-                .INSTANCE.requestToResponse(authorRequestTo);
+        AuthorResponseTo expectedAuthorResponseTo = new AuthorResponseTo(
+                id,
+                authorRequestTo.login(),
+                authorRequestTo.firstName(),
+                authorRequestTo.lastName()
+        );
 
         Assertions.assertEquals(expectedAuthorResponseTo, authorResponseTo);
     }
@@ -104,6 +107,7 @@ class AuthorControllerTests {
                 .orElseThrow();
 
         AuthorRequestTo authorRequestTo = new AuthorRequestTo(
+                savedAuthor.getId(),
                 "UpdatedLogin",
                 null,
                 "UpdateFirstName",
@@ -113,10 +117,9 @@ class AuthorControllerTests {
         AuthorResponseTo authorResponseTo = RestAssured
                 .given()
                     .contentType("application/json")
-                    .pathParam("id", savedAuthor.getId())
                     .body(authorRequestTo)
                 .when()
-                    .put(uri + "/authors/{id}")
+                    .put(uri + "/authors")
                 .then()
                     .contentType("application/json")
                     .statusCode(HttpStatus.OK.value())
@@ -125,8 +128,8 @@ class AuthorControllerTests {
 
         AuthorResponseTo expectedAuthorResponseTo = new AuthorResponseTo(
                 savedAuthor.getId(),
-                authorRequestTo.getLogin(),
-                authorRequestTo.getFirstName(),
+                authorRequestTo.login(),
+                authorRequestTo.firstName(),
                 savedAuthor.getLastName()
         );
 
@@ -162,8 +165,8 @@ class AuthorControllerTests {
 
         ApiExceptionInfo expectedApiExceptionInfo = new ApiExceptionInfo(
                 HttpStatus.NOT_FOUND.value(),
-                AuthorSubCode.WRONG_ID.getSubCode(),
-                "There is no author with id = " + id
+                GeneralSubCode.WRONG_ID.getSubCode(),
+                GeneralSubCode.WRONG_ID.getMessage()
         );
 
         ApiExceptionInfo apiExceptionInfo = RestAssured

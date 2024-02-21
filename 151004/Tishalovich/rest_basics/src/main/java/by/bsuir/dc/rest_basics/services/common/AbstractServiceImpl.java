@@ -3,7 +3,7 @@ package by.bsuir.dc.rest_basics.services.common;
 import by.bsuir.dc.rest_basics.dal.common.MemoryRepository;
 import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
 import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
-import by.bsuir.dc.rest_basics.services.exceptions.AuthorSubCode;
+import by.bsuir.dc.rest_basics.services.exceptions.GeneralSubCode;
 import by.bsuir.dc.rest_basics.services.impl.mappers.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,7 +16,8 @@ import java.util.stream.StreamSupport;
 
 @Setter
 @RequiredArgsConstructor
-public abstract class AbstractServiceImpl<I, E, M extends AbstractEntity> implements AbstractService<I, E> {
+public abstract class AbstractServiceImpl<I, E, M extends AbstractEntity>
+        implements AbstractService<I, E> {
 
     private final MemoryRepository<M> dao;
 
@@ -47,8 +48,8 @@ public abstract class AbstractServiceImpl<I, E, M extends AbstractEntity> implem
         if (author.isEmpty()) {
             throw new ApiException(
                     HttpStatus.NOT_FOUND.value(),
-                    AuthorSubCode.WRONG_ID.getSubCode(),
-                    "There is no author with id = " + id
+                    GeneralSubCode.WRONG_ID.getSubCode(),
+                    GeneralSubCode.WRONG_ID.getMessage()
             );
         }
 
@@ -64,8 +65,8 @@ public abstract class AbstractServiceImpl<I, E, M extends AbstractEntity> implem
         if (updateRes.isEmpty()) {
             throw new ApiException(
                     HttpStatus.NOT_FOUND.value(),
-                    AuthorSubCode.WRONG_ID.getSubCode(),
-                    "There is no author with id = " + model.getId()
+                    GeneralSubCode.WRONG_ID.getSubCode(),
+                    GeneralSubCode.WRONG_ID.getMessage()
             );
         }
 
@@ -79,8 +80,8 @@ public abstract class AbstractServiceImpl<I, E, M extends AbstractEntity> implem
         M model = deletingRes.orElseThrow(
                 () -> new ApiException(
                         HttpStatus.NOT_FOUND.value(),
-                        AuthorSubCode.WRONG_ID.getSubCode(),
-                        "There is no author with id = " + id
+                        GeneralSubCode.WRONG_ID.getSubCode(),
+                        GeneralSubCode.WRONG_ID.getMessage()
                 )
         );
 

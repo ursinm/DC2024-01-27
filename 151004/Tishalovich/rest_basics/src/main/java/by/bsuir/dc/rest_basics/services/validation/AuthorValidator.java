@@ -3,63 +3,10 @@ package by.bsuir.dc.rest_basics.services.validation;
 import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
 import by.bsuir.dc.rest_basics.services.exceptions.AuthorSubCode;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
+import by.bsuir.dc.rest_basics.services.exceptions.GeneralSubCode;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
-@Aspect
-@Component
-public class AuthorValidator {
-
-    @Around("execution(* by.bsuir.dc.rest_basics.services.AuthorService.create(..))")
-    public Object validateCreate(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object[] args = joinPoint.getArgs();
-        AuthorRequestTo authorRequestTo = (AuthorRequestTo) args[0];
-
-        String login = authorRequestTo.getLogin();
-        if (login == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    AuthorSubCode.NO_LOGIN_PROVIDED.getSubCode(),
-                    "No login provided"
-            );
-        }
-        checkLogin(authorRequestTo.getLogin());
-
-        String password = authorRequestTo.getPassword();
-        if (password == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    AuthorSubCode.NO_PASSWORD_PROVIDED.getSubCode(),
-                    "No password provided"
-            );
-        }
-        checkPassword(authorRequestTo.getPassword());
-
-        String firstName = authorRequestTo.getFirstName();
-        if (firstName == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    AuthorSubCode.NO_FIRST_NAME_PROVIDED.getSubCode(),
-                    "No firstName provided"
-            );
-        }
-        checkFirstName(authorRequestTo.getFirstName());
-
-        String lastName = authorRequestTo.getLastName();
-        if (lastName == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    AuthorSubCode.NO_LAST_NAME_PROVIDED.getSubCode(),
-                    "No lastName provided"
-            );
-        }
-        checkLastName(authorRequestTo.getLastName());
-
-        return joinPoint.proceed();
-    }
+public class AuthorValidator implements EntityValidator {
 
     private void checkLogin(String login) throws ApiException {
         int loginLen = login.length();
@@ -84,6 +31,7 @@ public class AuthorValidator {
             );
         }
     }
+
     private void checkFirstName(String firstName) throws ApiException {
         int firstNameLen = firstName.length();
 
@@ -108,32 +56,82 @@ public class AuthorValidator {
         }
     }
 
-    @Around("execution(* by.bsuir.dc.rest_basics.services.AuthorService.update(..))")
-    public Object validateUpdate(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object[] args = joinPoint.getArgs();
-        AuthorRequestTo authorRequestTo = (AuthorRequestTo) args[0];
+    @Override
+    public void validateCreate(Object o) throws ApiException {
+        AuthorRequestTo authorRequestTo = (AuthorRequestTo) o;
 
-        String login = authorRequestTo.getLogin();
+        String login = authorRequestTo.login();
+        if (login == null) {
+            throw new ApiException(
+                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    AuthorSubCode.NO_LOGIN_PROVIDED.getSubCode(),
+                    "No login provided"
+            );
+        }
+        checkLogin(authorRequestTo.login());
+
+        String password = authorRequestTo.password();
+        if (password == null) {
+            throw new ApiException(
+                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    AuthorSubCode.NO_PASSWORD_PROVIDED.getSubCode(),
+                    "No password provided"
+            );
+        }
+        checkPassword(authorRequestTo.password());
+
+        String firstName = authorRequestTo.firstName();
+        if (firstName == null) {
+            throw new ApiException(
+                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    AuthorSubCode.NO_FIRST_NAME_PROVIDED.getSubCode(),
+                    "No firstName provided"
+            );
+        }
+        checkFirstName(authorRequestTo.firstName());
+
+        String lastName = authorRequestTo.lastName();
+        if (lastName == null) {
+            throw new ApiException(
+                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    AuthorSubCode.NO_LAST_NAME_PROVIDED.getSubCode(),
+                    "No lastName provided"
+            );
+        }
+        checkLastName(authorRequestTo.lastName());
+    }
+
+    @Override
+    public void validateUpdate(Object o) throws ApiException {
+        AuthorRequestTo authorRequestTo = (AuthorRequestTo) o;
+
+        if (authorRequestTo.id() == null) {
+            throw new ApiException(
+                    HttpStatus.NOT_FOUND.value(),
+                    GeneralSubCode.WRONG_ID.getSubCode(),
+                    GeneralSubCode.WRONG_ID.getMessage()
+            );
+        }
+
+        String login = authorRequestTo.login();
         if (login != null) {
-            checkLogin(authorRequestTo.getLogin());
+            checkLogin(authorRequestTo.login());
         }
 
-        String password = authorRequestTo.getPassword();
+        String password = authorRequestTo.password();
         if (password != null) {
-            checkPassword(authorRequestTo.getPassword());
+            checkPassword(authorRequestTo.password());
         }
 
-        String firstName = authorRequestTo.getFirstName();
+        String firstName = authorRequestTo.firstName();
         if (firstName != null) {
-            checkFirstName(authorRequestTo.getFirstName());
+            checkFirstName(authorRequestTo.firstName());
         }
 
-        String lastName = authorRequestTo.getLastName();
+        String lastName = authorRequestTo.lastName();
         if (lastName != null) {
-            checkLastName(authorRequestTo.getLastName());
+            checkLastName(authorRequestTo.lastName());
         }
-
-        return joinPoint.proceed();
     }
 
 }
