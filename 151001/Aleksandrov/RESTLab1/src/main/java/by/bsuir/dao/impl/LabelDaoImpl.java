@@ -52,4 +52,16 @@ public class LabelDaoImpl implements LabelDao {
             throw new UpdateException("Label update failed", 40002L);
         }
     }
+
+    @Override
+    public Optional<Label> getLabelByIssueId(long issueId) {
+        for (Label label : map.values()) {
+            if (label.getIssueId() != null) {
+                if (label.getIssueId() == issueId) {
+                    return Optional.of(label);
+                }
+            }
+        }
+        return Optional.empty();
+    }
 }

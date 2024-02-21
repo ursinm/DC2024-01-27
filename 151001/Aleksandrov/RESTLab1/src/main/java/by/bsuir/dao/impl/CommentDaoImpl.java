@@ -24,7 +24,7 @@ public class CommentDaoImpl implements CommentDao {
 
     @Override
     public void delete(long id) throws DeleteException {
-        if (map.remove(id) == null){
+        if (map.remove(id) == null) {
             throw new DeleteException("The comment has not been deleted", 40003L);
         }
     }
@@ -50,5 +50,17 @@ public class CommentDaoImpl implements CommentDao {
         } else {
             throw new UpdateException("Comment update failed", 40002L);
         }
+    }
+
+    @Override
+    public Optional<Comment> getCommentByIssueId(long issueId) {
+        for (Comment comment : map.values()) {
+            if (comment.getIssueId() != null) {
+                if (comment.getIssueId() == issueId) {
+                    return Optional.of(comment);
+                }
+            }
+        }
+        return Optional.empty();
     }
 }

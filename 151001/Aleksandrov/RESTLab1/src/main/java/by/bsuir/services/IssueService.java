@@ -50,4 +50,8 @@ public class IssueService {
         Issue issueToUpdate = issueMapper.issueRequestToIssue(issue);
         return issueMapper.issueToIssueResponse(issueDao.update(issueToUpdate));
     }
+
+    public IssueResponseTo getIssueByCriteria(String labelName, Long labelId, String title, String content){
+        return issueMapper.issueToIssueResponse(issueDao.getIssueByCriteria(labelName, labelId, title, content).orElseThrow(() -> new NotFoundException("Issue not found!", 40005L)));
+    }
 }

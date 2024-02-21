@@ -22,8 +22,8 @@ public class IssueController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IssueResponseTo> getIssue(@PathVariable Long id) {
-        return ResponseEntity.status(200).body(issueService.getIssueById(id));
+    public ResponseEntity<IssueResponseTo> getIssue(@PathVariable int id) {
+        return ResponseEntity.status(200).body(issueService.getIssueById((long) id));
     }
 
     @DeleteMapping("/{id}")
@@ -41,5 +41,14 @@ public class IssueController {
     @PutMapping()
     public ResponseEntity<IssueResponseTo> updateIssue(@RequestBody IssueRequestTo issue) {
         return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(issue));
+    }
+
+    @GetMapping("/byCriteria")
+    public ResponseEntity<IssueResponseTo> getIssueByCriteria(
+            @RequestParam(required = false) String labelName,
+            @RequestParam(required = false) Long labelId,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String content){
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueByCriteria(labelName, labelId, title, content));
     }
 }

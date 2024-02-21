@@ -42,4 +42,9 @@ public class EditorController {
     public ResponseEntity<EditorResponseTo> updateEditor(@RequestBody EditorRequestTo editor) {
         return ResponseEntity.status(HttpStatus.OK).body(editorService.updateEditor(editor));
     }
+
+    @GetMapping("/byIssue/{id}")
+    public ResponseEntity<EditorResponseTo> getEditorByIssueId(@PathVariable Long id){
+        return ResponseEntity.status(200).body(editorService.getEditorByIssueId(id));
+    }
 }

@@ -3,7 +3,9 @@ package by.bsuir.services;
 import by.bsuir.dao.EditorDao;
 import by.bsuir.dto.EditorRequestTo;
 import by.bsuir.dto.EditorResponseTo;
+import by.bsuir.dto.IssueResponseTo;
 import by.bsuir.entities.Editor;
+import by.bsuir.entities.Issue;
 import by.bsuir.exceptions.DeleteException;
 import by.bsuir.exceptions.NotFoundException;
 import by.bsuir.exceptions.UpdateException;
@@ -50,5 +52,8 @@ public class EditorService {
         Editor editorToUpdate = editorMapper.editorRequestToEditor(editor);
         return editorMapper.editorToEditorResponse(editorDao.update(editorToUpdate));
     }
-
+    public EditorResponseTo getEditorByIssueId(@Min(0) Long issueId) throws NotFoundException{
+        Optional<Editor> editor = editorDao.getEditorByIssueId(issueId);
+        return editor.map(value -> editorMapper.editorToEditorResponse(value)).orElseThrow(() -> new NotFoundException("Editor not found!", 40004L));
+    }
 }

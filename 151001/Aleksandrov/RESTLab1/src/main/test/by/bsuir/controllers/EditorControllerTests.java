@@ -138,4 +138,50 @@ public class EditorControllerTests {
                 .then()
                 .statusCode(400);
     }
+
+    @Test
+    public void testGetEditorByIssueId() {
+        Response editorResponse = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"login\": \"editor2019\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
+                .when()
+                .post("/api/v1.0/editors")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        long editorId = editorResponse.jsonPath().getLong("id");
+        String body = "{ \"editorId\": "+ editorId +", \"title\": \"title3190\", \"content\": \"content9594\" }";
+
+        Response issueResponse = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        long issueId = issueResponse.jsonPath().getLong("id");
+
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .get("/api/v1.0/editors/byIssue/{id}")
+                .then()
+                .statusCode(200)
+                .body("login", equalTo("editor2019"));
+    }
+
+    @Test
+    public void testGetEditorByIssueIdWithWrongArgument() {
+        given()
+                .pathParam("id", 999999)
+                .when()
+                .get("/api/v1.0/editors/byIssue/{id}")
+                .then()
+                .statusCode(400)
+                .body("errorMessage", equalTo("Issue not found!"))
+                .body("errorCode", equalTo(40004));
+    }
 }

@@ -28,7 +28,7 @@ public class LabelService {
     @Autowired
     LabelListMapper labelListMapper;
 
-    public LabelResponseTo getLabelById(@Min(0) Long id) throws NotFoundException{
+    public LabelResponseTo getLabelById(@Min(0) Long id) throws NotFoundException {
         Optional<Label> label = labelDao.findById(id);
         return label.map(value -> labelMapper.labelToLabelResponse(value)).orElseThrow(() -> new NotFoundException("Label not found!", 40004L));
     }
@@ -49,5 +49,10 @@ public class LabelService {
     public LabelResponseTo updateLabel(@Valid LabelRequestTo label) throws UpdateException {
         Label labelToUpdate = labelMapper.labelRequestToLabel(label);
         return labelMapper.labelToLabelResponse(labelDao.update(labelToUpdate));
+    }
+
+    public LabelResponseTo getLabelByIssueId(@Min(0) Long issueId) throws NotFoundException {
+        Optional<Label> label = labelDao.getLabelByIssueId(issueId);
+        return label.map(value -> labelMapper.labelToLabelResponse(value)).orElseThrow(() -> new NotFoundException("Label not found!", 40004L));
     }
 }

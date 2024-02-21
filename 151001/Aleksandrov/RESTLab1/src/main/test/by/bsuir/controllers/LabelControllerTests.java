@@ -127,5 +127,51 @@ public class LabelControllerTests {
                 .body("errorMessage", equalTo("The label has not been deleted"))
                 .body("errorCode", equalTo(40003));
     }
+
+    @Test
+    public void testGetCommentByIssueId() {
+        Response issueResponse = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"editorId\": 5, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        long issueId = issueResponse.jsonPath().getLong("id");
+
+        String body = "{ \"issueId\": " + issueId + ", \"name\": \"name4845\" }";
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/labels")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .get("/api/v1.0/labels/byIssue/{id}")
+                .then()
+                .statusCode(200)
+                .body("name", equalTo("name4845"));
+    }
+
+    @Test
+    public void testGetLabelByIssueIdWithWrongArgument() {
+        given()
+                .pathParam("id", 999999)
+                .when()
+                .get("/api/v1.0/labels/byIssue/{id}")
+                .then()
+                .statusCode(400)
+                .body("errorMessage", equalTo("Label not found!"))
+                .body("errorCode", equalTo(40004));
+    }
 }
 

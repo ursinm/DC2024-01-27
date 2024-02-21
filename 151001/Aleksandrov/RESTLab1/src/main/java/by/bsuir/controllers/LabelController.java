@@ -1,5 +1,6 @@
 package by.bsuir.controllers;
 
+import by.bsuir.dto.CommentResponseTo;
 import by.bsuir.dto.LabelRequestTo;
 import by.bsuir.dto.LabelResponseTo;
 import by.bsuir.services.LabelService;
@@ -41,5 +42,10 @@ public class LabelController {
     @PutMapping()
     public ResponseEntity<LabelResponseTo> updateLabel(@RequestBody LabelRequestTo label) {
         return ResponseEntity.status(HttpStatus.OK).body(labelService.updateLabel(label));
+    }
+
+    @GetMapping("/byIssue/{id}")
+    public ResponseEntity<LabelResponseTo> getEditorByIssueId(@PathVariable Long id){
+        return ResponseEntity.status(200).body(labelService.getLabelByIssueId(id));
     }
 }

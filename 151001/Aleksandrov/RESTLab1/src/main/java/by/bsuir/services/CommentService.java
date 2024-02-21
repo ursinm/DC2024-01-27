@@ -50,4 +50,9 @@ public class CommentService {
         Comment commentToUpdate = commentMapper.commentRequestToComment(comment);
         return commentMapper.commentToCommentResponse(commentDao.update(commentToUpdate));
     }
+
+    public CommentResponseTo getCommentByIssueId(@Min(0) Long issueId) throws NotFoundException {
+        Optional<Comment> comment = commentDao.getCommentByIssueId(issueId);
+        return comment.map(value -> commentMapper.commentToCommentResponse(value)).orElseThrow(() -> new NotFoundException("Comment not found!", 40004L));
+    }
 }

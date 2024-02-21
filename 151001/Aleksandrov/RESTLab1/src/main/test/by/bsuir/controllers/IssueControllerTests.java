@@ -138,4 +138,100 @@ public class IssueControllerTests {
                 .then()
                 .statusCode(400);
     }
+
+    @Test
+    public void testGetIssueByTitleAndContentCriteria() {
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        String title = response.jsonPath().getString("title");
+        String content = response.jsonPath().getString("content");
+        String uri = "/api/v1.0/issues/byCriteria?title=" + title + "&content=" + content;
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .body("title", equalTo(title))
+                .body("content", equalTo(content));
+    }
+
+    @Test
+    public void testGetIssueByLabelIdCriteria() {
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\",\"labelId\": 10 }")
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        String title = response.jsonPath().getString("title");
+        String content = response.jsonPath().getString("content");
+        long labelId = response.jsonPath().getLong("labelId");
+        String uri = "/api/v1.0/issues/byCriteria?labelId=" + labelId;
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .body("title", equalTo(title))
+                .body("content", equalTo(content));
+    }
+
+    @Test
+    public void testGetIssueByWrongLabelIdCriteria() {
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\",\"labelId\": 10 }")
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        long labelId = response.jsonPath().getLong("labelId") + 2;
+        String uri = "/api/v1.0/issues/byCriteria?labelId=" + labelId;
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(400)
+                .body("errorCode", equalTo(40005))
+                .body("errorMessage", equalTo("Issue not found!"));
+    }
+
+    @Test
+    public void testGetIssueByWrongTitleAndContentCriteria() {
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        String title = response.jsonPath().getString("title") + "aboba";
+        String content = response.jsonPath().getString("content") + "mama";
+        String uri = "/api/v1.0/issues/byCriteria?title=" + title + "&content=" + content;
+        given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(400)
+                .body("errorCode", equalTo(40005))
+                .body("errorMessage", equalTo("Issue not found!"));
+    }
 }

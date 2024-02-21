@@ -2,6 +2,7 @@ package by.bsuir.controllers;
 
 import by.bsuir.dto.CommentRequestTo;
 import by.bsuir.dto.CommentResponseTo;
+import by.bsuir.dto.EditorResponseTo;
 import by.bsuir.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,5 +42,10 @@ public class CommentController {
     @PutMapping()
     public ResponseEntity<CommentResponseTo> updateComment(@RequestBody CommentRequestTo comment) {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(comment));
+    }
+
+    @GetMapping("/byIssue/{id}")
+    public ResponseEntity<CommentResponseTo> getEditorByIssueId(@PathVariable Long id){
+        return ResponseEntity.status(200).body(commentService.getCommentByIssueId(id));
     }
 }
