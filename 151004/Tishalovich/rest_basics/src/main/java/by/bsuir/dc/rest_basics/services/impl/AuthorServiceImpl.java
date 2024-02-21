@@ -7,6 +7,7 @@ import by.bsuir.dc.rest_basics.entities.Author;
 import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
 import by.bsuir.dc.rest_basics.services.AuthorService;
 import by.bsuir.dc.rest_basics.services.exceptions.AuthorSubCode;
+import by.bsuir.dc.rest_basics.services.impl.mappers.AuthorMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -66,7 +67,7 @@ public class AuthorServiceImpl implements AuthorService {
             throw new ApiException(
                     HttpStatus.NOT_FOUND.value(),
                     AuthorSubCode.WRONG_ID.getSubCode(),
-                    "There is no author with id = " + authorRequestTo.getId()
+                    "There is no author with id = " + authorRequestTo.id()
             );
         }
 
