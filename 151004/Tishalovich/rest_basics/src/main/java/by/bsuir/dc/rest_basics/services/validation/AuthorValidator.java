@@ -15,7 +15,7 @@ public class AuthorValidator implements EntityValidator {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_LOGIN_LEN.getSubCode(),
-                    "Author's login len must be from 2 to 64"
+                    AuthorSubCode.WRONG_LOGIN_LEN.getMessage()
             );
         }
     }
@@ -27,7 +27,7 @@ public class AuthorValidator implements EntityValidator {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_PASSWORD_LEN.getSubCode(),
-                    "Author's password len must be from 8 to 128"
+                    AuthorSubCode.WRONG_PASSWORD_LEN.getMessage()
             );
         }
     }
@@ -39,7 +39,7 @@ public class AuthorValidator implements EntityValidator {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_FIRST_NAME_LEN.getSubCode(),
-                    "Author's first name len must be from 2 to 64"
+                    AuthorSubCode.WRONG_FIRST_NAME_LEN.getMessage()
             );
         }
     }
@@ -51,7 +51,7 @@ public class AuthorValidator implements EntityValidator {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_LAST_NAME_LEN.getSubCode(),
-                    "Author's last name len must be from 2 to 64"
+                    AuthorSubCode.WRONG_LAST_NAME_LEN.getMessage()
             );
         }
     }
