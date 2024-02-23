@@ -3,14 +3,12 @@ package by.bsuir.dc.rest_basics.configuration;
 import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.entities.dtos.request.LabelRequestTo;
 import by.bsuir.dc.rest_basics.entities.dtos.request.MessageRequestTo;
+import by.bsuir.dc.rest_basics.entities.dtos.request.StoryRequestTo;
 import by.bsuir.dc.rest_basics.services.impl.mappers.AuthorMapper;
 import by.bsuir.dc.rest_basics.services.impl.mappers.LabelMapper;
 import by.bsuir.dc.rest_basics.services.impl.mappers.MessageMapper;
 import by.bsuir.dc.rest_basics.services.impl.mappers.StoryMapper;
-import by.bsuir.dc.rest_basics.services.validation.AuthorValidator;
-import by.bsuir.dc.rest_basics.services.validation.EntityValidator;
-import by.bsuir.dc.rest_basics.services.validation.LabelValidator;
-import by.bsuir.dc.rest_basics.services.validation.MessageValidator;
+import by.bsuir.dc.rest_basics.services.validation.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +47,7 @@ public class MyConfiguration {
         validators.put(AuthorRequestTo.class, new AuthorValidator());
         validators.put(LabelRequestTo.class, new LabelValidator());
         validators.put(MessageRequestTo.class, new MessageValidator());
+        validators.put(StoryRequestTo.class, new StoryValidator());
 
         return validators;
     }
