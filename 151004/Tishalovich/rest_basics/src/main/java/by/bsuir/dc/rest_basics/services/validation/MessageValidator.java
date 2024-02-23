@@ -11,7 +11,7 @@ public class MessageValidator implements EntityValidator {
     private void checkContent(String content) throws ApiException {
         int contentLen = content.length();
 
-        if ((contentLen < 2) || (contentLen > 2048)) {
+        if ((contentLen < 4) || (contentLen > 2048)) {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     MessageSubCode.WRONG_CONTENT_LEN.getSubCode(),

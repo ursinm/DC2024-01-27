@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1.0/stories")
+@RequestMapping("api/v1.0/storys")
 public class StoryController extends AbstractController<StoryRequestTo, StoryResponseTo> {
 
     public StoryController(AbstractService<StoryRequestTo, StoryResponseTo> service) {

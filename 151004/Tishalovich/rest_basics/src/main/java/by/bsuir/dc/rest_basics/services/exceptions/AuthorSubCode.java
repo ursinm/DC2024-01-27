@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum AuthorSubCode {
+
     //422 - Unprocessable entity
     WRONG_LOGIN_LEN(1, "Author's login len must be from 2 to 64"),
     WRONG_PASSWORD_LEN(2, "Author's password len must be from 8 to 128"),

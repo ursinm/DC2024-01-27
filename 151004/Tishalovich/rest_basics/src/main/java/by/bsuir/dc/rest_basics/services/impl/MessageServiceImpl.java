@@ -8,6 +8,8 @@ import by.bsuir.dc.rest_basics.services.MessageService;
 import by.bsuir.dc.rest_basics.services.common.AbstractServiceImpl;
 import by.bsuir.dc.rest_basics.services.impl.mappers.EntityMapper;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MessageServiceImpl
@@ -18,6 +20,20 @@ public class MessageServiceImpl
                               EntityMapper<MessageRequestTo,
                                       MessageResponseTo, Message> mapper) {
         super(dao, mapper);
+    }
+
+    @Override
+    public List<MessageResponseTo> getByStoryId(Long storyId) {
+        List<MessageResponseTo> result = new ArrayList<>();
+
+        Iterable<Message> messages = dao.getAll();
+        for ( Message message : messages ) {
+            if ( message.getStoryId().equals(storyId) ) {
+                result.add(mapper.modelToResponse(message));
+            }
+        }
+
+        return result;
     }
 
 }

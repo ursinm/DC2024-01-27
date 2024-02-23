@@ -36,13 +36,13 @@ public class StoryValidator implements EntityValidator {
     public void validateCreate(Object o) throws ApiException {
         StoryRequestTo storyRequestTo = (StoryRequestTo) o;
 
-        if (storyRequestTo.authorId() == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    StorySubCode.AUTHOR_ID_IS_NULL.getSubCode(),
-                    StorySubCode.AUTHOR_ID_IS_NULL.getMessage()
-            );
-        }
+        //if (storyRequestTo.authorId() == null) {
+        //    throw new ApiException(
+        //            HttpStatus.UNPROCESSABLE_ENTITY.value(),
+        //            StorySubCode.AUTHOR_ID_IS_NULL.getSubCode(),
+        //            StorySubCode.AUTHOR_ID_IS_NULL.getMessage()
+        //    );
+        //}
 
         String title = storyRequestTo.title();
         if (title == null) {
@@ -56,31 +56,33 @@ public class StoryValidator implements EntityValidator {
         checkTitle(title);
 
         String content = storyRequestTo.content();
-        if (content == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    StorySubCode.CONTENT_IS_NULL.getSubCode(),
-                    StorySubCode.CONTENT_IS_NULL.getMessage()
-            );
+        //if (content == null) {
+        //    throw new ApiException(
+        //            HttpStatus.UNPROCESSABLE_ENTITY.value(),
+        //            StorySubCode.CONTENT_IS_NULL.getSubCode(),
+        //            StorySubCode.CONTENT_IS_NULL.getMessage()
+        //    );
+        //}
+
+        if (content != null) {
+            checkContent(content);
         }
 
-        checkContent(content);
+        //if (storyRequestTo.created() == null) {
+        //    throw new ApiException(
+        //            HttpStatus.UNPROCESSABLE_ENTITY.value(),
+        //            StorySubCode.CREATED_IS_NULL.getSubCode(),
+        //            StorySubCode.CREATED_IS_NULL.getMessage()
+        //    );
+        //}
 
-        if (storyRequestTo.created() == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    StorySubCode.CREATED_IS_NULL.getSubCode(),
-                    StorySubCode.CREATED_IS_NULL.getMessage()
-            );
-        }
-
-        if (storyRequestTo.modified() == null) {
-            throw new ApiException(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    StorySubCode.MODIFIED_IS_NULL.getSubCode(),
-                    StorySubCode.MODIFIED_IS_NULL.getMessage()
-            );
-        }
+        //if (storyRequestTo.modified() == null) {
+        //    throw new ApiException(
+        //            HttpStatus.UNPROCESSABLE_ENTITY.value(),
+        //            StorySubCode.MODIFIED_IS_NULL.getSubCode(),
+        //            StorySubCode.MODIFIED_IS_NULL.getMessage()
+        //    );
+        //}
     }
 
     @Override

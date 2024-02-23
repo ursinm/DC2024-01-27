@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class MemoryRepository<T extends AbstractEntity> implements CrudRepository<T, Long> {
+public abstract class MemoryRepository<T extends AbstractEntity>
+        implements CrudRepository<T, Long> {
 
     private final static AtomicLong ids = new AtomicLong();
 
@@ -38,4 +39,5 @@ public abstract class MemoryRepository<T extends AbstractEntity> implements Crud
     public Optional<T> delete(Long id) {
         return Optional.ofNullable(map.remove(id));
     }
+
 }
