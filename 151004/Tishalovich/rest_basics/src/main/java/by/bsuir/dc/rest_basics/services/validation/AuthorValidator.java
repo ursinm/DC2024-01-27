@@ -32,10 +32,10 @@ public class AuthorValidator implements EntityValidator {
         }
     }
 
-    private void checkFirstName(String firstName) throws ApiException {
-        int firstNameLen = firstName.length();
+    private void checkFirstName(String firstname) throws ApiException {
+        int firstnameLen = firstname.length();
 
-        if (!(2 <= firstNameLen) || !(firstNameLen <= 64)) {
+        if (!(2 <= firstnameLen) || !(firstnameLen <= 64)) {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_FIRST_NAME_LEN.getSubCode(),
@@ -44,10 +44,10 @@ public class AuthorValidator implements EntityValidator {
         }
     }
 
-    private void checkLastName(String lastName) throws ApiException {
-        int lastNameLen = lastName.length();
+    private void checkLastName(String lastname) throws ApiException {
+        int lastnameLen = lastname.length();
 
-        if (!(2 <= lastNameLen) || !(lastNameLen <= 64)) {
+        if (!(2 <= lastnameLen) || !(lastnameLen <= 64)) {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.WRONG_LAST_NAME_LEN.getSubCode(),
@@ -80,25 +80,25 @@ public class AuthorValidator implements EntityValidator {
         }
         checkPassword(authorRequestTo.password());
 
-        String firstName = authorRequestTo.firstName();
-        if (firstName == null) {
+        String firstname = authorRequestTo.firstname();
+        if (firstname == null) {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.NO_FIRST_NAME_PROVIDED.getSubCode(),
-                    "No firstName provided"
+                    "No firstname provided"
             );
         }
-        checkFirstName(authorRequestTo.firstName());
+        checkFirstName(authorRequestTo.firstname());
 
-        String lastName = authorRequestTo.lastName();
-        if (lastName == null) {
+        String lastname = authorRequestTo.lastname();
+        if (lastname == null) {
             throw new ApiException(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     AuthorSubCode.NO_LAST_NAME_PROVIDED.getSubCode(),
-                    "No lastName provided"
+                    "No lastname provided"
             );
         }
-        checkLastName(authorRequestTo.lastName());
+        checkLastName(authorRequestTo.lastname());
     }
 
     @Override
@@ -115,22 +115,22 @@ public class AuthorValidator implements EntityValidator {
 
         String login = authorRequestTo.login();
         if (login != null) {
-            checkLogin(authorRequestTo.login());
+            checkLogin(login);
         }
 
         String password = authorRequestTo.password();
         if (password != null) {
-            checkPassword(authorRequestTo.password());
+            checkPassword(password);
         }
 
-        String firstName = authorRequestTo.firstName();
-        if (firstName != null) {
-            checkFirstName(authorRequestTo.firstName());
+        String firstname = authorRequestTo.firstname();
+        if (firstname != null) {
+            checkFirstName(firstname);
         }
 
-        String lastName = authorRequestTo.lastName();
-        if (lastName != null) {
-            checkLastName(authorRequestTo.lastName());
+        String lastname = authorRequestTo.lastname();
+        if (lastname != null) {
+            checkLastName(lastname);
         }
     }
 

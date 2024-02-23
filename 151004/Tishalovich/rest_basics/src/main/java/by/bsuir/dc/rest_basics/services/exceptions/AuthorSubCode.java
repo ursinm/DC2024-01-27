@@ -13,7 +13,9 @@ public enum AuthorSubCode {
     NO_LOGIN_PROVIDED(5, "No login provided"),
     NO_PASSWORD_PROVIDED(6, "No password provided"),
     NO_FIRST_NAME_PROVIDED(7, "No firstName provided"),
-    NO_LAST_NAME_PROVIDED(8, "No lastName provided");
+    NO_LAST_NAME_PROVIDED(8, "No lastName provided"),
+
+    NO_AUTHOR_FOR_STORY(9, "No author found for this story");
 
     private final int subCode;
 

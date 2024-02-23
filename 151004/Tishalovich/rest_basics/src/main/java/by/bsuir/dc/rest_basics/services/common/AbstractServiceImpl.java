@@ -19,9 +19,9 @@ import java.util.stream.StreamSupport;
 public abstract class AbstractServiceImpl<I, E, M extends AbstractEntity>
         implements AbstractService<I, E> {
 
-    private final MemoryRepository<M> dao;
+    protected final MemoryRepository<M> dao;
 
-    private final EntityMapper<I, E, M> mapper;
+    protected final EntityMapper<I, E, M> mapper;
 
     @Override
     public E create(I requestTo) {

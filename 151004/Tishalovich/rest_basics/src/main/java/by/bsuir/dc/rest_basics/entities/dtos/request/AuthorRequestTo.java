@@ -4,6 +4,6 @@ public record AuthorRequestTo (
         Long id,
         String login,
         String password,
-        String firstName,
-        String lastName) {
+        String firstname,
+        String lastname) {
 }
