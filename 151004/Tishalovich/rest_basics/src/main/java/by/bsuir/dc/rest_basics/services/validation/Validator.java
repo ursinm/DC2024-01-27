@@ -28,7 +28,7 @@ public class Validator{
         return joinPoint.proceed();
     }
 
-    @Around("execution(* by.bsuir.dc.rest_basics.services.AuthorService.update(..))")
+    @Around("execution(* by.bsuir.dc.rest_basics.services.common.AbstractService.update(..))")
     public Object validateUpdate(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         Object o = args[0];
