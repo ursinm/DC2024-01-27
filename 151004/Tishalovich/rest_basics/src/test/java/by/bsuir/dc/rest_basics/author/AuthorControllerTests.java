@@ -1,6 +1,7 @@
 package by.bsuir.dc.rest_basics.author;
 
 import by.bsuir.dc.rest_basics.configuration.MyTestConfiguration;
+import by.bsuir.dc.rest_basics.dal.impl.AuthorDao;
 import by.bsuir.dc.rest_basics.entities.Author;
 import by.bsuir.dc.rest_basics.entities.dtos.request.AuthorRequestTo;
 import by.bsuir.dc.rest_basics.entities.dtos.response.AuthorResponseTo;
@@ -11,12 +12,16 @@ import io.restassured.RestAssured;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
+import java.util.List;
 import java.util.Optional;
+import static org.mockito.ArgumentMatchers.eq;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
@@ -25,16 +30,19 @@ import java.util.Optional;
 @Import(MyTestConfiguration.class)
 class AuthorControllerTests {
 
-    private static final String uri = "http://localhost:24110/api/v1.0";
-
     @Autowired
-    private TestAuthorDao testAuthorDao;
+    private String uri;
+
+    @MockBean
+    private AuthorDao mockAuthorDao;
 
     @Autowired
     private AuthorMapper authorMapper;
 
     @Test
     public void getExistingAuthor() {
+        Long authorId = 1L;
+
         Author newAuthor = new Author(
                 "AuthorLogin",
                 "Password",
@@ -42,12 +50,11 @@ class AuthorControllerTests {
                 "LastName"
         );
 
-        Optional<Author> savedAuthor = testAuthorDao.save(newAuthor);
-        Author author = savedAuthor.orElseThrow();
+        Mockito.when(mockAuthorDao.getById(authorId)).thenReturn(Optional.of(newAuthor));
 
         AuthorResponseTo createdAuthorResponseTo = RestAssured
                 .given()
-                .pathParam("id", author.getId())
+                .pathParam("id", authorId)
                 .when()
                     .get(uri + "/authors/{id}")
                 .then()
@@ -57,7 +64,7 @@ class AuthorControllerTests {
                     .as(AuthorResponseTo.class);
 
         Assertions.assertEquals(
-                authorMapper.modelToResponse(author),
+                authorMapper.modelToResponse(newAuthor),
                 createdAuthorResponseTo
         );
     }
@@ -72,7 +79,13 @@ class AuthorControllerTests {
                 "Last Name"
         );
 
-        Long id = testAuthorDao.getNextId();
+        Author expectedAuthor = authorMapper.requestToModel(authorRequestTo);
+        expectedAuthor.setId(1L);
+
+        Mockito.when(mockAuthorDao
+                .save(Mockito.any()))
+                .thenReturn(
+                        Optional.of(expectedAuthor));
 
         AuthorResponseTo authorResponseTo = RestAssured
                 .given()
@@ -86,36 +99,31 @@ class AuthorControllerTests {
                 .extract()
                     .as(AuthorResponseTo.class);
 
-        AuthorResponseTo expectedAuthorResponseTo = new AuthorResponseTo(
-                id,
-                authorRequestTo.login(),
-                authorRequestTo.firstname(),
-                authorRequestTo.lastname()
-        );
-
-        Assertions.assertEquals(expectedAuthorResponseTo, authorResponseTo);
+        Assertions.assertEquals(
+                authorMapper.modelToResponse(expectedAuthor), authorResponseTo);
     }
 
     @Test
     public void update() {
-        Author newAuthor = new Author(
-                "AuthorLogin",
+        Author updatedAuthor = new Author(
+                "UpdateAuthorLogin",
                 "Password",
-                "FirstName",
+                "UpdateFirstName",
                 "LastName"
         );
 
-        Author savedAuthor = testAuthorDao
-                .save(newAuthor)
-                .orElseThrow();
-
         AuthorRequestTo authorRequestTo = new AuthorRequestTo(
-                savedAuthor.getId(),
-                "UpdatedLogin",
+                1L,
+                updatedAuthor.getLogin(),
                 null,
-                "UpdateFirstName",
+                updatedAuthor.getFirstName(),
                 null
         );
+
+        Author updateBodyAuthor = authorMapper.requestToModel(authorRequestTo);
+
+        Mockito.when(mockAuthorDao.update(eq(updateBodyAuthor)))
+                .thenReturn(Optional.of(updatedAuthor));
 
         AuthorResponseTo authorResponseTo = RestAssured
                 .given()
@@ -129,31 +137,26 @@ class AuthorControllerTests {
                 .extract()
                     .as(AuthorResponseTo.class);
 
-        AuthorResponseTo expectedAuthorResponseTo = new AuthorResponseTo(
-                savedAuthor.getId(),
-                authorRequestTo.login(),
-                authorRequestTo.firstname(),
-                savedAuthor.getLastName()
-        );
-
-        Assertions.assertEquals(expectedAuthorResponseTo, authorResponseTo);
+        Assertions.assertEquals(
+                authorMapper.modelToResponse(updatedAuthor), authorResponseTo);
     }
 
     @Test
     public void deleteExistingAuthor() {
         Author authorForDeleting = new Author(
+                1L,
                 "SomeValue",
                 "SomeValue",
                 "SomeValue",
                 "SomeValue"
         );
 
-        Optional<Author> savingRes = testAuthorDao.save(authorForDeleting);
-        Author savedAuthor = savingRes.orElseThrow();
+        Mockito.when(mockAuthorDao.delete(authorForDeleting.getId()))
+                        .thenReturn(Optional.of(authorForDeleting));
 
         RestAssured
                 .given()
-                    .pathParam("id", savedAuthor.getId())
+                    .pathParam("id", authorForDeleting.getId())
                 .when()
                     .delete(uri + "/authors/{id}")
                 .then()
@@ -162,8 +165,6 @@ class AuthorControllerTests {
 
     @Test
     public void deleteNotExistingAuthor() {
-        testAuthorDao.clear();
-
         final Long id = 1L;
 
         ApiExceptionInfo expectedApiExceptionInfo = new ApiExceptionInfo(
@@ -171,6 +172,9 @@ class AuthorControllerTests {
                 GeneralSubCode.WRONG_ID.getSubCode(),
                 GeneralSubCode.WRONG_ID.getMessage()
         );
+
+        Mockito.when(mockAuthorDao.delete(eq(id)))
+                .thenReturn(Optional.empty());
 
         ApiExceptionInfo apiExceptionInfo = RestAssured
                 .given()
@@ -188,16 +192,12 @@ class AuthorControllerTests {
 
     @Test
     public void getAll() {
-        testAuthorDao.clear();
-
         Author firstAuthor = new Author(
                 "FirstAuthorLogin",
                 "FirstAuthorPassword",
                 "FirstAuthorFirstName",
                 "FirstAuthorLastName"
         );
-
-        Optional<Author> firstSavedAuthor = testAuthorDao.save(firstAuthor);
 
         Author secondAuthor = new Author(
                 "SecondAuthorLogin",
@@ -206,11 +206,12 @@ class AuthorControllerTests {
                 "SecondAuthorLastName"
         );
 
-        Optional<Author> secondSavedAuthor = testAuthorDao.save(secondAuthor);
+        Mockito.when(mockAuthorDao.getAll())
+                .thenReturn(List.of(firstAuthor, secondAuthor));
 
         AuthorResponseTo[] savedAuthors = {
-                authorMapper.modelToResponse(firstSavedAuthor.orElseThrow()),
-                authorMapper.modelToResponse(secondSavedAuthor.orElseThrow()),
+                authorMapper.modelToResponse(firstAuthor),
+                authorMapper.modelToResponse(secondAuthor),
         };
 
         AuthorResponseTo[] authors = RestAssured
