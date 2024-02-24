@@ -19,7 +19,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/labels")
+@RequestMapping("/api/v1.0/labels")
 public class LabelController {
     private final LabelService labelService;
 
@@ -43,11 +43,11 @@ public class LabelController {
 	return labelService.getById(labelId);
     }
 
-    @PatchMapping("/{labelId}")
+    @PutMapping
     public LabelDto updateLabelById(
-	@PathVariable long labelId,
 	@RequestBody @Validated(Update.class) UpdateLabelDto dto
     ) {
+	long labelId = dto.id();
 	return labelService.update(labelId, dto);
     }
 

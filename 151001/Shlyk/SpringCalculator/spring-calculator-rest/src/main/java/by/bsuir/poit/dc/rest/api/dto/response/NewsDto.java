@@ -7,11 +7,11 @@ import java.sql.Timestamp;
  * DTO for {@link by.bsuir.poit.dc.rest.model.News}
  */
 public record NewsDto(
-    Long id,
+    long id,
     String title,
     String content,
     Timestamp created,
     Timestamp modified,
-    UserDto author
+    long userId
 ) implements Serializable {
 }

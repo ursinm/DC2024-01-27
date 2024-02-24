@@ -1,5 +1,6 @@
 package by.bsuir.poit.dc.rest.context;
 
+import by.bsuir.poit.dc.rest.CatchLevel;
 import by.bsuir.poit.dc.rest.CatchThrows;
 import lombok.Builder;
 import lombok.NonNull;
@@ -17,9 +18,19 @@ import java.util.*;
 
 /**
  * There are several limitations of reflective implementation:
- * - Only one type of exception can be handled
- * - The order of arguments should be the same as in target class
- * - It's really slow in run-time
+ * <ul>
+ * 	<li>
+ *       Only one type of catchLevel can be handled
+ * 	</li>
+ * 	<li>
+ * 	The order of arguments should be the same as in target class
+ * 	</li>
+ * 	<li>
+ * 	It's really slow in run-time
+ * 	</li>
+ * </ul>
+ * The catch handler should accept at least one parameter ―
+ * the exception was thrown (this exception will always last argument)
  *
  * @author Paval Shlyk
  * @since 13/02/2024
@@ -64,6 +75,13 @@ public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
     public Object postProcessBeforeInitialization(Object bean, @NonNull String beanName) throws BeansException {
 	Class<?> clazz = bean.getClass();
 	Map<String, ExceptionHandlerParams> methodsMap = new HashMap<>();
+	Class<? extends Throwable> defaultCatchLevel;
+	if (clazz.isAnnotationPresent(CatchLevel.class)) {
+	    CatchLevel levelAnnotation = clazz.getAnnotation(CatchLevel.class);
+	    defaultCatchLevel = levelAnnotation.value();
+	} else {
+	    defaultCatchLevel = null;
+	}
 	for (Method method : clazz.getDeclaredMethods()) {
 	    if (method.isAnnotationPresent(CatchThrows.class)) {
 		method.setAccessible(true);
@@ -75,14 +93,19 @@ public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
 		handler.setAccessible(true);
 		if (methodsMap.containsKey(method.getName()) || !(Throwable.class.isAssignableFrom(handler.getReturnType()))) {
 		    throw new IllegalStateException(STR."""
-
-		    Failed to create CatchInvoke annotation implementation for \{method.getName()} of \{clazz}
-		    The catch method \{annotation.call()} should be unique by name and return exception
+		    Failed to create CatchInvoke annotation implementation for\{method.getName()} of \{clazz}
+		    The catch method\{annotation.call()} should be unique by name and return exception
 		    """);
+		}
+		Class<? extends Throwable> catchLevel;
+		if (defaultCatchLevel != null) {
+		    catchLevel = defaultCatchLevel;
+		} else {
+		    catchLevel = annotation.value();
 		}
 		var params = ExceptionHandlerParams.builder()
 				 .bean(bean)
-				 .exception(annotation.value())
+				 .catchLevel(catchLevel)
 				 .method(handler)
 				 .arguments(argsPair.getSecond())
 				 .build();
@@ -116,7 +139,7 @@ public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
     private record ExceptionHandlerParams(
 	Object bean,
 	Method method,
-	Class<? extends Throwable> exception,
+	Class<? extends Throwable> catchLevel,
 	boolean[] arguments
     ) {
     }
@@ -137,13 +160,13 @@ public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
 		result = method.invoke(bean, args);
 	    } catch (InvocationTargetException e) {
 		Throwable cause = e.getCause();
-		assert cause != null : "e is only wrapper under real exception";
-		if (params.exception.isAssignableFrom(cause.getClass())) {
+		assert cause != null : "e is only wrapper under real catchLevel";
+		if (params.catchLevel.isAssignableFrom(cause.getClass())) {
 		    Object[] realArgs = fillArgs(args, params.arguments, cause);
 		    try {
 			cause = (Throwable) params.method.invoke(params.bean, realArgs);
 		    } catch (Throwable _) {
-			//exception in handler will be suppressed
+			//catchLevel in handler will be suppressed
 		    }
 		    assert cause != null : "The call method should always return non null";
 		}

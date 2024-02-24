@@ -24,24 +24,28 @@ public abstract class NewsMapper {
     private UserMapper userMapper;
 
     @Mapping(target = "labels", ignore = true)
-    @Mapping(target = "author", source = "authorId", qualifiedByName = "getUserRef")
+    @Mapping(target = "user", source = "userId", qualifiedByName = "getUserRef")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "modified", ignore = true)
     @Mapping(target = "notes", ignore = true)
     public abstract News toEntity(UpdateNewsDto dto);
 
-    @Mapping(target = "author", source = "author", qualifiedByName = "mapUser")
+    @Mapping(target = "userId", source = "user.id")
     @Named("toDto")
     public abstract NewsDto toDto(News news);
 
     @Mapping(target = "labels", ignore = true)
-    @Mapping(target = "author", ignore = true)//author cannot be changed
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "modified", ignore = true)
     @Mapping(target = "notes", ignore = true)
-    public abstract News partialUpdate(@MappingTarget News news, UpdateNewsDto dto);
+    @Mapping(target = "user",
+	source = "userId",
+	qualifiedByName = "getUserRef")//author cannot be changed
+    public abstract News partialUpdate(
+	@MappingTarget News news,
+	UpdateNewsDto dto);
 
 
     @Named("mapUser")

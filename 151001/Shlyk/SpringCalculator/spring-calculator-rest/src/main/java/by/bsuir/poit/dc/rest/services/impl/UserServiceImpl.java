@@ -9,6 +9,7 @@ import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.User;
 import by.bsuir.poit.dc.rest.services.UserService;
+import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @CatchThrows(call = "newUserModifyingException", args = "userId")
+    @CatchThrows(
+	call = "newUserModifyingException",
+	args = "userId")
     public UserDto update(long userId, UpdateUserDto dto) {
 	User user = userRepository
 			.findById(userId)
@@ -84,6 +87,7 @@ public class UserServiceImpl implements UserService {
 	return isDeleted;
     }
 
+    @Keep
     public ResourceModifyingException newUserModifyingException(long userId, Throwable e) {
 	final String frontMsg = STR."Failed to modify user by id=\{userId}";
 	final String msg = STR."\{frontMsg} \{e.getMessage()}";
@@ -91,8 +95,9 @@ public class UserServiceImpl implements UserService {
 	return new ResourceModifyingException(frontMsg, 51);
     }
 
+    @Keep
     public ResourceModifyingException newUserAlreadyExistsException(Throwable e) {
-	final String msg = STR."Failed to create new user. It's already exists";
+	final String msg = STR."Failed to create new user. Actual cause =\{e.getMessage()}";
 	log.warn(msg);
 	return new ResourceModifyingException(msg, 32);
 

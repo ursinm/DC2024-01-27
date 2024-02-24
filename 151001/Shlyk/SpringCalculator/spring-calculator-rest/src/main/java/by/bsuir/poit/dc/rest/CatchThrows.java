@@ -8,6 +8,11 @@ import java.lang.annotation.RetentionPolicy;
  */
 @java.lang.annotation.Retention(RetentionPolicy.RUNTIME)
 public @interface CatchThrows {
+    /**
+     * The default exception can be overridden by {@link CatchLevel}
+     *
+     * @return the default exception will be caught
+     */
     Class<? extends Throwable> value() default java.lang.Throwable.class;
 
     /**

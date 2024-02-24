@@ -20,13 +20,20 @@ public abstract class NoteMapper {
     private NewsRepository newsRepository;
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "news", source = "newsId", qualifiedByName = "getNewsRef")
-    public abstract Note toEntity(UpdateNoteDto dto, long newsId);
+    @Mapping(target = "news",
+	source = "newsId",
+	qualifiedByName = "getNewsRef")
+    public abstract Note toEntity(UpdateNoteDto dto);
 
-    @Mapping(target = "news", ignore = true)
     @Mapping(target = "id", ignore = true)
-    public abstract Note partialUpdate(@MappingTarget Note note, UpdateNoteDto dto);
+    @Mapping(target = "news",
+	source = "newsId",
+	qualifiedByName = "getNewsRef")
+    public abstract Note partialUpdate(
+	@MappingTarget Note note,
+	UpdateNoteDto dto);
 
+    @Mapping(target = "newsId", source = "news.id")
     public abstract NoteDto toDto(Note note);
 
     @Named("getNewsRef")

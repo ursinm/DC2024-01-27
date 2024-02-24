@@ -19,7 +19,9 @@ public abstract class LabelMapper {
     public abstract Label toEntity(UpdateLabelDto dto);
 
     @Mapping(target = "id", ignore = true)
-    public abstract Label partialUpdate(@MappingTarget Label label, UpdateLabelDto dto);
+    public abstract Label partialUpdate(
+	@MappingTarget Label label,
+	UpdateLabelDto dto);
 
     @Named("toDto")
     public abstract LabelDto toDto(Label label);

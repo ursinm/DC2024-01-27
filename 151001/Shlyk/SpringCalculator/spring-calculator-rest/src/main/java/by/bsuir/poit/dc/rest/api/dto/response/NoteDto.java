@@ -9,7 +9,8 @@ import java.io.Serializable;
  */
 @Builder
 public record NoteDto(
-    Long id,
-    String content
+    long id,
+    String content,
+    long newsId
 ) implements Serializable {
 }

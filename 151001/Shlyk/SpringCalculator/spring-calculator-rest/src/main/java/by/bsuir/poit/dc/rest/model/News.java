@@ -46,7 +46,7 @@ public class News {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User author;
+    private User user;
 
     @OneToMany(mappedBy = "news", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @Builder.Default

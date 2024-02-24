@@ -5,7 +5,6 @@ import by.bsuir.poit.dc.rest.api.dto.groups.Update;
 import by.bsuir.poit.dc.rest.api.dto.request.ErrorDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
-import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
@@ -24,11 +23,11 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/news")
+@RequestMapping("/api/v1.0/news")
 public class NewsController {
     private final NewsService newsService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<NewsDto> publishNews(
 	@RequestBody @Validated(Create.class) UpdateNewsDto dto
     ) {
@@ -39,9 +38,10 @@ public class NewsController {
     @GetMapping("")
     public ResponseEntity<?> getNews(
 	@RequestParam(value = "label", required = false) String label,
-	@RequestParam(value = "userId", required = false) Long userId
+	@RequestParam(value = "userId", required = false) Long userId,
+	@RequestParam(value = "offset", required = false) Long offset,
+	@RequestParam(value = "limit", required = false) Integer limit
     ) {
-	//todo: add custom parameters handler to perform such functionality
 	if (label != null && userId != null) {
 	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(conflictParameters());
 	}
@@ -50,6 +50,8 @@ public class NewsController {
 	    newsList = newsService.getNewsByLabel(label);
 	} else if (userId != null) {
 	    newsList = newsService.getNewsByUserId(userId);
+	} else if (limit != null && offset != null) {
+	    newsList = newsService.getByOffsetAndLimit(offset, limit);
 	} else {
 	    newsList = newsService.getAll();
 	}
@@ -63,11 +65,11 @@ public class NewsController {
 	return newsService.getById(newsId);
     }
 
-    @PatchMapping("/{newsId}")
+    @PutMapping
     public NewsDto updateNewsById(
-	@PathVariable long newsId,
 	@RequestBody @Validated(Update.class) UpdateNewsDto dto
     ) {
+	long newsId = dto.id();
 	return newsService.update(newsId, dto);
     }
 
@@ -76,20 +78,11 @@ public class NewsController {
 	@PathVariable long newsId
     ) {
 	boolean isDeleted = newsService.delete(newsId);
-	HttpStatus status = isDeleted ?
-				HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
+	HttpStatus status = isDeleted
+				? HttpStatus.NO_CONTENT
+				: HttpStatus.NOT_FOUND;
 	return ResponseEntity.status(status).build();
     }
-
-    @PostMapping("/{newsId}/notes")
-    public ResponseEntity<NoteDto> createNewsNote(
-	@PathVariable long newsId,
-	@RequestBody @Validated(Create.class) UpdateNoteDto dto
-    ) {
-	var response = newsService.createNote(newsId, dto);
-	return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
 
     @GetMapping("/{newsId}/notes")
     public List<NoteDto> getNewsNotes(

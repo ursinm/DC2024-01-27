@@ -11,6 +11,6 @@ import java.io.Serializable;
 public record UserDto(
     Long id,
     String login,
-    String firstName,
-    String lastName) implements Serializable {
+    String firstname,
+    String lastname) implements Serializable {
 }

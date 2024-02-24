@@ -21,7 +21,9 @@ public abstract class UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "news", ignore = true)
-    public abstract User partialUpdate(@MappingTarget User user, UpdateUserDto dto);
+    public abstract User partialUpdate(
+	@MappingTarget User user,
+	UpdateUserDto dto);
 
     @Named("toDto")
     public abstract UserDto toDto(User user);

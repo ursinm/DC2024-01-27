@@ -43,13 +43,15 @@ public class User {
     @Column(name = "first_name",
 	length = 64,
 	nullable = false)
-    private String firstName;
+    private String firstname;
     @Size(min = 2, max = 64)
 
     @Column(name = "last_name", length = 64, nullable = false)
-    private String lastName;
+    private String lastname;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",
+	fetch = FetchType.LAZY,
+	orphanRemoval = true)
     @Builder.Default
     private List<News> news = new ArrayList<>();
 }

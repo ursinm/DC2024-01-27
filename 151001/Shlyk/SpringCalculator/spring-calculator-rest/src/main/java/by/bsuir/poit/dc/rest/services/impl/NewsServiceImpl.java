@@ -1,5 +1,7 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
+import by.bsuir.poit.dc.rest.CatchLevel;
+import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.LabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NewsLabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NewsMapper;
@@ -11,15 +13,23 @@ import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
-import by.bsuir.poit.dc.rest.dao.*;
+import by.bsuir.poit.dc.rest.dao.NewsLabelRepository;
+import by.bsuir.poit.dc.rest.dao.NewsRepository;
+import by.bsuir.poit.dc.rest.dao.NoteRepository;
+import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.News;
 import by.bsuir.poit.dc.rest.model.NewsLabel;
 import by.bsuir.poit.dc.rest.model.NewsLabelId;
 import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NewsService;
+import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +39,10 @@ import java.util.List;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@Service
+@CatchLevel(DataAccessException.class)
+@RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
     //    private final LabelRepository labelRepository;
     private final NoteRepository noteRepository;
@@ -71,6 +82,16 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public List<NewsDto> getByOffsetAndLimit(long offset, int limit) {
+	int number = (int) (offset / limit);
+	PageRequest pageRequest = PageRequest.of(number, limit);
+	Page<News> pages = newsRepository.findAll(pageRequest);
+	return pages.stream()
+		   .map(newsMapper::toDto)
+		   .toList();
+    }
+
+    @Override
     public List<NewsDto> getAll() {
 	return newsRepository.findAll().stream()
 		   .map(newsMapper::toDto)
@@ -91,11 +112,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Transactional
+    @CatchThrows(
+	call = "newNoteCreationException",
+	args = {"newsId"})
     public NoteDto createNote(long newsId, UpdateNoteDto dto) {
 	if (!newsRepository.existsById(newsId)) {
 	    throw newNewsNotFoundException(newsId);
 	}
-	Note noteEntity = noteMapper.toEntity(dto, newsId);
+	Note noteEntity = noteMapper.toEntity(dto);
 	Note savedNote = noteRepository.save(noteEntity);
 	return noteMapper.toDto(savedNote);
     }
@@ -137,7 +162,7 @@ public class NewsServiceImpl implements NewsService {
 	    throw newUserNotFoundException(userId);
 	}
 	return newsMapper.toDtoList(
-	    newsRepository.findAllByAuthorId(userId)
+	    newsRepository.findAllByUserId(userId)
 	);
     }
 
@@ -171,12 +196,24 @@ public class NewsServiceImpl implements NewsService {
 		   .toList();
     }
 
+    @Keep
+    private static ResourceModifyingException newNoteCreationException(
+	long newsId,
+	Throwable cause
+    ) {
+	final String msg = STR."Failed to create new note for news entity with id = \{newsId} by cause = \{cause.getMessage()}";
+	log.warn(msg);
+	return new ResourceModifyingException(msg, 71);
+    }
+
+    @Keep
     private static ResourceNotFoundException newNewsNotFoundException(long newsId) {
 	final String msg = STR."Failed to find news by id = \{newsId}";
 	log.warn(msg);
 	return new ResourceNotFoundException(msg, 44);
     }
-    @SuppressWarnings("unused")
+
+    @Keep
     private static ResourceNotFoundException newLabelNotFoundException(long labelId) {
 	final String msg = STR."Failed to find label by id = \{labelId}";
 	log.warn(msg);
@@ -184,6 +221,7 @@ public class NewsServiceImpl implements NewsService {
 
     }
 
+    @Keep
     private static ResourceBusyException newLabelNewsAlreadyPresent(NewsLabelId id) {
 	final String msg = STR."The news label is already present by newsId=\{id.getLabelId()} and labelId=\{id.getLabelId()}";
 	log.warn(msg);
@@ -191,6 +229,7 @@ public class NewsServiceImpl implements NewsService {
 
     }
 
+    @Keep
     private static ResourceNotFoundException newUserNotFoundException(long userId) {
 	final String msg = STR."Failed to find news for user with id = \{userId}, because user is not exists";
 	log.warn(msg);

@@ -1,8 +1,10 @@
 package by.bsuir.poit.dc.rest.api.controllers;
 
+import by.bsuir.poit.dc.rest.api.dto.groups.Create;
 import by.bsuir.poit.dc.rest.api.dto.groups.Update;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.rest.services.NewsService;
 import by.bsuir.poit.dc.rest.services.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,13 +20,22 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/notes")
+@RequestMapping("/api/v1.0/notes")
 public class NoteController {
     private final NoteService noteService;
+    private final NewsService newsService;
 
     @GetMapping
     public List<NoteDto> getAllNotes() {
 	return noteService.getAll();
+    }
+
+    @PostMapping
+    public ResponseEntity<NoteDto> createNewsNote(
+	@RequestBody @Validated(Create.class) UpdateNoteDto dto) {
+	long newsId = dto.newsId();
+	NoteDto response = newsService.createNote(newsId, dto);
+	return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{noteId}")
@@ -34,11 +45,11 @@ public class NoteController {
 	return noteService.getById(noteId);
     }
 
-    @PatchMapping("/{noteId}")
+    @PutMapping
     public NoteDto updateNoteById(
-	@PathVariable long noteId,
 	@RequestBody @Validated(Update.class) UpdateNoteDto dto
     ) {
+	long noteId = dto.id();
 	return noteService.update(noteId, dto);
     }
 

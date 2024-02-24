@@ -19,7 +19,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1.0/users")
 public class UserController {
     private final UserService userService;
 
@@ -50,11 +50,11 @@ public class UserController {
 	return userService.getById(userId);
     }
 
-    @PatchMapping("/{userId}")
+    @PutMapping
     public UserDto updateUser(
-	@PathVariable long userId,
 	@RequestBody @Validated(Update.class) UpdateUserDto dto
     ) {
+	long userId = dto.id();
 	return userService.update(userId, dto);
     }
 

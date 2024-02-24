@@ -20,7 +20,7 @@ public interface NewsService {
     NewsDto update(long newsId, @Valid UpdateNewsDto dto);
 
     NewsDto getById(long newsId);
-
+    List<NewsDto> getByOffsetAndLimit(long offset, int limit);
     @Deprecated
     List<NewsDto> getAll();
 

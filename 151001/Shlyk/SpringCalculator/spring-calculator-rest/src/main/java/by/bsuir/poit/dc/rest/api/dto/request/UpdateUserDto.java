@@ -1,8 +1,10 @@
 package by.bsuir.poit.dc.rest.api.dto.request;
 
 import by.bsuir.poit.dc.rest.api.dto.groups.Create;
+import by.bsuir.poit.dc.rest.api.dto.groups.Update;
 import by.bsuir.poit.dc.rest.model.User;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
@@ -11,6 +13,9 @@ import java.io.Serializable;
  * DTO for {@link User}
  */
 public record UpdateUserDto(
+    @Null(groups = Create.class)
+    @NotNull(groups = Update.class)
+    Long id,
     @Size(min = 2, max = 64)
     @NotNull(groups = Create.class)
     String login,
@@ -19,9 +24,9 @@ public record UpdateUserDto(
     String password,
     @Size(min = 2, max = 64)
     @NotNull(groups = Create.class)
-    String firstName,
+    String firstname,
     @Size(min = 2, max = 64)
     @NotNull(groups = Create.class)
-    String lastName
+    String lastname
 ) implements Serializable {
 }

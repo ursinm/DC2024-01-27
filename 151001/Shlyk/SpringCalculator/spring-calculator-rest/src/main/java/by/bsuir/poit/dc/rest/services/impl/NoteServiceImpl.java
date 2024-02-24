@@ -1,14 +1,19 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
+import by.bsuir.poit.dc.rest.CatchLevel;
+import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.NoteRepository;
 import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NoteService;
+import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +23,20 @@ import java.util.List;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-@Service
-@RequiredArgsConstructor
+
 @Slf4j
+@Service
+@CatchLevel(DataAccessException.class)
+@RequiredArgsConstructor
 public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newNoteModifyingException",
+	args = {"noteId"})
     public NoteDto update(long noteId, UpdateNoteDto dto) {
 	Note entity = noteRepository
 			  .findById(noteId)
@@ -63,6 +73,17 @@ public class NoteServiceImpl implements NoteService {
 	}
 	return isDeleted;
     }
+
+    @Keep
+    private static ResourceModifyingException newNoteModifyingException(
+	long noteId,
+	Throwable cause
+    ) {
+	final String msg = STR."Failed to modify note by id =\{noteId}";
+	log.warn(msg);
+	return new ResourceModifyingException(msg, 70);
+    }
+    @Keep
 
     private static ResourceNotFoundException newNoteNotFountException(long noteId) {
 	final String msg = STR."Failed to find news' note by id = \{noteId}";

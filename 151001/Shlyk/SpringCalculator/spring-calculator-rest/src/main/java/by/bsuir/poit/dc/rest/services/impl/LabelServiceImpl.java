@@ -1,5 +1,6 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
+import by.bsuir.poit.dc.rest.CatchLevel;
 import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.LabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
@@ -9,8 +10,10 @@ import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.LabelRepository;
 import by.bsuir.poit.dc.rest.model.Label;
 import by.bsuir.poit.dc.rest.services.LabelService;
+import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +23,11 @@ import java.util.List;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-@Service
-@RequiredArgsConstructor
+
 @Slf4j
+@Service
+@CatchLevel(DataAccessException.class)
+@RequiredArgsConstructor
 public class LabelServiceImpl implements LabelService {
     private final LabelRepository labelRepository;
     private final LabelMapper labelMapper;
@@ -84,6 +89,7 @@ public class LabelServiceImpl implements LabelService {
 	return isDeleted;
     }
 
+    @Keep
     private static ResourceModifyingException newLabelModifyingException(
 	long labelId,
 	Throwable e) {
@@ -93,6 +99,7 @@ public class LabelServiceImpl implements LabelService {
 	return new ResourceModifyingException(frontMessage, 50);
     }
 
+    @Keep
     private static ResourceNotFoundException newLabelNotFountException(String name) {
 	final String msg = STR."Failed to find label by name = \{name}";
 	log.warn(msg);
@@ -100,6 +107,7 @@ public class LabelServiceImpl implements LabelService {
 
     }
 
+    @Keep
     private static ResourceNotFoundException newLabelNotFountException(long labelId) {
 	final String msg = STR."Failed to find label by id = \{labelId}";
 	log.warn(msg);
