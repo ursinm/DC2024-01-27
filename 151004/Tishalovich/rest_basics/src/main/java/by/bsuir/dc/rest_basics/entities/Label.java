@@ -10,4 +10,9 @@ public class Label extends AbstractEntity {
 
     private String name;
 
+    public Label(Long id, String name) {
+        setId(id);
+        this.name = name;
+    }
+
 }

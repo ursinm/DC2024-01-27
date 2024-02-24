@@ -17,10 +17,11 @@ public class Author extends AbstractEntity {
 
     private String lastName;
 
-    //public Author(Long id, String login, String password, String firstName, String lastName) {
-    //    setId(id);
-    //    this.password = password;
-    //    this.firstName = firstName;
-    //    this.lastName = lastName;
-    //}
+    public Author(Long id, String login, String password, String firstName, String lastName) {
+        setId(id);
+        this.login = login;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }
