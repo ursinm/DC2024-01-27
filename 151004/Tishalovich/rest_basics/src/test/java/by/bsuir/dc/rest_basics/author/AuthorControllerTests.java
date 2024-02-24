@@ -30,6 +30,9 @@ class AuthorControllerTests {
     @Autowired
     private TestAuthorDao testAuthorDao;
 
+    @Autowired
+    private AuthorMapper authorMapper;
+
     @Test
     public void getExistingAuthor() {
         Author newAuthor = new Author(
@@ -54,7 +57,7 @@ class AuthorControllerTests {
                     .as(AuthorResponseTo.class);
 
         Assertions.assertEquals(
-                AuthorMapper.INSTANCE.modelToResponse(author),
+                authorMapper.modelToResponse(author),
                 createdAuthorResponseTo
         );
     }
@@ -86,8 +89,8 @@ class AuthorControllerTests {
         AuthorResponseTo expectedAuthorResponseTo = new AuthorResponseTo(
                 id,
                 authorRequestTo.login(),
-                authorRequestTo.firstName(),
-                authorRequestTo.lastName()
+                authorRequestTo.firstname(),
+                authorRequestTo.lastname()
         );
 
         Assertions.assertEquals(expectedAuthorResponseTo, authorResponseTo);
@@ -129,7 +132,7 @@ class AuthorControllerTests {
         AuthorResponseTo expectedAuthorResponseTo = new AuthorResponseTo(
                 savedAuthor.getId(),
                 authorRequestTo.login(),
-                authorRequestTo.firstName(),
+                authorRequestTo.firstname(),
                 savedAuthor.getLastName()
         );
 
@@ -206,8 +209,8 @@ class AuthorControllerTests {
         Optional<Author> secondSavedAuthor = testAuthorDao.save(secondAuthor);
 
         AuthorResponseTo[] savedAuthors = {
-                AuthorMapper.INSTANCE.modelToResponse(firstSavedAuthor.orElseThrow()),
-                AuthorMapper.INSTANCE.modelToResponse(secondSavedAuthor.orElseThrow()),
+                authorMapper.modelToResponse(firstSavedAuthor.orElseThrow()),
+                authorMapper.modelToResponse(secondSavedAuthor.orElseThrow()),
         };
 
         AuthorResponseTo[] authors = RestAssured

@@ -1,4 +1,4 @@
-package by.bsuir.dc.rest_basics.configuration;
+package by.bsuir.dc.rest_basics.author;
 
 import by.bsuir.dc.rest_basics.dal.impl.AuthorDao;
 import by.bsuir.dc.rest_basics.entities.Author;
