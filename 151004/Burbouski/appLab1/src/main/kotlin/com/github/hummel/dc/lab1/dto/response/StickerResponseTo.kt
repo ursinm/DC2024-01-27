@@ -3,6 +3,6 @@ package com.github.hummel.dc.lab1.dto.response
 import kotlinx.serialization.Serializable
 
 @Serializable
-class StickerResponseTo(
-	val id: Long, val name: String
+data class StickerResponseTo(
+	private val id: Long, private val name: String
 )

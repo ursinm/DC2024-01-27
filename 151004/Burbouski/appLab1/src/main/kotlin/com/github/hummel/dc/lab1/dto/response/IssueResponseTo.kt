@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 
 @Serializable
-class IssueResponseTo(
+data class IssueResponseTo(
 	private val id: Long,
 	private val authorId: Long,
 	private val title: String,

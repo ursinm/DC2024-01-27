@@ -5,9 +5,8 @@ import com.github.hummel.dc.lab1.util.TimeStampSerializer
 import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 
-@Suppress("MemberVisibilityCanBePrivate")
 @Serializable
-class Issue(
+data class Issue(
 	val id: Long,
 	val authorId: Long,
 	val title: String,

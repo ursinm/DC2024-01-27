@@ -10,7 +10,6 @@ import com.github.hummel.dc.lab1.util.BaseRepository
 class AuthorServiceImpl(
 	private val authorRepository: BaseRepository<Author, Long>
 ) : AuthorService {
-
 	override fun getAll(): List<AuthorResponseTo> {
 		val result = authorRepository.data.map { it.second }
 

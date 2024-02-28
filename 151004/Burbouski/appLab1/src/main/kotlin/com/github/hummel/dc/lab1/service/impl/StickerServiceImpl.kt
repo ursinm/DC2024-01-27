@@ -10,7 +10,6 @@ import com.github.hummel.dc.lab1.util.BaseRepository
 class StickerServiceImpl(
 	private val messageRepository: BaseRepository<Sticker, Long>
 ) : StickerService {
-
 	override fun getAll(): List<StickerResponseTo> {
 		val result = messageRepository.data.map { it.second }
 

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import java.sql.Timestamp
 
 @Serializable
-class IssueRequestTo(
+data class IssueRequestTo(
 	private val authorId: Long, private val title: String, private val content: String
 ) {
 	fun toBean(id: Long, created: Timestamp, modified: Timestamp): Issue = Issue(

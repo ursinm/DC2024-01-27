@@ -3,8 +3,8 @@ package com.github.hummel.dc.lab1.dto.response
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MessageResponseTo(
-	val id: Long,
-	val issueId: Long,
-	val content: String
+data class MessageResponseTo(
+	private val id: Long,
+	private val issueId: Long,
+	private val content: String
 )

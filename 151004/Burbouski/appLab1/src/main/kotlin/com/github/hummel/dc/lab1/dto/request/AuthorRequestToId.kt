@@ -4,7 +4,7 @@ import com.github.hummel.dc.lab1.bean.Author
 import kotlinx.serialization.Serializable
 
 @Serializable
-class AuthorRequestToId(
+data class AuthorRequestToId(
 	private val id: Long,
 	private val login: String,
 	private val password: String,

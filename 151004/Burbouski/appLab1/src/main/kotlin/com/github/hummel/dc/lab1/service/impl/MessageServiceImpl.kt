@@ -10,7 +10,6 @@ import com.github.hummel.dc.lab1.util.BaseRepository
 class MessageServiceImpl(
 	private val messageRepository: BaseRepository<Message, Long>
 ) : MessageService {
-
 	override fun getAll(): List<MessageResponseTo> {
 		val result = messageRepository.data.map { it.second }
 

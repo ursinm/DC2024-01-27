@@ -4,7 +4,7 @@ import com.github.hummel.dc.lab1.bean.Author
 import kotlinx.serialization.Serializable
 
 @Serializable
-class AuthorRequestTo(
+data class AuthorRequestTo(
 	private val login: String, private val password: String, private val firstname: String, private val lastname: String
 ) {
 	fun toBean(id: Long): Author = Author(id, login, password, firstname, lastname)

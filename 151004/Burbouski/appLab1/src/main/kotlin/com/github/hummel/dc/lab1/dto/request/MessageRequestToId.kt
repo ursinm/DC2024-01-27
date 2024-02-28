@@ -4,7 +4,7 @@ import com.github.hummel.dc.lab1.bean.Message
 import kotlinx.serialization.Serializable
 
 @Serializable
-class MessageRequestToId(
+data class MessageRequestToId(
 	private val id: Long, private val issueId: Long, private val content: String
 ) {
 	fun toBean(): Message = Message(

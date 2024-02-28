@@ -4,7 +4,7 @@ import com.github.hummel.dc.lab1.bean.Sticker
 import kotlinx.serialization.Serializable
 
 @Serializable
-class StickerRequestToId(
+data class StickerRequestToId(
 	private val id: Long, private val name: String
 ) {
 	fun toBean(): Sticker = Sticker(

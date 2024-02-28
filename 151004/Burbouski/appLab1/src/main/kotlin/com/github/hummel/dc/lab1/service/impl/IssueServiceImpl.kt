@@ -11,7 +11,6 @@ import java.sql.Timestamp
 class IssueServiceImpl(
 	private val issueRepository: BaseRepository<Issue, Long>
 ) : IssueService {
-
 	override fun getAll(): List<IssueResponseTo> {
 		val result = issueRepository.data.map { it.second }
 
