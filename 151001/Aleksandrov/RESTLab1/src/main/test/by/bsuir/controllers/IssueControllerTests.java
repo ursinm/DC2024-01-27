@@ -7,8 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class IssueControllerTests {
@@ -31,7 +34,7 @@ public class IssueControllerTests {
     public void testGetIssueById() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"newTitle\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -45,13 +48,19 @@ public class IssueControllerTests {
                 .get("/api/v1.0/issues/{id}")
                 .then()
                 .statusCode(200);
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
     public void testDeleteIssue() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"newTitle\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -69,21 +78,10 @@ public class IssueControllerTests {
     }
 
     @Test
-    public void testSaveIssue() {
-        given()
-                .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
-                .when()
-                .post("/api/v1.0/issues")
-                .then()
-                .statusCode(201);
-    }
-
-    @Test
     public void testUpdateIssue() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"newTitle\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -92,7 +90,7 @@ public class IssueControllerTests {
 
         long issueId = response.jsonPath().getLong("id");
 
-        String body = "{ \"id\": " + issueId + ", \"editorId\": 7, \"title\": \"updatedTitle699\", \"content\": \"updatedContent9402\" }";
+        String body = "{ \"id\": " + issueId + ", \"title\": \"updatedTitle69994\", \"content\": \"updatedContent9402\" }";
 
         given()
                 .contentType(ContentType.JSON)
@@ -101,7 +99,13 @@ public class IssueControllerTests {
                 .put("/api/v1.0/issues")
                 .then()
                 .statusCode(200)
-                .body("title", equalTo("updatedTitle699"));
+                .body("title", equalTo("updatedTitle69994"));
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
@@ -124,15 +128,15 @@ public class IssueControllerTests {
                 .delete("/api/v1.0/issues/{id}")
                 .then()
                 .statusCode(400)
-                .body("errorMessage", equalTo("The issue has not been deleted"))
-                .body("errorCode", equalTo(40003));
+                .body("errorMessage", equalTo("Issue not found!"))
+                .body("errorCode", equalTo(40004));
     }
 
     @Test
     public void testSaveIssueWithWrongTitle() {
         given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"x\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"x\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -140,98 +144,148 @@ public class IssueControllerTests {
     }
 
     @Test
-    public void testGetIssueByTitleAndContentCriteria() {
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
-                .when()
-                .post("/api/v1.0/issues")
-                .then()
-                .statusCode(201)
-                .extract().response();
-
-        String title = response.jsonPath().getString("title");
-        String content = response.jsonPath().getString("content");
-        String uri = "/api/v1.0/issues/byCriteria?title=" + title + "&content=" + content;
-        given()
+    public void testGetIssueByContentCriteria() {
+        String uri = "/api/v1.0/issues/byCriteria?content=" + "content123";
+        String firstContent = given()
                 .contentType(ContentType.JSON)
                 .when()
                 .get(uri)
                 .then()
                 .statusCode(200)
-                .body("title", equalTo(title))
-                .body("content", equalTo(content));
+                .extract()
+                .path("[0].content");
+
+        assertEquals("content123", firstContent);
     }
 
     @Test
-    public void testGetIssueByLabelIdCriteria() {
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\",\"labelId\": 10 }")
-                .when()
-                .post("/api/v1.0/issues")
-                .then()
-                .statusCode(201)
-                .extract().response();
-
-        String title = response.jsonPath().getString("title");
-        String content = response.jsonPath().getString("content");
-        long labelId = response.jsonPath().getLong("labelId");
-        String uri = "/api/v1.0/issues/byCriteria?labelId=" + labelId;
-        given()
+    public void testGetIssueByEditorLoginCriteria() {
+        String uri = "/api/v1.0/issues/byCriteria?editorLogin=" + "12345";
+        int firstContent = given()
                 .contentType(ContentType.JSON)
                 .when()
                 .get(uri)
                 .then()
                 .statusCode(200)
-                .body("title", equalTo(title))
-                .body("content", equalTo(content));
+                .extract()
+                .path("[0].editorId");
+
+        assertEquals(208, firstContent);
     }
 
     @Test
-    public void testGetIssueByWrongLabelIdCriteria() {
+    public void testFindAllOrderById(){
+        String body = "{\"title\": \"qwerty1\", \"content\": \"aaa\" }";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\",\"labelId\": 10 }")
+                .body(body)
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        long labelId = response.jsonPath().getLong("labelId") + 2;
-        String uri = "/api/v1.0/issues/byCriteria?labelId=" + labelId;
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get(uri)
-                .then()
-                .statusCode(400)
-                .body("errorCode", equalTo(40005))
-                .body("errorMessage", equalTo("Issue not found!"));
-    }
+        Integer issueId1 = response.jsonPath().getInt("id");
 
-    @Test
-    public void testGetIssueByWrongTitleAndContentCriteria() {
-        Response response = given()
+        body = "{\"title\": \"qwerty2\", \"content\": \"bbb\" }";
+        response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body(body)
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        String title = response.jsonPath().getString("title") + "aboba";
-        String content = response.jsonPath().getString("content") + "mama";
-        String uri = "/api/v1.0/issues/byCriteria?title=" + title + "&content=" + content;
-        given()
+        Integer issueId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/issues?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
+        Integer content = given()
                 .contentType(ContentType.JSON)
                 .when()
                 .get(uri)
                 .then()
-                .statusCode(400)
-                .body("errorCode", equalTo(40005))
-                .body("errorMessage", equalTo("Issue not found!"));
+                .statusCode(200)
+                .extract()
+                .path("[0].id");
+
+        assertEquals(issueId2, content);
+
+        given()
+                .pathParam("id", issueId1)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .pathParam("id", issueId2)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void testFindAllOrderByContent(){
+        String body = "{\"title\": \"qwerty1\", \"content\": \"aaa\" }";
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer issueId1 = response.jsonPath().getInt("id");
+
+        body = "{\"title\": \"qwerty2\", \"content\": \"bbb\" }";
+        response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/issues")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer issueId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/issues?pageNumber=0&pageSize=10&sortBy=content&sortOrder=desc";
+        String content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[3].content");
+
+        assertEquals("bbb", content);
+
+        uri = "/api/v1.0/issues?pageNumber=0&pageSize=10&sortBy=content&sortOrder=asc";
+        content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].content");
+
+        assertEquals("aaa", content);
+
+        given()
+                .pathParam("id", issueId1)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .pathParam("id", issueId2)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
     }
 }

@@ -17,8 +17,12 @@ public class EditorController {
     EditorService editorService;
 
     @GetMapping
-    public ResponseEntity<List<EditorResponseTo>> getEditors() {
-        return ResponseEntity.status(200).body(editorService.getEditors());
+    public ResponseEntity<List<EditorResponseTo>> getEditors(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(editorService.getEditors(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")

@@ -2,7 +2,6 @@ package by.bsuir.controllers;
 
 import by.bsuir.dto.CommentRequestTo;
 import by.bsuir.dto.CommentResponseTo;
-import by.bsuir.dto.EditorResponseTo;
 import by.bsuir.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +17,12 @@ public class CommentController {
     CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<CommentResponseTo>> getComments() {
-        return ResponseEntity.status(200).body(commentService.getComments());
+    public ResponseEntity<List<CommentResponseTo>> getComments(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(commentService.getComments(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -45,7 +48,7 @@ public class CommentController {
     }
 
     @GetMapping("/byIssue/{id}")
-    public ResponseEntity<CommentResponseTo> getEditorByIssueId(@PathVariable Long id){
+    public ResponseEntity<List<CommentResponseTo>> getEditorByIssueId(@PathVariable Long id) {
         return ResponseEntity.status(200).body(commentService.getCommentByIssueId(id));
     }
 }
