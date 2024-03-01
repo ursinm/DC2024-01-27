@@ -22,7 +22,7 @@ import java.util.Objects;
 @Table(name = "tbl_creator")
 public class Creator extends BaseEntity {
 
-    @Column(name = "login")
+    @Column(name = "login", unique = true, nullable = false)
     private String login;
     @Column(name = "password")
     private String password;

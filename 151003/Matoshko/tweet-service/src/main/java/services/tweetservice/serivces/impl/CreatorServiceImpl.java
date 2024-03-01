@@ -16,6 +16,7 @@ import services.tweetservice.repositories.CreatorRepository;
 import services.tweetservice.serivces.CreatorService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -68,7 +69,22 @@ public class CreatorServiceImpl implements CreatorService {
 
     @Override
     public CreatorResponseTo findCreatorById(Long id) {
-        Creator creator = creatorRepository.findCreatorById(id).orElseThrow(() -> new NoSuchCreatorException(id));
+        Creator creator = creatorRepository.findById(id).orElseThrow(() -> new NoSuchCreatorException(id));
         return creatorMapper.toCreatorResponseTo(creator);
+    }
+
+    @Override
+    public boolean existsByIdExt(Long id) {
+        return creatorRepository.existsById(id);
+    }
+
+    @Override
+    public Optional<Creator> findCreatorByIdExt(Long id) {
+        return creatorRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Creator> getReferenceByIdExt(Long id) {
+        return Optional.of(creatorRepository.getReferenceById(id));
     }
 }

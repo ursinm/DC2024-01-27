@@ -9,7 +9,6 @@ public record TweetResponseTo(
         String title,
         String content,
         LocalDateTime created,
-        LocalDateTime modified,
-        List<MessageResponseTo> messageList,
-        List<StickerResponseTo> stickerList) {
+        LocalDateTime modified, //   List<StickerResponseTo> stickerList
+        List<MessageResponseTo> messageList) {
 }

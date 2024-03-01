@@ -29,7 +29,7 @@ public class Tweet extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private Creator creator;
-    @Column(name = "title")
+    @Column(name = "title", unique = true, nullable = false)
     private String title;
     @Column(name = "content")
     private String content;
@@ -41,9 +41,8 @@ public class Tweet extends BaseEntity {
     private LocalDateTime modified;
     @OneToMany(mappedBy = "tweet")
     private List<Message> messageList = new ArrayList<>();
-
     @OneToMany(mappedBy = "tweet")
-    private List<TweetSticker> stickerList = new ArrayList<>();
+    private List<TweetSticker> tweetStickerList = new ArrayList<>();
 
     @Override
     public final boolean equals(Object o) {

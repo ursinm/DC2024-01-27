@@ -8,4 +8,6 @@
 
     </changeSet>
     <include file="db/changelog/2024/29-01-changelog.xml"/>
+    <include file="db/changelog/2024/01-01-changelog.xml"/>
+    <include file="db/changelog/2024/01-02-changelog.xml"/>
 </databaseChangeLog>

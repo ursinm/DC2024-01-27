@@ -8,6 +8,7 @@ import services.tweetservice.domain.response.MessageResponseTo;
 
 @Mapper(componentModel = "spring", uses = TweetMapper.class)
 public interface MessageMapper {
+    @Mapping(source = "tweetId", target = "tweet.id")
     Message toMessage(MessageRequestTo messageRequestTo);
     @Mapping(source = "tweet.id", target = "tweetId")
     MessageResponseTo toMessageResponseTo(Message message);
