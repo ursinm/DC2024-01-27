@@ -23,9 +23,5 @@ public interface CreatorService {
 
     CreatorResponseTo findCreatorById(Long id);
 
-    boolean existsByIdExt(Long id);
-
     Optional<Creator> findCreatorByIdExt(Long id);
-
-    Optional<Creator> getReferenceByIdExt(Long id);
 }

@@ -1,11 +1,13 @@
 package services.tweetservice.serivces.impl;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import services.tweetservice.domain.entity.Message;
 import services.tweetservice.domain.entity.Tweet;
+import services.tweetservice.domain.entity.ValidationMarker;
 import services.tweetservice.domain.mapper.MessageListMapper;
 import services.tweetservice.domain.mapper.MessageMapper;
 import services.tweetservice.domain.request.MessageRequestTo;
@@ -36,7 +38,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageResponseTo create(MessageRequestTo entity) {
+    @Validated(ValidationMarker.OnCreate.class)
+    public MessageResponseTo create(@Valid MessageRequestTo entity) {
         Tweet tweet = tweetService.findTweetByIdExt(entity.tweetId()).orElseThrow(() -> new NoSuchTweetException(entity.tweetId()));
         Message message = messageMapper.toMessage(entity);
         message.setTweet(tweet);
@@ -49,7 +52,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageResponseTo update(MessageRequestTo entity) {
+    @Validated(ValidationMarker.OnUpdate.class)
+    public MessageResponseTo update(@Valid MessageRequestTo entity) {
         if (messageRepository.existsById(entity.id())) {
             Message message = messageMapper.toMessage(entity);
             Tweet tweetRef = tweetService.findTweetByIdExt(message.getTweet().getId()).orElseThrow(() -> new NoSuchTweetException(message.getTweet().getId()));

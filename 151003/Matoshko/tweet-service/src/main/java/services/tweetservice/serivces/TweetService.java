@@ -24,6 +24,4 @@ public interface TweetService {
     TweetResponseTo findTweetById(Long id);
 
     Optional<Tweet> findTweetByIdExt(Long id);
-
-    Optional<Tweet> getReferenceByIdExt(Long id);
 }

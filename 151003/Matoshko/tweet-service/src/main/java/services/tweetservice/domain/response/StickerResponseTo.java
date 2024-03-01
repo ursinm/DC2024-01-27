@@ -1,9 +1,6 @@
 package services.tweetservice.domain.response;
 
-import java.util.List;
-
 public record StickerResponseTo(
-        Long id,
-        String name,
-        List<TweetResponseTo> tweetList) {
+        Long id, //List<TweetResponseTo> tweetList
+        String name) {
 }

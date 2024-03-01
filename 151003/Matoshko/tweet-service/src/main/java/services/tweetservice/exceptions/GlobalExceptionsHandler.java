@@ -30,4 +30,25 @@ public class GlobalExceptionsHandler {
         ErrorResponseTo errorResponseTo = new ErrorResponseTo(exception.getMessage(), HttpStatus.FORBIDDEN.value() + ExceptionStatus.DB_CONSTRAINTS_EXCEPTION_STATUS.getValue());
         return new ResponseEntity<>(errorResponseTo, HttpStatus.FORBIDDEN);
     }
+
+    @ResponseBody
+    @ExceptionHandler(NoSuchTweetException.class)
+    public ResponseEntity<ErrorResponseTo> handleNoSuchTweetException(NoSuchTweetException exception) {
+        ErrorResponseTo errorResponseTo = new ErrorResponseTo(exception.getMessage(), HttpStatus.NOT_FOUND + ExceptionStatus.NO_SUCH_TWEET_EXCEPTION_STATUS.getValue());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseTo);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(NoSuchMessageException.class)
+    public ResponseEntity<ErrorResponseTo> handleNoSuchMessageException(NoSuchMessageException exception) {
+        ErrorResponseTo errorResponseTo = new ErrorResponseTo(exception.getMessage(), HttpStatus.NOT_FOUND + ExceptionStatus.NO_SUCH_MESSAGE_EXCEPTION_STATUS.getValue());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseTo);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(NoSuchStickerException.class)
+    public ResponseEntity<ErrorResponseTo> handleNoSuchStickerException(NoSuchStickerException exception) {
+        ErrorResponseTo errorResponseTo = new ErrorResponseTo(exception.getMessage(), HttpStatus.NOT_FOUND + ExceptionStatus.NO_SUCH_STICKER_EXCEPTION_STATUS.getValue());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseTo);
+    }
 }

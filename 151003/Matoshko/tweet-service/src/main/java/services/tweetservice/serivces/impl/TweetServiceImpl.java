@@ -88,9 +88,4 @@ public class TweetServiceImpl implements TweetService {
     public Optional<Tweet> findTweetByIdExt(Long id) {
         return tweetRepository.findById(id);
     }
-
-    @Override
-    public Optional<Tweet> getReferenceByIdExt(Long id) {
-        return Optional.of(tweetRepository.getReferenceById(id));
-    }
 }

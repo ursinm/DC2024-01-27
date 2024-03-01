@@ -74,17 +74,7 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
-    public boolean existsByIdExt(Long id) {
-        return creatorRepository.existsById(id);
-    }
-
-    @Override
     public Optional<Creator> findCreatorByIdExt(Long id) {
         return creatorRepository.findById(id);
-    }
-
-    @Override
-    public Optional<Creator> getReferenceByIdExt(Long id) {
-        return Optional.of(creatorRepository.getReferenceById(id));
     }
 }
