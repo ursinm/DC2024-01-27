@@ -1,10 +1,10 @@
 package com.github.hummel.dc.lab1.controller.routing
 
 import com.github.hummel.dc.lab1.bean.Response
+import com.github.hummel.dc.lab1.controller.respond
 import com.github.hummel.dc.lab1.dto.request.AuthorRequestTo
 import com.github.hummel.dc.lab1.dto.request.AuthorRequestToId
 import com.github.hummel.dc.lab1.service.AuthorService
-import com.github.hummel.dc.lab1.util.respond
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
