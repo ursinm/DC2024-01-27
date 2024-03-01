@@ -10,6 +10,7 @@ import org.koin.ktor.plugin.Koin
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
+@Suppress("unused")
 fun Application.module() {
 	install(Koin) {
 		modules(dataModule, appModule)
