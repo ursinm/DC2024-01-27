@@ -5,12 +5,14 @@ import com.github.hummel.dc.lab1.controller.configureSerialization
 import com.github.hummel.dc.lab1.module.appModule
 import com.github.hummel.dc.lab1.module.dataModule
 import io.ktor.server.application.*
+import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.koin.ktor.plugin.Koin
 
-fun main(args: Array<String>): Unit = EngineMain.main(args)
+fun main() {
+	embeddedServer(Netty, port = 24110, module = Application::module).start(wait = true)
+}
 
-@Suppress("unused")
 fun Application.module() {
 	install(Koin) {
 		modules(dataModule, appModule)
