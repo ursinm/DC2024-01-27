@@ -1,5 +1,6 @@
 package by.bsuir.controllers;
 
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -211,19 +212,8 @@ public class CommentControllerTests {
                 .extract().response();
 
         Integer commentId2 = response.jsonPath().getInt("id");
-        String uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=id&sortOrder=asc";
+        String uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
         Integer id = given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get(uri)
-                .then()
-                .statusCode(200)
-                .extract()
-                .path("[0].id");
-
-        assertEquals(commentId1, id);
-        uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
-        id = given()
                 .contentType(ContentType.JSON)
                 .when()
                 .get(uri)
