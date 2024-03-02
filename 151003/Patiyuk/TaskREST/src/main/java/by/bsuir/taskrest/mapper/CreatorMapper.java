@@ -11,7 +11,15 @@ import org.mapstruct.MappingTarget;
 public interface CreatorMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "firstName", source = "firstname")
+    @Mapping(target = "lastName", source = "lastname")
     Creator toEntity(CreatorRequestTo request);
+
+    @Mapping(target = "firstname", source = "firstName")
+    @Mapping(target = "lastname", source = "lastName")
     CreatorResponseTo toResponseTo(Creator entity);
+
+    @Mapping(target = "firstName", source = "firstname")
+    @Mapping(target = "lastName", source = "lastname")
     Creator updateEntity(@MappingTarget Creator entity, CreatorRequestTo request);
 }

@@ -3,6 +3,7 @@ package by.bsuir.taskrest.controller;
 import by.bsuir.taskrest.dto.request.MarkerRequestTo;
 import by.bsuir.taskrest.dto.response.MarkerResponseTo;
 import by.bsuir.taskrest.service.MarkerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,19 +31,19 @@ public class MarkerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MarkerResponseTo createMarker(@RequestBody MarkerRequestTo marker) {
+    public MarkerResponseTo createMarker(@Valid @RequestBody MarkerRequestTo marker) {
         return markerService.createMarker(marker);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public MarkerResponseTo updateMarker(@RequestBody MarkerRequestTo marker) {
+    public MarkerResponseTo updateMarker(@Valid @RequestBody MarkerRequestTo marker) {
         return markerService.updateMarker(marker);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public MarkerResponseTo updateMarker(@PathVariable Long id, @RequestBody MarkerRequestTo marker) {
+    public MarkerResponseTo updateMarker(@PathVariable Long id, @Valid @RequestBody MarkerRequestTo marker) {
         return markerService.updateMarker(id, marker);
     }
 

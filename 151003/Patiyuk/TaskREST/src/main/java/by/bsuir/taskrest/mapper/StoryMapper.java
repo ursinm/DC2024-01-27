@@ -14,6 +14,10 @@ public interface StoryMapper {
     @Mapping(target = "created", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "modified", expression = "java(java.time.LocalDateTime.now())")
     Story toEntity(StoryRequestTo request);
+
     StoryResponseTo toResponseTo(Story entity);
+
+    @Mapping(target = "created", ignore = true)
+    @Mapping(target = "modified", expression = "java(java.time.LocalDateTime.now())")
     Story updateEntity(@MappingTarget Story entity, StoryRequestTo request);
 }

@@ -3,6 +3,7 @@ package by.bsuir.taskrest.controller;
 import by.bsuir.taskrest.dto.request.MessageRequestTo;
 import by.bsuir.taskrest.dto.response.MessageResponseTo;
 import by.bsuir.taskrest.service.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -36,19 +37,19 @@ public class MessageController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MessageResponseTo createMessage(@RequestBody MessageRequestTo message) {
+    public MessageResponseTo createMessage(@Valid @RequestBody MessageRequestTo message) {
         return messageService.createMessage(message);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public MessageResponseTo updateMessage(@RequestBody MessageRequestTo message) {
+    public MessageResponseTo updateMessage(@Valid @RequestBody MessageRequestTo message) {
         return messageService.updateMessage(message);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public MessageResponseTo updateMessage(@PathVariable Long id, @RequestBody MessageRequestTo message) {
+    public MessageResponseTo updateMessage(@PathVariable Long id, @Valid @RequestBody MessageRequestTo message) {
         return messageService.updateMessage(id, message);
     }
 

@@ -12,6 +12,8 @@ public interface MessageMapper {
 
     @Mapping(target = "id", ignore = true)
     Message toEntity(MessageRequestTo request);
+
     MessageResponseTo toResponseTo(Message entity);
+
     Message updateEntity(@MappingTarget Message entity, MessageRequestTo request);
 }

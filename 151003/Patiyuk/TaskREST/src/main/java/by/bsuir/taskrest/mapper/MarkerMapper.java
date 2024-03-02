@@ -12,6 +12,8 @@ public interface MarkerMapper {
 
     @Mapping(target = "id", ignore = true)
     Marker toEntity(MarkerRequestTo request);
+
     MarkerResponseTo toResponseTo(Marker entity);
+
     Marker updateEntity(@MappingTarget Marker entity, MarkerRequestTo request);
 }

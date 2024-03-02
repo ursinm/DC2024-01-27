@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class InMemoryRepository<T extends BaseEntity<Long>> implements ListCrudRepository<T, Long> {
 
-    private static final AtomicLong idCounter = new AtomicLong();
+    private final AtomicLong idCounter = new AtomicLong();
     protected final Map<Long, T> entities = new ConcurrentHashMap<>();
 
     @Override

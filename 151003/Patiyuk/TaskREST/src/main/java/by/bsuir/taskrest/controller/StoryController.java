@@ -3,6 +3,7 @@ package by.bsuir.taskrest.controller;
 import by.bsuir.taskrest.dto.request.StoryRequestTo;
 import by.bsuir.taskrest.dto.response.StoryResponseTo;
 import by.bsuir.taskrest.service.StoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stories")
+@RequestMapping("/storys")
 public class StoryController {
 
     private final StoryService storyService;
@@ -30,19 +31,19 @@ public class StoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public StoryResponseTo createStory(@RequestBody StoryRequestTo story) {
+    public StoryResponseTo createStory(@Valid  @RequestBody StoryRequestTo story) {
         return storyService.createStory(story);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public StoryResponseTo updateStory(@RequestBody StoryRequestTo story) {
+    public StoryResponseTo updateStory(@Valid @RequestBody StoryRequestTo story) {
         return storyService.updateStory(story);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public StoryResponseTo updateStory(@PathVariable Long id, @RequestBody StoryRequestTo story) {
+    public StoryResponseTo updateStory(@PathVariable Long id, @Valid @RequestBody StoryRequestTo story) {
         return storyService.updateStory(id, story);
     }
 
