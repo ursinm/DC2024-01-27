@@ -17,8 +17,12 @@ public class IssueController {
     IssueService issueService;
 
     @GetMapping
-    public ResponseEntity<List<IssueResponseTo>> getIssues() {
-        return ResponseEntity.status(200).body(issueService.getIssues());
+    public ResponseEntity<List<IssueResponseTo>> getIssues(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(issueService.getIssues(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -44,11 +48,12 @@ public class IssueController {
     }
 
     @GetMapping("/byCriteria")
-    public ResponseEntity<IssueResponseTo> getIssueByCriteria(
-            @RequestParam(required = false) String labelName,
-            @RequestParam(required = false) Long labelId,
+    public ResponseEntity<List<IssueResponseTo>> getIssueByCriteria(
+            @RequestParam(required = false) List<String> labelName,
+            @RequestParam(required = false) List<Long> labelId,
+            @RequestParam(required = false) String editorLogin,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content){
-        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueByCriteria(labelName, labelId, title, content));
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueByCriteria(labelName, labelId, editorLogin, title, content));
     }
 }
