@@ -38,7 +38,7 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
+public class CatchThrowsBeanPostProcessor extends AbstractMethodHandlerBeanPostProcessor {
     private final Map<String, Pair<Class<?>, Map<String, ExceptionHandlerParams>>> map = new HashMap<>();
 
     private static Pair<Class<?>[], boolean[]> fetchInvokableArguments(Method target, CatchThrows annotation) {

@@ -4,6 +4,7 @@ import by.bsuir.poit.dc.rest.CatchLevel;
 import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import by.bsuir.poit.dc.rest.dao.NoteRepository;
 import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NoteService;
 import com.google.errorprone.annotations.Keep;
+import liquibase.datatype.DatabaseDataType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -63,15 +65,10 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Transactional
-    public boolean delete(long noteId) {
-	boolean isDeleted;
-	if (noteRepository.existsById(noteId)) {
-	    noteRepository.deleteById(noteId);
-	    isDeleted = true;
-	} else {
-	    isDeleted = false;
-	}
-	return isDeleted;
+    public DeleteDto delete(long noteId) {
+	return DeleteDto
+		   .wrap(noteRepository.existsById(noteId))
+		   .ifPresent(() -> noteRepository.deleteById(noteId));
     }
 
     @Keep
@@ -83,6 +80,7 @@ public class NoteServiceImpl implements NoteService {
 	log.warn(msg);
 	return new ResourceModifyingException(msg, 70);
     }
+
     @Keep
 
     private static ResourceNotFoundException newNoteNotFountException(long noteId) {

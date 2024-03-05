@@ -9,6 +9,7 @@ import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
@@ -100,15 +101,10 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public boolean delete(long newsId) {
-	boolean isDeleted;
-	if (newsRepository.existsById(newsId)) {
-	    newsRepository.deleteById(newsId);
-	    isDeleted = true;
-	} else {
-	    isDeleted = false;
-	}
-	return isDeleted;
+    public DeleteDto delete(long newsId) {
+	return DeleteDto
+		   .wrap(newsRepository.existsById(newsId))
+		   .ifPresent(() -> newsRepository.deleteById(newsId));
     }
 
     @Override
@@ -144,15 +140,10 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public boolean detachLabelById(long newsId, long labelId) {
-	boolean isDeleted;
-	if (newsLabelRepository.existsByNewsIdAndLabelId(newsId, labelId)) {
-	    newsLabelRepository.deleteByNewsIdAndLabelId(newsId, labelId);
-	    isDeleted = true;
-	} else {
-	    isDeleted = false;
-	}
-	return isDeleted;
+    public DeleteDto detachLabelById(long newsId, long labelId) {
+	return DeleteDto
+		   .wrap(newsLabelRepository.existsByNewsIdAndLabelId(newsId, labelId))
+		   .ifPresent(() -> newsLabelRepository.deleteByNewsIdAndLabelId(newsId, labelId));
     }
 
     @Override

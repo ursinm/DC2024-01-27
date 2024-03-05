@@ -74,14 +74,10 @@ public class NewsController {
     }
 
     @DeleteMapping("/{newsId}")
-    public ResponseEntity<?> deleteNewsById(
+    public Object deleteNewsById(
 	@PathVariable long newsId
     ) {
-	boolean isDeleted = newsService.delete(newsId);
-	HttpStatus status = isDeleted
-				? HttpStatus.NO_CONTENT
-				: HttpStatus.NOT_FOUND;
-	return ResponseEntity.status(status).build();
+	return newsService.delete(newsId);
     }
 
     @GetMapping("/{newsId}/notes")
@@ -107,13 +103,11 @@ public class NewsController {
     }
 
     @DeleteMapping("/{newsId}/labels/{labelId}")
-    public ResponseEntity<?> deleteNewsLabel(
+    public Object deleteNewsLabel(
 	@PathVariable long newsId,
 	@PathVariable long labelId
     ) {
-	boolean isDeleted = newsService.detachLabelById(newsId, labelId);
-	var status = isDeleted ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
-	return ResponseEntity.status(status).build();
+	return newsService.detachLabelById(newsId, labelId);
     }
 
     private static ErrorDto conflictParameters() {

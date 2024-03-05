@@ -1,6 +1,7 @@
 package by.bsuir.poit.dc.rest.services;
 
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
+import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import jakarta.validation.Valid;
 
@@ -22,5 +23,5 @@ public interface LabelService {
 
     List<LabelDto> getAll();
 
-    boolean delete(long labelId);
+    DeleteDto delete(long labelId);
 }

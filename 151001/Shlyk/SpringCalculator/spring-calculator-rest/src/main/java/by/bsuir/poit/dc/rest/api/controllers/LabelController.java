@@ -52,12 +52,9 @@ public class LabelController {
     }
 
     @DeleteMapping("/{labelId}")
-    public ResponseEntity<?> deleteLabelById(
+    public Object deleteLabelById(
 	@PathVariable long labelId
     ) {
-	boolean isDeleted = labelService.delete(labelId);
-	HttpStatus code = isDeleted ?
-			      HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
-	return ResponseEntity.status(code).build();
+	return labelService.delete(labelId);
     }
 }

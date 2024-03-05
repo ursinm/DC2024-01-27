@@ -3,7 +3,6 @@ package by.bsuir.poit.dc.rest.api.controllers;
 import by.bsuir.poit.dc.rest.api.dto.groups.Create;
 import by.bsuir.poit.dc.rest.api.dto.groups.Update;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
-import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
 import by.bsuir.poit.dc.rest.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +59,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public DeleteDto deleteUserById(
+    public Object deleteUserById(
 	@PathVariable long userId
     ) {
 	return userService.deleteUser(userId);
