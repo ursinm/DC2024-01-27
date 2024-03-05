@@ -4,6 +4,7 @@ import org.openjdk.jmh.annotations.*;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Paval Shlyk
@@ -26,9 +27,9 @@ public class Floats {
 	}
     }
 
-//    @Benchmark
-//    @BenchmarkMode(Mode.AverageTime)
-//    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public void doDivision(HugeArray array) {
 	float[] numbers = array.numbers;
 	for (int i = 0; i < numbers.length; i++) {

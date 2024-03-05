@@ -10,6 +10,8 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+    properties:
+      hibernate.globally_quoted_identifiers: true
   application:
     name: 'Spring Rest Calculator'
   liquibase:

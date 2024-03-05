@@ -3,6 +3,7 @@ package by.bsuir.poit.dc.rest.api.controllers;
 import by.bsuir.poit.dc.rest.api.dto.groups.Create;
 import by.bsuir.poit.dc.rest.api.dto.groups.Update;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
+import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
 import by.bsuir.poit.dc.rest.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -59,12 +60,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUserById(
+    public DeleteDto deleteUserById(
 	@PathVariable long userId
     ) {
-	boolean isDeleted = userService.deleteUser(userId);
-	HttpStatus status = isDeleted ?
-				HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
-	return ResponseEntity.status(status).build();
+	return userService.deleteUser(userId);
     }
 }
