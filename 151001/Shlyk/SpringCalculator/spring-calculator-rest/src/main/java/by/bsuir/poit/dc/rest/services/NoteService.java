@@ -1,11 +1,10 @@
 package by.bsuir.poit.dc.rest.services;
 
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
-import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import jakarta.validation.Valid;
 
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -21,6 +20,6 @@ public interface NoteService {
     @Deprecated
     List<NoteDto> getAll();
 
-    DeleteDto delete(long noteId);
+    PresenceDto delete(long noteId);
 
 }

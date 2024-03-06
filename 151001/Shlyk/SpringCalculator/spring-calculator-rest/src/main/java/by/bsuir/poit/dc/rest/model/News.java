@@ -30,7 +30,10 @@ public class News {
     private Long id;
 
     @Size(min = 2, max = 64)
-    @Column(name = "title", length = 64, nullable = false)
+    @Column(name = "title",
+	length = 64,
+	nullable = false,
+	unique = true)
     private String title;
 
     @Size(min = 4, max = 2048)

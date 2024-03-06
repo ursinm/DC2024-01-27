@@ -28,12 +28,12 @@ public class CommonControllerExceptionAdvice {
 
     @ExceptionHandler({ResourceModifyingException.class})
     public ResponseEntity<ErrorDto> catchModifyingException(ResourceModifyingException e) {
-	return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getError());
+	return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getError());
     }
 
     @ExceptionHandler({ResourceBusyException.class})
     public ResponseEntity<ErrorDto> catchBusyException(ResourceBusyException e) {
-	return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getError());
+	return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getError());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})

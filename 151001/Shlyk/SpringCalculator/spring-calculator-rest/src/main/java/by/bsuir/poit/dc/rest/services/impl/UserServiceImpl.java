@@ -3,7 +3,7 @@ package by.bsuir.poit.dc.rest.services.impl;
 import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.UserMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
-import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
@@ -77,8 +77,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public DeleteDto deleteUser(long userId) {
-	return DeleteDto
+    public PresenceDto deleteUser(long userId) {
+	return PresenceDto
 		   .wrap(userRepository.existsById(userId))
 		   .ifPresent(() -> userRepository.deleteById(userId));
     }

@@ -4,7 +4,7 @@ import by.bsuir.poit.dc.rest.CatchLevel;
 import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.LabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
-import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
@@ -79,8 +79,8 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional
-    public DeleteDto delete(long labelId) {
-	return DeleteDto
+    public PresenceDto delete(long labelId) {
+	return PresenceDto
 		   .wrap(labelRepository.existsById(labelId))
 		   .ifPresent(() -> labelRepository.deleteById(labelId));
     }

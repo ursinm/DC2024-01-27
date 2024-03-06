@@ -22,6 +22,7 @@ public record UpdateNewsDto(
     @Size(min = 4, max = 2048)
     @NotNull(groups = Create.class)
     String content,
+    @NotNull(groups = Create.class)
     Long userId
 
 ) implements Serializable {

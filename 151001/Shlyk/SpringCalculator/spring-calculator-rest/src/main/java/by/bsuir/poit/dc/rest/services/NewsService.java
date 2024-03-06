@@ -3,7 +3,7 @@ package by.bsuir.poit.dc.rest.services;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
-import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
@@ -27,13 +27,13 @@ public interface NewsService {
     @Deprecated
     List<NewsDto> getAll();
 
-    DeleteDto delete(long newsId);
+    PresenceDto delete(long newsId);
 
     NoteDto createNote(long newsId, @Valid UpdateNoteDto dto);
 
     void attachLabelById(long newsId, @Valid UpdateNewsLabelDto dto);
 
-    DeleteDto detachLabelById(long newsId, long labelId);
+    PresenceDto detachLabelById(long newsId, long labelId);
 
     List<NewsDto> getNewsByUserId(long userId);
 

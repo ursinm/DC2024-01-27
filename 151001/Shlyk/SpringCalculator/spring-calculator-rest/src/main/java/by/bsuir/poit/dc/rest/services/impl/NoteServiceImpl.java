@@ -4,7 +4,7 @@ import by.bsuir.poit.dc.rest.CatchLevel;
 import by.bsuir.poit.dc.rest.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
-import by.bsuir.poit.dc.rest.api.dto.response.DeleteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
@@ -12,7 +12,6 @@ import by.bsuir.poit.dc.rest.dao.NoteRepository;
 import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NoteService;
 import com.google.errorprone.annotations.Keep;
-import liquibase.datatype.DatabaseDataType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -65,8 +64,8 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     @Transactional
-    public DeleteDto delete(long noteId) {
-	return DeleteDto
+    public PresenceDto delete(long noteId) {
+	return PresenceDto
 		   .wrap(noteRepository.existsById(noteId))
 		   .ifPresent(() -> noteRepository.deleteById(noteId));
     }
