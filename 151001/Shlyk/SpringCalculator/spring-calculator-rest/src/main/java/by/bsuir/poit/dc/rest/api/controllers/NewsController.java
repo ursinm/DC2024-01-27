@@ -43,7 +43,7 @@ public class NewsController {
 	@RequestParam(value = "limit", required = false) Integer limit
     ) {
 	if (label != null && userId != null) {
-	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(conflictParameters());
+	    return conflictParameters(HttpStatus.BAD_REQUEST);
 	}
 	List<NewsDto> newsList;
 	if (label != null) {
@@ -110,11 +110,14 @@ public class NewsController {
 	return newsService.detachLabelById(newsId, labelId);
     }
 
-    private static ErrorDto conflictParameters() {
-	return ErrorDto.builder()
-		   .errorCode(122)
-		   .errorMessage("The provided parameters should be passed separately")
-		   .build();
+    private static ResponseEntity<ErrorDto> conflictParameters(
+	HttpStatus status
+    ) {
+	ErrorDto dto = ErrorDto.builder()
+			   .errorCode(ErrorDto.codeOf(status, 122))
+			   .errorMessage("The provided parameters should be passed separately")
+			   .build();
+	return ResponseEntity.status(status).body(dto);
     }
 
 }

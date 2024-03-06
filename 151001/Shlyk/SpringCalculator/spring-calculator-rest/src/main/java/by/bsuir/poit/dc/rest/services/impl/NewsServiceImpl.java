@@ -9,10 +9,10 @@ import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
-import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
@@ -57,6 +57,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsLabelMapper newsLabelMapper;
 
     @Override
+    @CatchThrows(call = "newNewsCreationException")
     public NewsDto create(UpdateNewsDto dto) {
 	News entity = newsMapper.toEntity(dto);
 	News savedEntity = newsRepository.save(entity);
@@ -65,6 +66,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newNewsModifyingException",
+	args = "newsId")
     public NewsDto update(long newsId, UpdateNewsDto dto) {
 	News entity = newsRepository
 			  .findById(newsId)
@@ -101,6 +105,9 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newNewsModifyingException",
+	args = "newsId")
     public PresenceDto delete(long newsId) {
 	return PresenceDto
 		   .wrap(newsRepository.existsById(newsId))
@@ -111,7 +118,7 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     @CatchThrows(
 	call = "newNoteCreationException",
-	args = {"newsId"})
+	args = "newsId")
     public NoteDto createNote(long newsId, UpdateNoteDto dto) {
 	if (!newsRepository.existsById(newsId)) {
 	    throw newNewsNotFoundException(newsId);
@@ -123,15 +130,14 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newNewsModifyingException",
+	args = "newsId")
     public void attachLabelById(long newsId, UpdateNewsLabelDto dto) {
 	if (!newsRepository.existsById(newsId)) {
 	    throw newNewsNotFoundException(newsId);
 	}
 	NewsLabel entity = newsLabelMapper.toEntity(newsId, dto);
-//	if (!labelRepository.existsById(entity.getId().getLabelId())) {
-//	    throw newLabelNotFoundException(entity.getLabel().getId());
-//	}
-	//this entity already holds id
 	if (newsLabelRepository.existsById(entity.getId())) {
 	    throw newLabelNewsAlreadyPresent(entity.getId());
 	}
@@ -185,6 +191,28 @@ public class NewsServiceImpl implements NewsService {
 		   .map(NewsLabel::getLabel)
 		   .map(labelMapper::toDto)
 		   .toList();
+    }
+
+    @Keep
+    private static ResourceModifyingException newNewsCreationException(
+	Throwable cause
+    ) {
+	final String msg = STR."Failed to create news by cause = \{cause.getMessage()}";
+	final String frontMsg = "Failed to create news. Check that news' title should be unique";
+	log.warn(msg);
+	return new ResourceModifyingException(frontMsg, 72);
+    }
+
+    @Keep
+    private static ResourceModifyingException newNewsModifyingException(
+	long newsId,
+	Throwable cause
+    ) {
+	final String msg = STR."Failed to update news by id = \{newsId} by cause = \{cause.getMessage()}";
+	final String frontMsg = "Failed to change news content. Verify that dto doesn't violate restrictions";
+	log.warn(msg);
+	return new ResourceModifyingException(frontMsg, 73);
+
     }
 
     @Keep

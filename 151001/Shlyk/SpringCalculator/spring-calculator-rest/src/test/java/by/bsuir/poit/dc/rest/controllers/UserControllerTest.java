@@ -1,7 +1,7 @@
 package by.bsuir.poit.dc.rest.controllers;
 
-import org.junit.Test;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 

@@ -34,6 +34,7 @@ public class LabelServiceImpl implements LabelService {
     private final LabelMapper labelMapper;
 
     @Override
+    @CatchThrows(call = "newLabelCreationException")
     public LabelDto create(UpdateLabelDto dto) {
 	Label entity = labelMapper.toEntity(dto);
 	Label savedEntity = labelRepository.save(entity);
@@ -79,10 +80,24 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newLabelModifyingException",
+	args = "labelId")
     public PresenceDto delete(long labelId) {
 	return PresenceDto
 		   .wrap(labelRepository.existsById(labelId))
 		   .ifPresent(() -> labelRepository.deleteById(labelId));
+    }
+
+    @Keep
+    private static ResourceModifyingException newLabelCreationException(
+	Throwable e
+    ) {
+	final String msg = STR."Failed to create label by cause = \{e.getMessage()}";
+	final String front = "Failed to create new label. Check dto";
+	log.warn(msg);
+	return new ResourceModifyingException(front, 75);
+
     }
 
     @Keep

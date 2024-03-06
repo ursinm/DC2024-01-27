@@ -2,12 +2,14 @@ package by.bsuir.poit.dc.rest.api.controllers;
 
 import by.bsuir.poit.dc.rest.api.dto.request.ErrorDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,38 +24,55 @@ import java.util.List;
 @RestControllerAdvice
 public class CommonControllerExceptionAdvice {
     @ExceptionHandler({ResourceNotFoundException.class})
-    public ResponseEntity<ErrorDto> catchNotFoundException(ResourceNotFoundException exception) {
-	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getError());
+    public ResponseEntity<ErrorDto> catchNotFoundException(ResourceNotFoundException e) {
+	return errorOf(HttpStatus.NOT_FOUND, e);
     }
 
     @ExceptionHandler({ResourceModifyingException.class})
     public ResponseEntity<ErrorDto> catchModifyingException(ResourceModifyingException e) {
-	return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getError());
+	return errorOf(HttpStatus.FORBIDDEN, e);
     }
 
     @ExceptionHandler({ResourceBusyException.class})
     public ResponseEntity<ErrorDto> catchBusyException(ResourceBusyException e) {
-	return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getError());
+	return errorOf(HttpStatus.TOO_MANY_REQUESTS, e);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorDto> catchValidationException(MethodArgumentNotValidException e) {
-	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(this.errorOf(e));
+	return errorOf(HttpStatus.BAD_REQUEST, e);
     }
 
     @ExceptionHandler({Throwable.class})
     public ResponseEntity<ErrorDto> catchThrowable(Throwable t) {
-	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorOf(t));
+	return errorOf(HttpStatus.INTERNAL_SERVER_ERROR, t);
     }
 
-    private ErrorDto errorOf(Throwable t) {
-	return ErrorDto.builder()
-		   .errorMessage("Server doesn't know how to deal your request. Sorry...(")
-		   .errors(new String[]{t.getMessage()})
-		   .build();
+    private ResponseEntity<ErrorDto> errorOf(
+	HttpStatus status,
+	ResourceException e
+    ) {
+	ErrorDto dto = ErrorDto.builder()
+			   .errorCode(ErrorDto.codeOf(status, e.getCode()))
+			   .errorMessage(e.getMessage())
+			   .build();
+	return ResponseEntity.status(status).body(dto);
     }
 
-    private ErrorDto errorOf(MethodArgumentNotValidException e) {
+    private ResponseEntity<ErrorDto> errorOf(
+	HttpStatus status,
+	Throwable t) {
+	ErrorDto dto = ErrorDto.builder()
+			   .errorCode(ErrorDto.codeOf(status, ErrorDto.MAGIC_CODE))
+			   .errorMessage("Server doesn't know how to deal your request. Sorry...(")
+			   .errors(new String[]{t.getMessage()})
+			   .build();
+	return ResponseEntity.status(status).body(dto);
+    }
+
+    private ResponseEntity<ErrorDto> errorOf(
+	HttpStatus status,
+	MethodArgumentNotValidException e) {
 	List<String> messages = new ArrayList<>();
 	for (ObjectError error : e.getAllErrors()) {
 	    String message;
@@ -65,10 +84,11 @@ public class CommonControllerExceptionAdvice {
 	    messages.add(message);
 	}
 	String errorMessage = "Input request violates some rules";
-	return ErrorDto.builder()
-		   .errorCode(77)//validation error
-		   .errorMessage(errorMessage)
-		   .errors(messages.toArray(String[]::new))
-		   .build();
+	ErrorDto dto = ErrorDto.builder()
+			   .errorCode(ErrorDto.codeOf(status, ErrorDto.MAGIC_CODE + 1))
+			   .errorMessage(errorMessage)
+			   .errors(messages.toArray(String[]::new))
+			   .build();
+	return ResponseEntity.status(status).body(dto);
     }
 }

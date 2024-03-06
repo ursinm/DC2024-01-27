@@ -2,6 +2,7 @@ package by.bsuir.poit.dc.rest.api.exceptions;
 
 import by.bsuir.poit.dc.rest.api.dto.request.ErrorDto;
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 /**
@@ -13,15 +14,11 @@ import lombok.Getter;
  */
 @Getter
 public class ResourceException extends RuntimeException {
-    @Nullable
-    private final ErrorDto error;
+    private final int code;
 
     public ResourceException(String message, int code) {
 	super(message);
-	error = ErrorDto.builder()
-		    .errorCode(code)
-		    .errorMessage(message)
-		    .build();
+	this.code = code;
     }
 
     @Override
