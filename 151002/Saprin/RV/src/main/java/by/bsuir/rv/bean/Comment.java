@@ -1,22 +1,31 @@
 package by.bsuir.rv.bean;
 
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.hibernate.validator.constraints.Length;
+
 
 import java.math.BigInteger;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
-@NoArgsConstructor
-public class Comment extends IdentifiedBean {
-    private BigInteger issueId;
-    private String content;
 
-    public Comment(BigInteger id, BigInteger issueId, String content) {
-        super(id);
-        this.issueId = issueId;
-        this.content = content;
-    }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "tbl_comment")
+public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "com_id")
+    private BigInteger com_id;
+
+    @JoinColumn(name = "com_issue")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Issue com_issue;
+
+    @Column(name = "com_content")
+    private String com_content;
 }

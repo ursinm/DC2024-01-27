@@ -24,13 +24,13 @@ public class CommentConverterTest {
 
         assertNotNull(response);
         assertEquals(comment.getId(), response.getId());
-        assertEquals(issue.getId(), response.getIssueId());
+        assertEquals(issue.getIss_id(), response.getIssueId());
         assertEquals(comment.getContent(), response.getContent());
     }
 
     @Test
     void convertToEntity_shouldConvertCommentRequestToComment() {
-        CommentRequestTo commentRequest = new CommentRequestTo(BigInteger.ONE, issue.getId(), "Test Comment");
+        CommentRequestTo commentRequest = new CommentRequestTo(BigInteger.ONE, issue.getIss_id(), "Test Comment");
         CommentConverter commentConverter = new CommentConverter();
 
         Comment comment = commentConverter.convertToEntity(commentRequest);

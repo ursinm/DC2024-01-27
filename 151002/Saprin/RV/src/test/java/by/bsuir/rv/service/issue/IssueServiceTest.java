@@ -5,13 +5,9 @@ import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.bean.Sticker;
 import by.bsuir.rv.dto.IssueRequestTo;
 import by.bsuir.rv.dto.IssueResponseTo;
-import by.bsuir.rv.dto.StickerRequestTo;
 import by.bsuir.rv.exception.EntititesNotFoundException;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.editor.EditorRepositoryMemory;
 import by.bsuir.rv.repository.exception.RepositoryException;
-import by.bsuir.rv.repository.issue.IssueRepositoryMemory;
-import by.bsuir.rv.repository.sticker.StickerRepositoryMemory;
 import by.bsuir.rv.service.issue.impl.IssueService;
 import by.bsuir.rv.util.converter.issue.IssueConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,9 +98,9 @@ class IssueServiceTest {
         BigInteger issueId = BigInteger.valueOf(3);
 
         Editor editor = new Editor(editorId, "TestEditor", "Password", "First", "Last");
-        IssueRequestTo issueRequestTo = new IssueRequestTo(issueId, editor.getId(), "TestTitle", "TestText", new Date(), new Date());
+        IssueRequestTo issueRequestTo = new IssueRequestTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
         Issue issueEntity = new Issue(issueId, editorId, "TestTitle", "TestText", new Date(), new Date());
-        IssueResponseTo expectedResponse = new IssueResponseTo(issueId, editor.getId(), "TestTitle", "TestText", new Date(), new Date());
+        IssueResponseTo expectedResponse = new IssueResponseTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
 
         Sticker sticker = new Sticker(stickerId, "TestSticker", issueId);
 
@@ -146,9 +142,9 @@ class IssueServiceTest {
 
         Editor editor = new Editor(editorId, "TestEditor", "Password", "First", "Last");
 
-        IssueRequestTo issueRequestTo = new IssueRequestTo(issueId, editor.getId(), "TestTitle", "TestText", new Date(), new Date());
+        IssueRequestTo issueRequestTo = new IssueRequestTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
         Issue issueEntity = new Issue(issueId, editorId, "TestTitle", "TestText", new Date(), new Date());
-        IssueResponseTo expectedResponse = new IssueResponseTo(issueId, editor.getId(), "TestTitle", "TestText", new Date(), new Date());
+        IssueResponseTo expectedResponse = new IssueResponseTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
 
         Sticker sticker = new Sticker(stickerId, "TestSticker", issueId);
 

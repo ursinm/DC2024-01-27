@@ -4,7 +4,6 @@ import by.bsuir.rv.bean.Editor;
 import by.bsuir.rv.dto.EditorRequestTo;
 import by.bsuir.rv.dto.EditorResponseTo;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.editor.EditorRepositoryMemory;
 import by.bsuir.rv.repository.exception.RepositoryException;
 import by.bsuir.rv.service.editor.impl.EditorService;
 import by.bsuir.rv.util.converter.editor.EditorConverter;

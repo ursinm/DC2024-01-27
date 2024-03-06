@@ -36,11 +36,11 @@ public class IssueConverterTest {
         IssueResponseTo response = issueConverter.convertToResponse(issue);
 
         assertNotNull(response);
-        assertEquals(issue.getId(), response.getId());
-        assertEquals(issue.getTitle(), response.getTitle());
-        assertEquals(issue.getContent(), response.getContent());
-        assertEquals(issue.getCreated(), response.getCreated());
-        assertEquals(issue.getModified(), response.getModified());
+        assertEquals(issue.getIss_id(), response.getId());
+        assertEquals(issue.getIss_title(), response.getTitle());
+        assertEquals(issue.getIss_content(), response.getContent());
+        assertEquals(issue.getIss_created(), response.getCreated());
+        assertEquals(issue.getIss_modified(), response.getModified());
     }
 
     @Test
@@ -54,11 +54,11 @@ public class IssueConverterTest {
         Issue issue = issueConverter.convertToEntity(issueRequestTo);
 
         assertNotNull(issue);
-        assertEquals(issueRequestTo.getId(), issue.getId());
-        assertEquals(issueRequestTo.getEditorId(), issue.getEditorId());
-        assertEquals(issueRequestTo.getTitle(), issue.getTitle());
-        assertEquals(issueRequestTo.getContent(), issue.getContent());
-        assertEquals(issueRequestTo.getCreated(), issue.getCreated());
-        assertEquals(issueRequestTo.getModified(), issue.getModified());
+        assertEquals(issueRequestTo.getId(), issue.getIss_id());
+        assertEquals(issueRequestTo.getEditorId(), issue.getIss_editorId());
+        assertEquals(issueRequestTo.getTitle(), issue.getIss_title());
+        assertEquals(issueRequestTo.getContent(), issue.getIss_content());
+        assertEquals(issueRequestTo.getCreated(), issue.getIss_created());
+        assertEquals(issueRequestTo.getModified(), issue.getIss_modified());
     }
 }

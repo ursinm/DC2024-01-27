@@ -29,7 +29,7 @@ public class IssueRepositoryMemoryTest {
 
         Issue savedIssue = issueRepository.save(issue);
 
-        assertNotNull(savedIssue.getId());
+        assertNotNull(savedIssue.getIss_id());
         assertEquals(1, issueRepository.findAll().size());
     }
 
@@ -50,10 +50,10 @@ public class IssueRepositoryMemoryTest {
         Issue issue = new Issue();
         Issue savedIssue = issueRepository.save(issue);
 
-        Issue foundIssue = issueRepository.findById(savedIssue.getId());
+        Issue foundIssue = issueRepository.findById(savedIssue.getIss_id());
 
         assertNotNull(foundIssue);
-        assertEquals(savedIssue.getId(), foundIssue.getId());
+        assertEquals(savedIssue.getIss_id(), foundIssue.getIss_id());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class IssueRepositoryMemoryTest {
         Issue savedIssue1 = issueRepository.save(issue1);
         Issue savedIssue2 = issueRepository.save(issue2);
 
-        List<BigInteger> idsToFind = Arrays.asList(savedIssue1.getId(), savedIssue2.getId());
+        List<BigInteger> idsToFind = Arrays.asList(savedIssue1.getIss_id(), savedIssue2.getIss_id());
 
         List<Issue> foundIssues = issueRepository.findAllById(idsToFind);
 
@@ -91,7 +91,7 @@ public class IssueRepositoryMemoryTest {
         Issue issue = new Issue();
         Issue savedIssue = issueRepository.save(issue);
 
-        issueRepository.deleteById(savedIssue.getId());
+        issueRepository.deleteById(savedIssue.getIss_id());
 
         assertEquals(0, issueRepository.findAll().size());
     }

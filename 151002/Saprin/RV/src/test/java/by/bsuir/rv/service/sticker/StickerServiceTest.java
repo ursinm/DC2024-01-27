@@ -5,7 +5,6 @@ import by.bsuir.rv.dto.StickerRequestTo;
 import by.bsuir.rv.dto.StickerResponseTo;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.repository.exception.RepositoryException;
-import by.bsuir.rv.repository.sticker.StickerRepositoryMemory;
 import by.bsuir.rv.service.sticker.impl.StickerService;
 import by.bsuir.rv.util.converter.sticker.StickerConverter;
 import org.junit.jupiter.api.BeforeEach;

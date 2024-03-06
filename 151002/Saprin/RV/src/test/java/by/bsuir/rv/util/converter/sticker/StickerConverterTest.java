@@ -20,7 +20,7 @@ class StickerConverterTest {
 
         assertNotNull(response);
         assertEquals(sticker.getId(), response.getId());
-        assertEquals(sticker.getName(), response.getName());
+        assertEquals(sticker.getSt_name(), response.getName());
     }
 
     @Test
@@ -32,6 +32,6 @@ class StickerConverterTest {
 
         assertNotNull(sticker);
         assertEquals(stickerRequest.getId(), sticker.getId());
-        assertEquals(stickerRequest.getName(), sticker.getName());
+        assertEquals(stickerRequest.getName(), sticker.getSt_name());
     }
 }

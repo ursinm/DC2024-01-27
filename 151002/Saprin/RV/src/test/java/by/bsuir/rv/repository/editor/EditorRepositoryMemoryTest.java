@@ -29,7 +29,7 @@ public class EditorRepositoryMemoryTest {
 
         Editor savedEditor = editorRepository.save(editor);
 
-        assertNotNull(savedEditor.getId());
+        assertNotNull(savedEditor.getEd_id());
         assertEquals(1, editorRepository.findAll().size());
     }
 
@@ -50,10 +50,10 @@ public class EditorRepositoryMemoryTest {
         Editor editor = new Editor();
         Editor savedEditor = editorRepository.save(editor);
 
-        Editor foundEditor = editorRepository.findById(savedEditor.getId());
+        Editor foundEditor = editorRepository.findById(savedEditor.getEd_id());
 
         assertNotNull(foundEditor);
-        assertEquals(savedEditor.getId(), foundEditor.getId());
+        assertEquals(savedEditor.getEd_id(), foundEditor.getEd_id());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class EditorRepositoryMemoryTest {
         Editor savedEditor1 = editorRepository.save(editor1);
         Editor savedEditor2 = editorRepository.save(editor2);
 
-        List<BigInteger> idsToFind = Arrays.asList(savedEditor1.getId(), savedEditor2.getId());
+        List<BigInteger> idsToFind = Arrays.asList(savedEditor1.getEd_id(), savedEditor2.getEd_id());
 
         List<Editor> foundEditors = editorRepository.findAllById(idsToFind);
 
@@ -91,7 +91,7 @@ public class EditorRepositoryMemoryTest {
         Editor editor = new Editor();
         Editor savedEditor = editorRepository.save(editor);
 
-        editorRepository.deleteById(savedEditor.getId());
+        editorRepository.deleteById(savedEditor.getEd_id());
 
         assertEquals(0, editorRepository.findAll().size());
     }

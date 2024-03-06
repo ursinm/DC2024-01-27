@@ -1,30 +1,43 @@
 package by.bsuir.rv.bean;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Length;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
-
-@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "tbl_issue")
 @Data
 @NoArgsConstructor
-public class Issue extends IdentifiedBean {
-    private BigInteger editorId;
-    private String title;
-    private String content;
-    private Date created;
-    private Date modified;
+@AllArgsConstructor
+public class Issue {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "iss_id")
+    private BigInteger iss_id;
 
-    public Issue(BigInteger id, BigInteger editorId, String title, String content, Date created, Date modified) {
-        super(id);
-        this.editorId = editorId;
-        this.title = title;
-        this.content = content;
-        this.created = created;
-        this.modified = modified;
-    }
+    @JoinColumn(name = "iss_editor")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Editor iss_editor;
+
+    @Column(name = "iss_title", unique = true)
+    @Length(min = 2, max = 64)
+    private String iss_title;
+
+    @Column(name = "iss_content", nullable = false)
+    private String iss_content;
+
+    @Column(name = "iss_created")
+    private Date iss_created;
+
+    @Column(name = "iss_modified")
+    private Date iss_modified;
 }
