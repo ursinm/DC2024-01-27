@@ -1,10 +1,10 @@
 package by.bsuir.rv.util.converter.issue;
 
+import by.bsuir.rv.bean.Editor;
 import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.bean.Sticker;
 import by.bsuir.rv.dto.IssueRequestTo;
 import by.bsuir.rv.dto.IssueResponseTo;
-import by.bsuir.rv.dto.StickerRequestTo;
 import by.bsuir.rv.dto.StickerResponseTo;
 import by.bsuir.rv.util.converter.sticker.StickerConverter;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class IssueConverterTest {
     @InjectMocks
     private IssueConverter issueConverter;
 
-    private final Issue issue = new Issue(BigInteger.ONE, BigInteger.ONE, "Title", "Text", new Date(), new Date());
+    private final Issue issue = new Issue(BigInteger.ONE, new Editor(), "Title", "Text", new Date(), new Date());
 
     @Test
     void convertToResponse_shouldConvertIssueToResponse() {
@@ -49,13 +49,12 @@ public class IssueConverterTest {
         IssueRequestTo issueRequestTo = new IssueRequestTo(BigInteger.ONE, BigInteger.ONE, "Test Issue", "Test Text", null, null);
 
         MockitoAnnotations.openMocks(this);
-        when(stickerConverter.convertToEntity(any(StickerRequestTo.class))).thenReturn(new Sticker());
 
-        Issue issue = issueConverter.convertToEntity(issueRequestTo);
+        Issue issue = issueConverter.convertToEntity(issueRequestTo, new Editor(BigInteger.ONE, "Test Editor", "Password", "First", "Last"));
 
         assertNotNull(issue);
         assertEquals(issueRequestTo.getId(), issue.getIss_id());
-        assertEquals(issueRequestTo.getEditorId(), issue.getIss_editorId());
+        assertEquals(issueRequestTo.getEditorId(), issue.getIss_editor().getEd_id());
         assertEquals(issueRequestTo.getTitle(), issue.getIss_title());
         assertEquals(issueRequestTo.getContent(), issue.getIss_content());
         assertEquals(issueRequestTo.getCreated(), issue.getIss_created());

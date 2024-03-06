@@ -4,9 +4,10 @@ import by.bsuir.rv.bean.Comment;
 import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.dto.CommentRequestTo;
 import by.bsuir.rv.dto.CommentResponseTo;
-import by.bsuir.rv.exception.EntititesNotFoundException;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.exception.RepositoryException;
+import by.bsuir.rv.repository.comment.CommentRepository;
+import by.bsuir.rv.repository.issue.IssueRepository;
 import by.bsuir.rv.service.comment.impl.CommentService;
 import by.bsuir.rv.util.converter.comment.CommentConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,10 +27,10 @@ import static org.mockito.Mockito.*;
 class CommentServiceTest {
 
     @Mock
-    private CommentRepositoryMemory commentRepository;
+    private CommentRepository commentRepository;
 
     @Mock
-    private IssueRepositoryMemory issueRepository;
+    private IssueRepository issueRepository;
 
     @Mock
     private CommentConverter commentConverter;
@@ -42,7 +44,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void getComments_shouldReturnListOfComments() throws EntititesNotFoundException, RepositoryException {
+    void getComments_shouldReturnListOfComments() {
         Comment comment1 = new Comment();
         Comment comment2 = new Comment();
 
@@ -62,11 +64,15 @@ class CommentServiceTest {
     }
 
     @Test
-    void addComment_shouldSaveComment() {
+    void addComment_shouldSaveComment() throws DuplicateEntityException, EntityNotFoundException {
         CommentRequestTo commentRequest = new CommentRequestTo();
         Comment comment = new Comment();
+        Issue issue = new Issue();
 
-        when(commentConverter.convertToEntity(commentRequest)).thenReturn(comment);
+        when(commentRepository.save(comment)).thenReturn(comment);
+        when(commentRepository.findById(commentRequest.getId())).thenReturn(Optional.of(comment));
+        when(issueRepository.findById(commentRequest.getIssueId())).thenReturn(Optional.of(issue));
+        when(commentConverter.convertToEntity(commentRequest, issue)).thenReturn(comment);
 
         commentService.addComment(commentRequest);
 
@@ -74,8 +80,9 @@ class CommentServiceTest {
     }
 
     @Test
-    void deleteComment_shouldDeleteComment() throws EntityNotFoundException, RepositoryException {
+    void deleteComment_shouldDeleteComment() throws EntityNotFoundException {
         BigInteger commentId = BigInteger.valueOf(1);
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(new Comment()));
 
         commentService.deleteComment(commentId);
 
@@ -83,11 +90,12 @@ class CommentServiceTest {
     }
 
     @Test
-    void updateComment_shouldUpdateComment() throws EntityNotFoundException, RepositoryException {
+    void updateComment_shouldUpdateComment() throws EntityNotFoundException, DuplicateEntityException {
         BigInteger commentId = BigInteger.valueOf(1);
         CommentRequestTo commentRequest = new CommentRequestTo(commentId, BigInteger.ONE, "Content");
 
-        when(commentRepository.findById(commentId)).thenReturn(new Comment(commentId, BigInteger.ONE, "Content"));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(new Comment(commentId, new Issue(), "Content")));
+        when(issueRepository.findById(commentRequest.getIssueId())).thenReturn(Optional.of(new Issue()));
 
         commentService.updateComment(commentRequest);
 
@@ -96,13 +104,13 @@ class CommentServiceTest {
     }
 
     @Test
-    void getCommentById_shouldReturnCommentById() throws EntityNotFoundException, RepositoryException {
+    void getCommentById_shouldReturnCommentById() throws EntityNotFoundException {
         BigInteger commentId = BigInteger.valueOf(1);
-        Comment comment = new Comment();
-        when(commentRepository.findById(commentId)).thenReturn(comment);
+        Comment comment = new Comment(commentId, new Issue(), "Content");
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(comment));
 
         Issue issue = new Issue();
-        when(issueRepository.findById(comment.getIssueId())).thenReturn(issue);
+        when(issueRepository.findById(comment.getCom_issue().getIss_id())).thenReturn(Optional.of(issue));
 
         when(commentConverter.convertToResponse(comment)).thenReturn(new CommentResponseTo());
 
@@ -110,7 +118,6 @@ class CommentServiceTest {
 
         assertNotNull(result);
         verify(commentRepository, times(1)).findById(commentId);
-        verify(issueRepository, times(1)).findById(comment.getIssueId());
         verify(commentConverter, times(1)).convertToResponse(comment);
     }
 }

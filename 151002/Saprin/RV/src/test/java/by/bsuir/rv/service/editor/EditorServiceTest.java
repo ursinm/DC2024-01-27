@@ -3,8 +3,9 @@ package by.bsuir.rv.service.editor;
 import by.bsuir.rv.bean.Editor;
 import by.bsuir.rv.dto.EditorRequestTo;
 import by.bsuir.rv.dto.EditorResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.exception.RepositoryException;
+import by.bsuir.rv.repository.editor.EditorRepository;
 import by.bsuir.rv.service.editor.impl.EditorService;
 import by.bsuir.rv.util.converter.editor.EditorConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +25,7 @@ import static org.mockito.Mockito.*;
 public class EditorServiceTest {
 
     @Mock
-    private EditorRepositoryMemory editorRepository;
+    private EditorRepository editorRepository;
 
     @Mock
     private EditorConverter editorConverter;
@@ -38,7 +40,6 @@ public class EditorServiceTest {
 
     @Test
     void getEditors_shouldReturnListOfEditors() {
-        // Arrange
         Editor editor1 = new Editor();
         Editor editor2 = new Editor();
 
@@ -54,10 +55,10 @@ public class EditorServiceTest {
     }
 
     @Test
-    void getEditorById_shouldReturnEditorById() throws EntityNotFoundException, RepositoryException {
+    void getEditorById_shouldReturnEditorById() throws EntityNotFoundException {
         BigInteger editorId = BigInteger.valueOf(1);
         Editor editor = new Editor();
-        when(editorRepository.findById(editorId)).thenReturn(editor);
+        when(editorRepository.findById(editorId)).thenReturn(Optional.of(editor));
 
         when(editorConverter.convertToResponse(editor)).thenReturn(new EditorResponseTo());
 
@@ -69,7 +70,7 @@ public class EditorServiceTest {
     }
 
     @Test
-    void createEditor_shouldSaveEditor() {
+    void createEditor_shouldSaveEditor() throws DuplicateEntityException {
         EditorRequestTo editorRequest = new EditorRequestTo();
         Editor editor = new Editor();
         when(editorConverter.convertToEntity(editorRequest)).thenReturn(editor);
@@ -84,14 +85,14 @@ public class EditorServiceTest {
     }
 
     @Test
-    void updateEditor_shouldUpdateEditor() throws EntityNotFoundException, RepositoryException {
+    void updateEditor_shouldUpdateEditor() throws EntityNotFoundException {
         BigInteger editorId = BigInteger.valueOf(1);
-        EditorRequestTo editorRequest = new EditorRequestTo();
-        Editor editor = new Editor();
+        EditorRequestTo editorRequest = new EditorRequestTo(editorId, "login", "password", "firstname", "lastname");
+        Editor editor = new Editor(editorId, "login", "password", "firstname", "lastname");
 
         when(editorConverter.convertToEntity(editorRequest)).thenReturn(editor);
         when(editorConverter.convertToResponse(editor)).thenReturn(new EditorResponseTo());
-        when(editorRepository.findById(editorId)).thenReturn(new Editor());
+        when(editorRepository.findById(editorId)).thenReturn(Optional.of(new Editor()));
         when(editorRepository.save(editor)).thenReturn(editor);
 
         EditorResponseTo result = editorService.updateEditor(editorRequest);
@@ -102,8 +103,9 @@ public class EditorServiceTest {
     }
 
     @Test
-    void deleteEditor_shouldDeleteEditor() throws RepositoryException {
+    void deleteEditor_shouldDeleteEditor() {
         BigInteger editorId = BigInteger.valueOf(1);
+        when(editorRepository.findById(editorId)).thenReturn(Optional.of(new Editor()));
 
         assertDoesNotThrow(() -> editorService.deleteEditor(editorId));
 

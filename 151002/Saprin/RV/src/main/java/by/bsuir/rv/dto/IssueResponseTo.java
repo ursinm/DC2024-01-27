@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.util.Date;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data

@@ -5,9 +5,11 @@ import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.bean.Sticker;
 import by.bsuir.rv.dto.IssueRequestTo;
 import by.bsuir.rv.dto.IssueResponseTo;
-import by.bsuir.rv.exception.EntititesNotFoundException;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.exception.RepositoryException;
+import by.bsuir.rv.repository.editor.EditorRepository;
+import by.bsuir.rv.repository.issue.IssueRepository;
+import by.bsuir.rv.repository.sticker.StickerRepository;
 import by.bsuir.rv.service.issue.impl.IssueService;
 import by.bsuir.rv.util.converter.issue.IssueConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,13 +27,13 @@ import static org.mockito.Mockito.*;
 class IssueServiceTest {
 
     @Mock
-    private IssueRepositoryMemory issueRepository;
+    private IssueRepository issueRepository;
 
     @Mock
-    private EditorRepositoryMemory editorRepository;
+    private EditorRepository editorRepository;
 
     @Mock
-    private StickerRepositoryMemory stickerRepository;
+    private StickerRepository stickerRepository;
 
     @Mock
     private IssueConverter issueConverter;
@@ -47,14 +47,14 @@ class IssueServiceTest {
     }
 
     @Test
-    void getIssues_shouldReturnListOfIssues() throws EntititesNotFoundException, RepositoryException {
+    void getIssues_shouldReturnListOfIssues() {
         BigInteger editorId = BigInteger.valueOf(1);
         BigInteger stickerId = BigInteger.valueOf(2);
         BigInteger issueId = BigInteger.valueOf(3);
 
         Editor editor = new Editor(editorId, "TestEditor", "Password", "First", "Last");
-        Issue issue = new Issue(issueId, editorId, "TestTitle", "TestText", new Date(), new Date());
-        Sticker sticker = new Sticker(stickerId, "TestSticker", issueId);
+        Issue issue = new Issue(issueId, new Editor(), "TestTitle", "TestText", new Date(), new Date());
+        Sticker sticker = new Sticker(stickerId, "TestSticker", new ArrayList<>());
 
         when(issueRepository.findAll()).thenReturn(List.of(issue));
         when(editorRepository.findAllById(Collections.singletonList(editorId))).thenReturn(Collections.singletonList(editor));
@@ -70,17 +70,17 @@ class IssueServiceTest {
     }
 
     @Test
-    void getIssueById_shouldReturnIssueById() throws EntityNotFoundException, RepositoryException {
+    void getIssueById_shouldReturnIssueById() throws EntityNotFoundException {
         BigInteger editorId = BigInteger.valueOf(1);
         BigInteger stickerId = BigInteger.valueOf(2);
         BigInteger issueId = BigInteger.valueOf(3);
 
         Editor editor = new Editor(editorId, "TestEditor", "Password", "First", "Last");
-        Issue issue = new Issue(issueId, editorId, "TestTitle", "TestText", new Date(), new Date());
-        Sticker sticker = new Sticker(stickerId, "TestSticker", issueId);
+        Issue issue = new Issue(issueId, new Editor(), "TestTitle", "TestText", new Date(), new Date());
+        Sticker sticker = new Sticker(stickerId, "TestSticker", new ArrayList<>());
 
-        when(issueRepository.findById(issueId)).thenReturn(issue);
-        when(editorRepository.findById(editorId)).thenReturn(editor);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issue));
+        when(editorRepository.findById(editorId)).thenReturn(Optional.of(editor));
         when(stickerRepository.findAllById(Collections.singletonList(stickerId))).thenReturn(Collections.singletonList(sticker));
         when(issueConverter.convertToResponse(issue)).thenReturn(new IssueResponseTo());
 
@@ -92,24 +92,24 @@ class IssueServiceTest {
     }
 
     @Test
-    void addIssue_shouldAddIssueAndReturnResponse() throws EntityNotFoundException, RepositoryException {
+    void addIssue_shouldAddIssueAndReturnResponse() throws EntityNotFoundException, DuplicateEntityException {
         BigInteger editorId = BigInteger.valueOf(1);
         BigInteger stickerId = BigInteger.valueOf(2);
         BigInteger issueId = BigInteger.valueOf(3);
 
         Editor editor = new Editor(editorId, "TestEditor", "Password", "First", "Last");
         IssueRequestTo issueRequestTo = new IssueRequestTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
-        Issue issueEntity = new Issue(issueId, editorId, "TestTitle", "TestText", new Date(), new Date());
+        Issue issueEntity = new Issue(issueId, new Editor(), "TestTitle", "TestText", new Date(), new Date());
         IssueResponseTo expectedResponse = new IssueResponseTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
 
-        Sticker sticker = new Sticker(stickerId, "TestSticker", issueId);
+        Sticker sticker = new Sticker(stickerId, "TestSticker", new ArrayList<>());
 
 
-        when(issueConverter.convertToEntity(issueRequestTo)).thenReturn(issueEntity);
+        when(issueConverter.convertToEntity(issueRequestTo, editor)).thenReturn(issueEntity);
         when(issueRepository.save(issueEntity)).thenReturn(issueEntity);
         when(issueConverter.convertToResponse(issueEntity)).thenReturn(expectedResponse);
-        when(issueRepository.findById(issueId)).thenReturn(issueEntity);
-        when(editorRepository.findById(editorId)).thenReturn(editor);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issueEntity));
+        when(editorRepository.findById(editorId)).thenReturn(Optional.of(editor));
         when(stickerRepository.findAllById(Collections.singletonList(stickerId))).thenReturn(Collections.singletonList(sticker));
         when(issueConverter.convertToResponse(issueEntity)).thenReturn(expectedResponse);
 
@@ -117,15 +117,17 @@ class IssueServiceTest {
 
         assertNotNull(result);
         assertEquals(expectedResponse, result);
-        verify(issueConverter, times(1)).convertToEntity(issueRequestTo);
+        verify(issueConverter, times(1)).convertToEntity(issueRequestTo, editor);
         verify(issueRepository, times(1)).save(issueEntity);
         verify(issueConverter, times(1)).convertToResponse(issueEntity);
     }
 
 
     @Test
-    void deleteIssue_shouldDeleteIssueById() throws RepositoryException {
+    void deleteIssue_shouldDeleteIssueById() {
         BigInteger issueId = BigInteger.valueOf(1);
+
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(new Issue()));
 
         doNothing().when(issueRepository).deleteById(issueId);
 
@@ -135,7 +137,7 @@ class IssueServiceTest {
     }
 
     @Test
-    void updateIssue_shouldUpdateIssueAndReturnResponse() throws EntityNotFoundException, EntititesNotFoundException, RepositoryException {
+    void updateIssue_shouldUpdateIssueAndReturnResponse() throws EntityNotFoundException, DuplicateEntityException {
         BigInteger editorId = BigInteger.valueOf(1);
         BigInteger stickerId = BigInteger.valueOf(2);
         BigInteger issueId = BigInteger.valueOf(3);
@@ -143,17 +145,17 @@ class IssueServiceTest {
         Editor editor = new Editor(editorId, "TestEditor", "Password", "First", "Last");
 
         IssueRequestTo issueRequestTo = new IssueRequestTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
-        Issue issueEntity = new Issue(issueId, editorId, "TestTitle", "TestText", new Date(), new Date());
+        Issue issueEntity = new Issue(issueId, new Editor(), "TestTitle", "TestText", new Date(), new Date());
         IssueResponseTo expectedResponse = new IssueResponseTo(issueId, editor.getEd_id(), "TestTitle", "TestText", new Date(), new Date());
 
-        Sticker sticker = new Sticker(stickerId, "TestSticker", issueId);
+        Sticker sticker = new Sticker(stickerId, "TestSticker", new ArrayList<>());
 
 
-        when(issueConverter.convertToEntity(issueRequestTo)).thenReturn(issueEntity);
+        when(issueConverter.convertToEntity(issueRequestTo, editor)).thenReturn(issueEntity);
         when(issueRepository.save(issueEntity)).thenReturn(issueEntity);
         when(issueConverter.convertToResponse(issueEntity)).thenReturn(expectedResponse);
-        when(issueRepository.findById(issueId)).thenReturn(issueEntity);
-        when(editorRepository.findById(editorId)).thenReturn(editor);
+        when(issueRepository.findById(issueId)).thenReturn(Optional.of(issueEntity));
+        when(editorRepository.findById(editorId)).thenReturn(Optional.of(editor));
         when(stickerRepository.findAllById(Collections.singletonList(stickerId))).thenReturn(Collections.singletonList(sticker));
         when(issueConverter.convertToResponse(issueEntity)).thenReturn(expectedResponse);
 
@@ -161,7 +163,7 @@ class IssueServiceTest {
 
         assertNotNull(result);
         assertEquals(expectedResponse, result);
-        verify(issueConverter, times(1)).convertToEntity(issueRequestTo);
+        verify(issueConverter, times(1)).convertToEntity(issueRequestTo, editor);
         verify(issueRepository, times(1)).save(issueEntity);
         verify(issueConverter, times(1)).convertToResponse(issueEntity);
     }
