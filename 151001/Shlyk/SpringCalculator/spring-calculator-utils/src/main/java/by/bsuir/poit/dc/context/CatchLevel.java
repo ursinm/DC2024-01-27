@@ -1,4 +1,4 @@
-package by.bsuir.poit.dc.rest;
+package by.bsuir.poit.dc.context;
 
 /**
  * @author Paval Shlyk

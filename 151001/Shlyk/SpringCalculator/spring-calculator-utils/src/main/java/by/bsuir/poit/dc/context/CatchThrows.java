@@ -1,4 +1,4 @@
-package by.bsuir.poit.dc.rest;
+package by.bsuir.poit.dc.context;
 
 import java.lang.annotation.RetentionPolicy;
 
@@ -13,7 +13,7 @@ public @interface CatchThrows {
      *
      * @return the default exception will be caught
      */
-    Class<? extends Throwable> value() default java.lang.Throwable.class;
+    Class<? extends Throwable> value() default Throwable.class;
 
     /**
      * If named method throws exception, it will be suppressed by implementation

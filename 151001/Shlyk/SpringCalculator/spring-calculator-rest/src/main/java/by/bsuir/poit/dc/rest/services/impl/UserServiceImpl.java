@@ -1,6 +1,7 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
-import by.bsuir.poit.dc.rest.CatchThrows;
+import by.bsuir.poit.dc.context.CatchLevel;
+import by.bsuir.poit.dc.context.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.UserMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
 import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
@@ -13,6 +14,7 @@ import by.bsuir.poit.dc.rest.services.UserService;
 import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +24,11 @@ import java.util.List;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-@Service
-@RequiredArgsConstructor
+
 @Slf4j
+@Service
+@CatchLevel(DataAccessException.class)
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;

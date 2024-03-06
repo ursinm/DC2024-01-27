@@ -24,6 +24,7 @@
     <modules>
         <module>spring-calculator-rest</module>
         <module>spring-calculator-cassandra</module>
+        <module>spring-calculator-utils</module>
     </modules>
     <properties>
         <java.version>21</java.version>
@@ -122,6 +123,11 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>by.bsuir.poit.dc</groupId>
+                <artifactId>spring-calculator-utils</artifactId>
+                <version>0.0.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

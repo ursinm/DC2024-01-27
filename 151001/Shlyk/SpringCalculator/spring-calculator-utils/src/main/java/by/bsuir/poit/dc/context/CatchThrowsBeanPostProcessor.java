@@ -1,17 +1,12 @@
-package by.bsuir.poit.dc.rest.context;
+package by.bsuir.poit.dc.context;
 
-import by.bsuir.poit.dc.rest.CatchLevel;
-import by.bsuir.poit.dc.rest.CatchThrows;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -35,10 +30,8 @@ import java.util.*;
  * @author Paval Shlyk
  * @since 13/02/2024
  */
-@Component
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class CatchThrowsBeanPostProcessor extends AbstractMethodHandlerBeanPostProcessor {
+public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
     private final Map<String, Pair<Class<?>, Map<String, ExceptionHandlerParams>>> map = new HashMap<>();
 
     private static Pair<Class<?>[], boolean[]> fetchInvokableArguments(Method target, CatchThrows annotation) {

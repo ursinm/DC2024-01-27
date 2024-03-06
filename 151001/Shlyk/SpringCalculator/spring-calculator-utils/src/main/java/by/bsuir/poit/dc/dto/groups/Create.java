@@ -1,4 +1,4 @@
-package by.bsuir.poit.dc.rest.api.dto.groups;
+package by.bsuir.poit.dc.dto.groups;
 
 import jakarta.validation.groups.Default;
 
@@ -6,5 +6,5 @@ import jakarta.validation.groups.Default;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-public interface Update extends Default {
+public interface Create extends Default {
 }

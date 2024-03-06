@@ -41,5 +41,9 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>by.bsuir.poit.dc</groupId>
+            <artifactId>spring-calculator-utils</artifactId>
+        </dependency>
     </dependencies>
 </project>

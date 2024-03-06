@@ -13,7 +13,7 @@ spring:
     properties:
       hibernate.globally_quoted_identifiers: true
   application:
-    name: 'Spring Rest Calculator'
+    name: 'Publicator'
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 server:

@@ -1,11 +1,11 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
-import by.bsuir.poit.dc.rest.CatchLevel;
-import by.bsuir.poit.dc.rest.CatchThrows;
+import by.bsuir.poit.dc.context.CatchLevel;
+import by.bsuir.poit.dc.context.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
-import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.NoteRepository;

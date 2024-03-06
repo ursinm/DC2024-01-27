@@ -1,0 +1,11 @@
+server:
+  port: 24130
+spring:
+  application:
+    name: 'Discussion'
+  cassandra:
+    password:
+    username:
+    keyspace-name: news-notes
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
