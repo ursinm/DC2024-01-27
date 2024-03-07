@@ -8,7 +8,7 @@ import java.sql.Timestamp
 data class IssueRequestTo(
 	private val authorId: Long, private val title: String, private val content: String
 ) {
-	fun toBean(id: Long, created: Timestamp, modified: Timestamp): Issue = Issue(
+	fun toBean(id: Long?, created: Timestamp, modified: Timestamp): Issue = Issue(
 		id, authorId, title, content, created, modified
 	)
 

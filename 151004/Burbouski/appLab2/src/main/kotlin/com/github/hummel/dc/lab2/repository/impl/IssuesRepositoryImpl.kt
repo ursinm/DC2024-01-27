@@ -1,23 +1,31 @@
 package com.github.hummel.dc.lab2.repository.impl
 
 import com.github.hummel.dc.lab2.bean.Issue
+import com.github.hummel.dc.lab2.dao.IssueDao
 import com.github.hummel.dc.lab2.repository.IssuesRepository
 
-class IssuesRepositoryImpl : IssuesRepository {
-	override val data: MutableList<Pair<Long, Issue>> = mutableListOf()
-
-	override suspend fun getLastItem(): Issue? {
-		var maxKey = 0L
-
-		data.forEach { maxKey = maxOf(it.first, maxKey) }
-
-		return data.find { it.first == maxKey }?.second
+class IssuesRepositoryImpl(
+	private val dao: IssueDao
+) : IssuesRepository {
+	override suspend fun create(item: Issue): Long? {
+		return try {
+			dao.create(item)
+		} catch (e: Exception) {
+			null
+		}
 	}
 
-	override suspend fun addItem(id: Long, item: Issue): Issue? {
-		val flag = data.add(id to item)
-		return if (flag) item else null
+	override suspend fun deleteById(id: Long): Boolean = dao.deleteById(id) > 0
+
+	override suspend fun getAll(): List<Issue?> = dao.getAll()
+
+	override suspend fun getById(id: Long): Issue? {
+		return try {
+			dao.getById(id)
+		} catch (e: Exception) {
+			null
+		}
 	}
 
-	override suspend fun removeItem(id: Long): Boolean = data.removeIf { it.first == id }
+	override suspend fun update(item: Issue): Boolean = dao.update(item) > 0
 }

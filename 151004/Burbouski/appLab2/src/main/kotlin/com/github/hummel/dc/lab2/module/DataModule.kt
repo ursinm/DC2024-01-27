@@ -1,7 +1,9 @@
 package com.github.hummel.dc.lab2.module
 
 import com.github.hummel.dc.lab2.dao.AuthorDao
+import com.github.hummel.dc.lab2.dao.IssueDao
 import com.github.hummel.dc.lab2.dao.impl.AuthorDaoImpl
+import com.github.hummel.dc.lab2.dao.impl.IssueDaoImpl
 import com.github.hummel.dc.lab2.repository.AuthorsRepository
 import com.github.hummel.dc.lab2.repository.IssuesRepository
 import com.github.hummel.dc.lab2.repository.MessagesRepository
@@ -26,15 +28,22 @@ val dataModule: Module = module {
 
 		AuthorDaoImpl(dbConnection)
 	}
+	single<IssueDao> {
+		val dbConnection = get<Connection>()
+
+		IssueDaoImpl(dbConnection)
+	}
 
 	single<AuthorsRepository>(authorsRepositoryQualifier) {
-		val authorDao = get<AuthorDao>()
+		val dao = get<AuthorDao>()
 
-		AuthorsRepositoryImpl(authorDao)
+		AuthorsRepositoryImpl(dao)
 	}
 
 	single<IssuesRepository>(issuesRepositoryQualifier) {
-		IssuesRepositoryImpl()
+		val dao = get<IssueDao>()
+
+		IssuesRepositoryImpl(dao)
 	}
 
 	single<MessagesRepository>(messagesRepositoryQualifier) {

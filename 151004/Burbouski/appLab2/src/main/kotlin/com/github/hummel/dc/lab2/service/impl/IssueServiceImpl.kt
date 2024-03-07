@@ -8,45 +8,45 @@ import com.github.hummel.dc.lab2.service.IssueService
 import java.sql.Timestamp
 
 class IssueServiceImpl(
-	private val issueRepository: IssuesRepository
+	private val repository: IssuesRepository
 ) : IssueService {
-	override suspend fun getAll(): List<IssueResponseTo> {
-		val result = issueRepository.data.map { it.second }
-
-		return result.map { it.toResponse() }
-	}
-
-	override suspend fun create(issueRequestTo: IssueRequestTo?): IssueResponseTo? {
-		val id = if (issueRepository.data.isEmpty()) {
-			-1
-		} else {
-			issueRepository.getLastItem()?.id ?: return null
-		} + 1
-
+	override suspend fun create(requestTo: IssueRequestTo?): IssueResponseTo? {
 		val created = Timestamp(System.currentTimeMillis())
 		val modified = Timestamp(System.currentTimeMillis())
 
-		val bean = issueRequestTo?.toBean(id, created, modified) ?: return null
-		val result = issueRepository.addItem(bean.id!!, bean)
+		val bean = requestTo?.toBean(null, created, modified) ?: return null
+		val id = repository.create(bean) ?: return null
+		val result = bean.copy(id = id)
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun deleteById(id: Long): Boolean = issueRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
+
+	override suspend fun getAll(): List<IssueResponseTo> {
+		val result = repository.getAll()
+
+		return result.filterNotNull().map { it.toResponse() }
+	}
 
 	override suspend fun getById(id: Long): IssueResponseTo? {
-		val result = issueRepository.getItemById(id)?.second
+		val result = repository.getById(id) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun update(issueRequestToId: IssueRequestToId?): IssueResponseTo? {
+	override suspend fun update(requestTo: IssueRequestToId?): IssueResponseTo? {
 		val created = Timestamp(System.currentTimeMillis())
 		val modified = Timestamp(System.currentTimeMillis())
 
-		val bean = issueRequestToId?.toBean(created, modified) ?: return null
-		val result = issueRepository.addItem(bean.id!!, bean)
+		val bean = requestTo?.toBean(created, modified) ?: return null
 
-		return result?.toResponse()
+		if (!repository.update(bean)) {
+			throw Exception("Exception during editor updating!")
+		}
+
+		val result = bean.copy()
+
+		return result.toResponse()
 	}
 }

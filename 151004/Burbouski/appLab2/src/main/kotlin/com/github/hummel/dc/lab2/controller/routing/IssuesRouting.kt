@@ -55,8 +55,7 @@ private fun Route.createIssue(issuesService: IssueService) {
 			call.respond(status = HttpStatusCode.Created, issue ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.Forbidden, Response(HttpStatusCode.Forbidden.value)
 			)
 		})
 	}
@@ -65,8 +64,7 @@ private fun Route.createIssue(issuesService: IssueService) {
 private fun Route.getIssue(issuesService: IssueService) {
 	get("/{id?}") {
 		val id = call.parameters["id"] ?: return@get call.respond(
-			status = HttpStatusCode.BadRequest,
-			message = Response(HttpStatusCode.BadRequest.value)
+			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
 
 		val issue = issuesService.getById(id.toLong())
@@ -77,8 +75,7 @@ private fun Route.getIssue(issuesService: IssueService) {
 			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
@@ -87,8 +84,7 @@ private fun Route.getIssue(issuesService: IssueService) {
 private fun Route.deleteIssue(issuesService: IssueService) {
 	delete("/{id?}") {
 		val id = call.parameters["id"] ?: return@delete call.respond(
-			status = HttpStatusCode.BadRequest,
-			message = Response(HttpStatusCode.BadRequest.value)
+			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
 
 		val issue = issuesService.deleteById(id.toLong())
@@ -97,13 +93,11 @@ private fun Route.deleteIssue(issuesService: IssueService) {
 			issue
 		}, onCorrect = {
 			call.respond(
-				status = HttpStatusCode.NoContent,
-				Response(HttpStatusCode.NoContent.value)
+				status = HttpStatusCode.NoContent, Response(HttpStatusCode.NoContent.value)
 			)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
@@ -125,8 +119,7 @@ private fun Route.updateIssue(issuesService: IssueService) {
 			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}

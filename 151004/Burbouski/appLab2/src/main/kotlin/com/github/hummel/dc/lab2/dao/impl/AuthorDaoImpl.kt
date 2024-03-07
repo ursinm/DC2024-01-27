@@ -2,85 +2,20 @@ package com.github.hummel.dc.lab2.dao.impl
 
 import com.github.hummel.dc.lab2.bean.Author
 import com.github.hummel.dc.lab2.dao.AuthorDao
+import com.github.hummel.dc.lab2.database.Authors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-private const val TABLE_NAME: String = "authors"
-private const val COLUMN_ID: String = "authors_id"
-private const val COLUMN_LOGIN: String = "authors_login"
-private const val COLUMN_PASSWORD: String = "authors_password"
-private const val COLUMN_FIRSTNAME: String = "authors_firstname"
-private const val COLUMN_LASTNAME: String = "authors_lastname"
-
-private val CREATE_TABLE_AUTHORS: String = """
-	CREATE TABLE $TABLE_NAME
-	(
-		$COLUMN_ID SERIAL PRIMARY KEY, 
-		$COLUMN_LOGIN VARCHAR(64) UNIQUE, 
-		$COLUMN_PASSWORD VARCHAR(128), 
-		$COLUMN_FIRSTNAME VARCHAR(64), 
-		$COLUMN_LASTNAME VARCHAR(64)
-	);
-	""".trimIndent()
-
-private val INSERT_AUTHOR: String = """
-	INSERT
-	INTO $TABLE_NAME
-	(
-		$COLUMN_LOGIN, 
-		$COLUMN_PASSWORD, 
-		$COLUMN_FIRSTNAME, 
-		$COLUMN_LASTNAME
-	)
-	VALUES (?, ?, ?, ?);
-	""".trimIndent()
-
-private val SELECT_AUTHOR_BY_ID: String = """
-	SELECT
-		$COLUMN_LOGIN, 
-		$COLUMN_PASSWORD, 
-		$COLUMN_FIRSTNAME, 
-		$COLUMN_LASTNAME 
-	FROM $TABLE_NAME 
-	WHERE $COLUMN_ID = ?;
-	""".trimIndent()
-
-private val SELECT_AUTHORS: String = """
-	SELECT 
-		$COLUMN_ID, 
-		$COLUMN_LOGIN, 
-		$COLUMN_PASSWORD, 
-		$COLUMN_FIRSTNAME, 
-		$COLUMN_LASTNAME
-	FROM $TABLE_NAME;
-	""".trimIndent()
-
-private val UPDATE_AUTHOR: String = """
-	UPDATE $TABLE_NAME 
-	SET 
-		$COLUMN_LOGIN = ?, 
-		$COLUMN_PASSWORD = ?, 
-		$COLUMN_FIRSTNAME = ?, 
-		$COLUMN_LASTNAME = ? 
-	WHERE $COLUMN_ID = ?;
-	""".trimMargin()
-
-private val DELETE_AUTHOR: String = """
-	DELETE
-	FROM $TABLE_NAME 
-	WHERE $COLUMN_ID = ?;
-	""".trimIndent()
-
 class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 	init {
 		val statement = connection.createStatement()
-		statement.executeUpdate(CREATE_TABLE_AUTHORS)
+		statement.executeUpdate(Authors.CREATE_TABLE_AUTHORS)
 	}
 
 	override suspend fun create(item: Author): Long = withContext(Dispatchers.IO) {
-		val statement = connection.prepareStatement(INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS)
+		val statement = connection.prepareStatement(Authors.INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS)
 		statement.apply {
 			setString(1, item.login)
 			setString(2, item.password)
@@ -98,7 +33,7 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 	}
 
 	override suspend fun deleteById(id: Long): Int = withContext(Dispatchers.IO) {
-		val statement = connection.prepareStatement(DELETE_AUTHOR)
+		val statement = connection.prepareStatement(Authors.DELETE_AUTHOR)
 		statement.setLong(1, id)
 
 		return@withContext try {
@@ -110,15 +45,15 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 
 	override suspend fun getAll(): List<Author?> = withContext(Dispatchers.IO) {
 		val result = mutableListOf<Author>()
-		val statement = connection.prepareStatement(SELECT_AUTHORS)
+		val statement = connection.prepareStatement(Authors.SELECT_AUTHORS)
 
 		val resultSet = statement.executeQuery()
 		while (resultSet.next()) {
-			val id = resultSet.getLong(COLUMN_ID)
-			val login = resultSet.getString(COLUMN_LOGIN)
-			val password = resultSet.getString(COLUMN_PASSWORD)
-			val firstname = resultSet.getString(COLUMN_FIRSTNAME)
-			val lastname = resultSet.getString(COLUMN_LASTNAME)
+			val id = resultSet.getLong(Authors.COLUMN_ID.toString())
+			val login = resultSet.getString(Authors.COLUMN_LOGIN.toString())
+			val password = resultSet.getString(Authors.COLUMN_PASSWORD.toString())
+			val firstname = resultSet.getString(Authors.COLUMN_FIRSTNAME.toString())
+			val lastname = resultSet.getString(Authors.COLUMN_LASTNAME.toString())
 			result.add(
 				Author(
 					id = id, login = login, password = password, firstname = firstname, lastname = lastname
@@ -130,15 +65,15 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 	}
 
 	override suspend fun getById(id: Long): Author = withContext(Dispatchers.IO) {
-		val statement = connection.prepareStatement(SELECT_AUTHOR_BY_ID)
+		val statement = connection.prepareStatement(Authors.SELECT_AUTHOR_BY_ID)
 		statement.setLong(1, id)
 
 		val resultSet = statement.executeQuery()
 		if (resultSet.next()) {
-			val login = resultSet.getString(COLUMN_LOGIN)
-			val password = resultSet.getString(COLUMN_PASSWORD)
-			val firstname = resultSet.getString(COLUMN_FIRSTNAME)
-			val lastname = resultSet.getString(COLUMN_LASTNAME)
+			val login = resultSet.getString(Authors.COLUMN_LOGIN.toString())
+			val password = resultSet.getString(Authors.COLUMN_PASSWORD.toString())
+			val firstname = resultSet.getString(Authors.COLUMN_FIRSTNAME.toString())
+			val lastname = resultSet.getString(Authors.COLUMN_LASTNAME.toString())
 			return@withContext Author(
 				id = id, login = login, password = password, firstname = firstname, lastname = lastname
 			)
@@ -148,7 +83,7 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 	}
 
 	override suspend fun update(item: Author): Int = withContext(Dispatchers.IO) {
-		val statement = connection.prepareStatement(UPDATE_AUTHOR)
+		val statement = connection.prepareStatement(Authors.UPDATE_AUTHOR)
 		statement.apply {
 			setString(1, item.login)
 			setString(2, item.password)
