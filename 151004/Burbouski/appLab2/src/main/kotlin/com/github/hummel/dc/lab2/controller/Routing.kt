@@ -13,10 +13,12 @@ fun Application.configureRouting() {
 		get("/") {
 			call.respondText("Hello World!")
 		}
-		authorsRouting()
-		issuesRouting()
-		messagesRouting()
-		stickersRouting()
+		route("/api/v1.0") {
+			authorsRouting()
+			issuesRouting()
+			messagesRouting()
+			stickersRouting()
+		}
 	}
 }
 

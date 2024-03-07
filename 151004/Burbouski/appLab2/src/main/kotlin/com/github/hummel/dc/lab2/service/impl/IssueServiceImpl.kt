@@ -27,7 +27,7 @@ class IssueServiceImpl(
 		val modified = Timestamp(System.currentTimeMillis())
 
 		val bean = issueRequestTo?.toBean(id, created, modified) ?: return null
-		val result = issueRepository.addItem(bean.id, bean)
+		val result = issueRepository.addItem(bean.id!!, bean)
 
 		return result?.toResponse()
 	}
@@ -45,7 +45,7 @@ class IssueServiceImpl(
 		val modified = Timestamp(System.currentTimeMillis())
 
 		val bean = issueRequestToId?.toBean(created, modified) ?: return null
-		val result = issueRepository.addItem(bean.id, bean)
+		val result = issueRepository.addItem(bean.id!!, bean)
 
 		return result?.toResponse()
 	}

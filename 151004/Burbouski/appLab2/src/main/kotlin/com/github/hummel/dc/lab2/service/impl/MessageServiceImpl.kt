@@ -23,7 +23,7 @@ class MessageServiceImpl(
 		} + 1
 
 		val bean = messageRequestTo?.toBean(id) ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+		val result = messageRepository.addItem(bean.id!!, bean)
 
 		return result?.toResponse()
 	}
@@ -38,7 +38,7 @@ class MessageServiceImpl(
 
 	override suspend fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo? {
 		val bean = messageRequestToId?.toBean() ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+		val result = messageRepository.addItem(bean.id!!, bean)
 
 		return result?.toResponse()
 	}
