@@ -1,14 +1,13 @@
 package com.github.hummel.dc.lab2.service.impl
 
-import com.github.hummel.dc.lab2.bean.Message
 import com.github.hummel.dc.lab2.dto.request.MessageRequestTo
 import com.github.hummel.dc.lab2.dto.request.MessageRequestToId
 import com.github.hummel.dc.lab2.dto.response.MessageResponseTo
+import com.github.hummel.dc.lab2.repository.MessagesRepository
 import com.github.hummel.dc.lab2.service.MessageService
-import com.github.hummel.dc.lab2.util.BaseRepository
 
 class MessageServiceImpl(
-	private val messageRepository: BaseRepository<Message, Long>
+	private val messageRepository: MessagesRepository
 ) : MessageService {
 	override fun getAll(): List<MessageResponseTo> {
 		val result = messageRepository.data.map { it.second }

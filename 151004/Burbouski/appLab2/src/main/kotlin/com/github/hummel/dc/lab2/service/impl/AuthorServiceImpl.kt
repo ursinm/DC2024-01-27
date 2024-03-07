@@ -1,14 +1,13 @@
 package com.github.hummel.dc.lab2.service.impl
 
-import com.github.hummel.dc.lab2.bean.Author
 import com.github.hummel.dc.lab2.dto.request.AuthorRequestTo
 import com.github.hummel.dc.lab2.dto.request.AuthorRequestToId
 import com.github.hummel.dc.lab2.dto.response.AuthorResponseTo
+import com.github.hummel.dc.lab2.repository.AuthorsRepository
 import com.github.hummel.dc.lab2.service.AuthorService
-import com.github.hummel.dc.lab2.util.BaseRepository
 
 class AuthorServiceImpl(
-	private val authorRepository: BaseRepository<Author, Long>
+	private val authorRepository: AuthorsRepository
 ) : AuthorService {
 	override fun getAll(): List<AuthorResponseTo> {
 		val result = authorRepository.data.map { it.second }

@@ -1,14 +1,13 @@
 package com.github.hummel.dc.lab2.service.impl
 
-import com.github.hummel.dc.lab2.bean.Sticker
 import com.github.hummel.dc.lab2.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab2.dto.request.StickerRequestToId
 import com.github.hummel.dc.lab2.dto.response.StickerResponseTo
+import com.github.hummel.dc.lab2.repository.StickersRepository
 import com.github.hummel.dc.lab2.service.StickerService
-import com.github.hummel.dc.lab2.util.BaseRepository
 
 class StickerServiceImpl(
-	private val messageRepository: BaseRepository<Sticker, Long>
+	private val messageRepository: StickersRepository
 ) : StickerService {
 	override fun getAll(): List<StickerResponseTo> {
 		val result = messageRepository.data.map { it.second }

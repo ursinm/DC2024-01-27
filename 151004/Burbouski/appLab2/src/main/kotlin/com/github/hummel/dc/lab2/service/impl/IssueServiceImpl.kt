@@ -1,15 +1,14 @@
 package com.github.hummel.dc.lab2.service.impl
 
-import com.github.hummel.dc.lab2.bean.Issue
 import com.github.hummel.dc.lab2.dto.request.IssueRequestTo
 import com.github.hummel.dc.lab2.dto.request.IssueRequestToId
 import com.github.hummel.dc.lab2.dto.response.IssueResponseTo
+import com.github.hummel.dc.lab2.repository.IssuesRepository
 import com.github.hummel.dc.lab2.service.IssueService
-import com.github.hummel.dc.lab2.util.BaseRepository
 import java.sql.Timestamp
 
 class IssueServiceImpl(
-	private val issueRepository: BaseRepository<Issue, Long>
+	private val issueRepository: IssuesRepository
 ) : IssueService {
 	override fun getAll(): List<IssueResponseTo> {
 		val result = issueRepository.data.map { it.second }
