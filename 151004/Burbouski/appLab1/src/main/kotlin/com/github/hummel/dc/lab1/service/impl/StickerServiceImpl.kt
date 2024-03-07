@@ -10,7 +10,7 @@ class StickerServiceImpl(
 	private val repository: StickersRepository
 ) : StickerService {
 	override suspend fun create(requestTo: StickerRequestTo?): StickerResponseTo? {
-		val id = repository.getLastId() ?: return null
+		val id = repository.getNextId() ?: return null
 		val bean = requestTo?.toBean(id) ?: return null
 		val result = repository.create(bean.id, bean) ?: return null
 
@@ -20,9 +20,9 @@ class StickerServiceImpl(
 	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
 
 	override suspend fun getAll(): List<StickerResponseTo> {
-		val result = repository.data.map { it.second }
+		val result = repository.getAll()
 
-		return result.map { it.toResponse() }
+		return result.filterNotNull().map { it.toResponse() }
 	}
 
 	override suspend fun getById(id: Long): StickerResponseTo? {

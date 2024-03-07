@@ -9,9 +9,9 @@ interface AuthorsRepository {
 
 	suspend fun deleteById(id: Long): Boolean
 
-	suspend fun getAll(): List<Author>
+	suspend fun getAll(): List<Author?>
 
 	suspend fun getById(id: Long): Author?
 
-	suspend fun getLastId(): Long?
+	suspend fun getNextId(): Long?
 }

@@ -10,7 +10,7 @@ class AuthorServiceImpl(
 	private val repository: AuthorsRepository
 ) : AuthorService {
 	override suspend fun create(requestTo: AuthorRequestTo?): AuthorResponseTo? {
-		val id = repository.getLastId() ?: return null
+		val id = repository.getNextId() ?: return null
 		val bean = requestTo?.toBean(id) ?: return null
 		val result = repository.create(bean.id, bean) ?: return null
 
@@ -22,7 +22,7 @@ class AuthorServiceImpl(
 	override suspend fun getAll(): List<AuthorResponseTo> {
 		val result = repository.getAll()
 
-		return result.map { it.toResponse() }
+		return result.filterNotNull().map { it.toResponse() }
 	}
 
 	override suspend fun getById(id: Long): AuthorResponseTo? {

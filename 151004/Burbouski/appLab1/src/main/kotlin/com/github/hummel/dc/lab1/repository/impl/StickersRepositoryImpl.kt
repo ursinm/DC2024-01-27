@@ -13,11 +13,11 @@ class StickersRepositoryImpl : StickersRepository {
 
 	override suspend fun deleteById(id: Long): Boolean = data.removeIf { it.first == id }
 
-	override suspend fun getAll(): List<Sticker> = data.map { it.second }
+	override suspend fun getAll(): List<Sticker?> = data.map { it.second }
 
 	override suspend fun getById(id: Long): Sticker? = data.find { it.first == id }?.second
 
-	override suspend fun getLastId(): Long? {
+	override suspend fun getNextId(): Long? {
 		return if (data.isEmpty()) {
 			-1
 		} else {

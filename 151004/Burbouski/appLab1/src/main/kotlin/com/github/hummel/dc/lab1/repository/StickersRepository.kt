@@ -9,9 +9,9 @@ interface StickersRepository {
 
 	suspend fun deleteById(id: Long): Boolean
 
-	suspend fun getAll(): List<Sticker>
+	suspend fun getAll(): List<Sticker?>
 
 	suspend fun getById(id: Long): Sticker?
 
-	suspend fun getLastId(): Long?
+	suspend fun getNextId(): Long?
 }

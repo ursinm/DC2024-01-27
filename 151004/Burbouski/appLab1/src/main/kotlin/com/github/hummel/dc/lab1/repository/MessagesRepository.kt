@@ -9,9 +9,9 @@ interface MessagesRepository {
 
 	suspend fun deleteById(id: Long): Boolean
 
-	suspend fun getAll(): List<Message>
+	suspend fun getAll(): List<Message?>
 
 	suspend fun getById(id: Long): Message?
 
-	suspend fun getLastId(): Long?
+	suspend fun getNextId(): Long?
 }

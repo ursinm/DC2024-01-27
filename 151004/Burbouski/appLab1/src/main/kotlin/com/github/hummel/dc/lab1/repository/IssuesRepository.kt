@@ -9,9 +9,9 @@ interface IssuesRepository {
 
 	suspend fun deleteById(id: Long): Boolean
 
-	suspend fun getAll(): List<Issue>
+	suspend fun getAll(): List<Issue?>
 
 	suspend fun getById(id: Long): Issue?
 
-	suspend fun getLastId(): Long?
+	suspend fun getNextId(): Long?
 }

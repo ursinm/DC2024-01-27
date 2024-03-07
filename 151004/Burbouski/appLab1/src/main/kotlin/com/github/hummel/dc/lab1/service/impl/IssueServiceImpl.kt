@@ -14,7 +14,7 @@ class IssueServiceImpl(
 		val created = Timestamp(System.currentTimeMillis())
 		val modified = Timestamp(System.currentTimeMillis())
 
-		val id = repository.getLastId() ?: return null
+		val id = repository.getNextId() ?: return null
 		val bean = requestTo?.toBean(id, created, modified) ?: return null
 		val result = repository.create(bean.id, bean) ?: return null
 
@@ -24,9 +24,9 @@ class IssueServiceImpl(
 	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
 
 	override suspend fun getAll(): List<IssueResponseTo> {
-		val result = repository.data.map { it.second }
+		val result = repository.getAll()
 
-		return result.map { it.toResponse() }
+		return result.filterNotNull().map { it.toResponse() }
 	}
 
 	override suspend fun getById(id: Long): IssueResponseTo? {
