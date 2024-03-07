@@ -7,9 +7,9 @@ import com.github.hummel.dc.lab2.repository.AuthorsRepository
 class AuthorsRepositoryImpl(
 	private val dao: AuthorDao
 ) : AuthorsRepository {
-	override suspend fun create(author: Author): Long? {
+	override suspend fun create(item: Author): Long? {
 		return try {
-			dao.create(author)
+			dao.create(item)
 		} catch (e: Exception) {
 			null
 		}
@@ -27,5 +27,5 @@ class AuthorsRepositoryImpl(
 		}
 	}
 
-	override suspend fun update(author: Author): Boolean = dao.update(author) > 0
+	override suspend fun update(item: Author): Boolean = dao.update(item) > 0
 }

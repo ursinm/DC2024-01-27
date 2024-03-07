@@ -3,7 +3,7 @@ package com.github.hummel.dc.lab2.dao
 import com.github.hummel.dc.lab2.bean.Author
 
 interface AuthorDao {
-	suspend fun create(authorEntity: Author): Long
+	suspend fun create(item: Author): Long
 
 	suspend fun deleteById(id: Long): Int
 
@@ -11,5 +11,5 @@ interface AuthorDao {
 
 	suspend fun getById(id: Long): Author
 
-	suspend fun update(authorEntity: Author): Int
+	suspend fun update(item: Author): Int
 }

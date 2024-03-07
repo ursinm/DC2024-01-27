@@ -79,13 +79,13 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 		statement.executeUpdate(CREATE_TABLE_AUTHORS)
 	}
 
-	override suspend fun create(authorEntity: Author): Long = withContext(Dispatchers.IO) {
+	override suspend fun create(item: Author): Long = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS)
 		statement.apply {
-			setString(1, authorEntity.login)
-			setString(2, authorEntity.password)
-			setString(3, authorEntity.firstname)
-			setString(4, authorEntity.lastname)
+			setString(1, item.login)
+			setString(2, item.password)
+			setString(3, item.firstname)
+			setString(4, item.lastname)
 			executeUpdate()
 		}
 
@@ -147,14 +147,14 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 		}
 	}
 
-	override suspend fun update(authorEntity: Author): Int = withContext(Dispatchers.IO) {
+	override suspend fun update(item: Author): Int = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(UPDATE_AUTHOR)
 		statement.apply {
-			setString(1, authorEntity.login)
-			setString(2, authorEntity.password)
-			setString(3, authorEntity.firstname)
-			setString(4, authorEntity.lastname)
-			authorEntity.id?.let { setLong(5, it) }
+			setString(1, item.login)
+			setString(2, item.password)
+			setString(3, item.firstname)
+			setString(4, item.lastname)
+			item.id?.let { setLong(5, it) }
 		}
 
 		return@withContext try {
