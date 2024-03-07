@@ -11,8 +11,6 @@ group = "com.github.hummel"
 version = LocalDate.now().format(DateTimeFormatter.ofPattern("yy.MM.dd"))
 
 dependencies {
-	implementation("com.mysql:mysql-connector-j:8.2.0")
-
 	implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
 	implementation("io.ktor:ktor-server-content-negotiation-jvm")
 
