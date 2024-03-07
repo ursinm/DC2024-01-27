@@ -7,38 +7,33 @@ import com.github.hummel.dc.lab1.repository.AuthorsRepository
 import com.github.hummel.dc.lab1.service.AuthorService
 
 class AuthorServiceImpl(
-	private val authorRepository: AuthorsRepository
+	private val repository: AuthorsRepository
 ) : AuthorService {
+	override suspend fun create(requestTo: AuthorRequestTo?): AuthorResponseTo? {
+		val id = repository.getLastId() ?: return null
+		val bean = requestTo?.toBean(id) ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
+
+		return result.toResponse()
+	}
+
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
+
 	override suspend fun getAll(): List<AuthorResponseTo> {
-		val result = authorRepository.getAll()
+		val result = repository.getAll()
 
 		return result.map { it.toResponse() }
 	}
 
-	override suspend fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo? {
-		val id = if (authorRepository.data.isEmpty()) {
-			-1
-		} else {
-			authorRepository.getLastItem()?.id ?: return null
-		} + 1
-
-		val bean = authorRequestTo?.toBean(id) ?: return null
-		val result = authorRepository.addItem(bean.id, bean) ?: return null
-
-		return result.toResponse()
-	}
-
-	override suspend fun deleteById(id: Long): Boolean = authorRepository.deleteById(id)
-
 	override suspend fun getById(id: Long): AuthorResponseTo? {
-		val result = authorRepository.getById(id) ?: return null
+		val result = repository.getById(id) ?: return null
 
 		return result.toResponse()
 	}
 
-	override suspend fun update(authorRequestToId: AuthorRequestToId?): AuthorResponseTo? {
-		val bean = authorRequestToId?.toBean() ?: return null
-		val result = authorRepository.addItem(bean.id, bean) ?: return null
+	override suspend fun update(requestTo: AuthorRequestToId?): AuthorResponseTo? {
+		val bean = requestTo?.toBean() ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
 
 		return result.toResponse()
 	}

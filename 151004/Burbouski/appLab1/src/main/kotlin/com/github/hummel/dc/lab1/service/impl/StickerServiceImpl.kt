@@ -7,38 +7,33 @@ import com.github.hummel.dc.lab1.repository.StickersRepository
 import com.github.hummel.dc.lab1.service.StickerService
 
 class StickerServiceImpl(
-	private val messageRepository: StickersRepository
+	private val repository: StickersRepository
 ) : StickerService {
+	override suspend fun create(requestTo: StickerRequestTo?): StickerResponseTo? {
+		val id = repository.getLastId() ?: return null
+		val bean = requestTo?.toBean(id) ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
+
+		return result.toResponse()
+	}
+
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
+
 	override suspend fun getAll(): List<StickerResponseTo> {
-		val result = messageRepository.data.map { it.second }
+		val result = repository.data.map { it.second }
 
 		return result.map { it.toResponse() }
 	}
 
-	override suspend fun create(messageRequestTo: StickerRequestTo?): StickerResponseTo? {
-		val id = if (messageRepository.data.isEmpty()) {
-			-1
-		} else {
-			messageRepository.getLastItem()?.id ?: return null
-		} + 1
-
-		val bean = messageRequestTo?.toBean(id) ?: return null
-		val result = messageRepository.addItem(bean.id, bean) ?: return null
-
-		return result.toResponse()
-	}
-
-	override suspend fun deleteById(id: Long): Boolean = messageRepository.deleteById(id)
-
 	override suspend fun getById(id: Long): StickerResponseTo? {
-		val result = messageRepository.getById(id) ?: return null
+		val result = repository.getById(id) ?: return null
 
 		return result.toResponse()
 	}
 
-	override suspend fun update(messageRequestToId: StickerRequestToId?): StickerResponseTo? {
-		val bean = messageRequestToId?.toBean() ?: return null
-		val result = messageRepository.addItem(bean.id, bean) ?: return null
+	override suspend fun update(requestTo: StickerRequestToId?): StickerResponseTo? {
+		val bean = requestTo?.toBean() ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
 
 		return result.toResponse()
 	}
