@@ -5,13 +5,13 @@ import com.github.hummel.dc.lab1.dto.request.IssueRequestToId
 import com.github.hummel.dc.lab1.dto.response.IssueResponseTo
 
 interface IssueService {
-	fun getAll(): List<IssueResponseTo>
+	suspend fun getAll(): List<IssueResponseTo>
 
-	fun create(issueRequestTo: IssueRequestTo?): IssueResponseTo?
+	suspend fun create(issueRequestTo: IssueRequestTo?): IssueResponseTo?
 
-	fun deleteById(id: Long): Boolean
+	suspend fun deleteById(id: Long): Boolean
 
-	fun getById(id: Long): IssueResponseTo?
+	suspend fun getById(id: Long): IssueResponseTo?
 
-	fun update(issueRequestToId: IssueRequestToId?): IssueResponseTo?
+	suspend fun update(issueRequestToId: IssueRequestToId?): IssueResponseTo?
 }

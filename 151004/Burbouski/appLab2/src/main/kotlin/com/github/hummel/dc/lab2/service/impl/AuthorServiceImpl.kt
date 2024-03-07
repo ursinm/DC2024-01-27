@@ -9,13 +9,13 @@ import com.github.hummel.dc.lab2.service.AuthorService
 class AuthorServiceImpl(
 	private val authorRepository: AuthorsRepository
 ) : AuthorService {
-	override fun getAll(): List<AuthorResponseTo> {
+	override suspend fun getAll(): List<AuthorResponseTo> {
 		val result = authorRepository.data.map { it.second }
 
 		return result.map { it.toResponse() }
 	}
 
-	override fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo? {
+	override suspend fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo? {
 		val id = if (authorRepository.data.isEmpty()) {
 			-1
 		} else {
@@ -28,15 +28,15 @@ class AuthorServiceImpl(
 		return result?.toResponse()
 	}
 
-	override fun deleteById(id: Long): Boolean = authorRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = authorRepository.removeItem(id)
 
-	override fun getById(id: Long): AuthorResponseTo? {
+	override suspend fun getById(id: Long): AuthorResponseTo? {
 		val result = authorRepository.getItemById(id)?.second
 
 		return result?.toResponse()
 	}
 
-	override fun update(authorRequestToId: AuthorRequestToId?): AuthorResponseTo? {
+	override suspend fun update(authorRequestToId: AuthorRequestToId?): AuthorResponseTo? {
 		val bean = authorRequestToId?.toBean() ?: return null
 		val result = authorRepository.addItem(bean.id, bean)
 

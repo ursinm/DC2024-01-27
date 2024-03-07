@@ -9,13 +9,13 @@ import com.github.hummel.dc.lab1.service.StickerService
 class StickerServiceImpl(
 	private val messageRepository: StickersRepository
 ) : StickerService {
-	override fun getAll(): List<StickerResponseTo> {
+	override suspend fun getAll(): List<StickerResponseTo> {
 		val result = messageRepository.data.map { it.second }
 
 		return result.map { it.toResponse() }
 	}
 
-	override fun create(messageRequestTo: StickerRequestTo?): StickerResponseTo? {
+	override suspend fun create(messageRequestTo: StickerRequestTo?): StickerResponseTo? {
 		val id = if (messageRepository.data.isEmpty()) {
 			-1
 		} else {
@@ -28,15 +28,15 @@ class StickerServiceImpl(
 		return result?.toResponse()
 	}
 
-	override fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
 
-	override fun getById(id: Long): StickerResponseTo? {
+	override suspend fun getById(id: Long): StickerResponseTo? {
 		val result = messageRepository.getItemById(id)?.second
 
 		return result?.toResponse()
 	}
 
-	override fun update(messageRequestToId: StickerRequestToId?): StickerResponseTo? {
+	override suspend fun update(messageRequestToId: StickerRequestToId?): StickerResponseTo? {
 		val bean = messageRequestToId?.toBean() ?: return null
 		val result = messageRepository.addItem(bean.id, bean)
 

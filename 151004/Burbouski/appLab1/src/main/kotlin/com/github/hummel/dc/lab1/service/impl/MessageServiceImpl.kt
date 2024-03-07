@@ -9,13 +9,13 @@ import com.github.hummel.dc.lab1.service.MessageService
 class MessageServiceImpl(
 	private val messageRepository: MessagesRepository
 ) : MessageService {
-	override fun getAll(): List<MessageResponseTo> {
+	override suspend fun getAll(): List<MessageResponseTo> {
 		val result = messageRepository.data.map { it.second }
 
 		return result.map { it.toResponse() }
 	}
 
-	override fun create(messageRequestTo: MessageRequestTo?): MessageResponseTo? {
+	override suspend fun create(messageRequestTo: MessageRequestTo?): MessageResponseTo? {
 		val id = if (messageRepository.data.isEmpty()) {
 			-1
 		} else {
@@ -28,15 +28,15 @@ class MessageServiceImpl(
 		return result?.toResponse()
 	}
 
-	override fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
 
-	override fun getById(id: Long): MessageResponseTo? {
+	override suspend fun getById(id: Long): MessageResponseTo? {
 		val result = messageRepository.getItemById(id)?.second
 
 		return result?.toResponse()
 	}
 
-	override fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo? {
+	override suspend fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo? {
 		val bean = messageRequestToId?.toBean() ?: return null
 		val result = messageRepository.addItem(bean.id, bean)
 

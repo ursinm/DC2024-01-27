@@ -10,13 +10,13 @@ import java.sql.Timestamp
 class IssueServiceImpl(
 	private val issueRepository: IssuesRepository
 ) : IssueService {
-	override fun getAll(): List<IssueResponseTo> {
+	override suspend fun getAll(): List<IssueResponseTo> {
 		val result = issueRepository.data.map { it.second }
 
 		return result.map { it.toResponse() }
 	}
 
-	override fun create(issueRequestTo: IssueRequestTo?): IssueResponseTo? {
+	override suspend fun create(issueRequestTo: IssueRequestTo?): IssueResponseTo? {
 		val id = if (issueRepository.data.isEmpty()) {
 			-1
 		} else {
@@ -32,15 +32,15 @@ class IssueServiceImpl(
 		return result?.toResponse()
 	}
 
-	override fun deleteById(id: Long): Boolean = issueRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = issueRepository.removeItem(id)
 
-	override fun getById(id: Long): IssueResponseTo? {
+	override suspend fun getById(id: Long): IssueResponseTo? {
 		val result = issueRepository.getItemById(id)?.second
 
 		return result?.toResponse()
 	}
 
-	override fun update(issueRequestToId: IssueRequestToId?): IssueResponseTo? {
+	override suspend fun update(issueRequestToId: IssueRequestToId?): IssueResponseTo? {
 		val created = Timestamp(System.currentTimeMillis())
 		val modified = Timestamp(System.currentTimeMillis())
 

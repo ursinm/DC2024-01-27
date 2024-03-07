@@ -5,13 +5,13 @@ import com.github.hummel.dc.lab1.dto.request.StickerRequestToId
 import com.github.hummel.dc.lab1.dto.response.StickerResponseTo
 
 interface StickerService {
-	fun getAll(): List<StickerResponseTo>
+	suspend fun getAll(): List<StickerResponseTo>
 
-	fun create(messageRequestTo: StickerRequestTo?): StickerResponseTo?
+	suspend fun create(messageRequestTo: StickerRequestTo?): StickerResponseTo?
 
-	fun deleteById(id: Long): Boolean
+	suspend fun deleteById(id: Long): Boolean
 
-	fun getById(id: Long): StickerResponseTo?
+	suspend fun getById(id: Long): StickerResponseTo?
 
-	fun update(messageRequestToId: StickerRequestToId?): StickerResponseTo?
+	suspend fun update(messageRequestToId: StickerRequestToId?): StickerResponseTo?
 }
