@@ -6,6 +6,8 @@ import com.github.hummel.dc.lab1.repository.MessagesRepository
 class MessagesRepositoryImpl : MessagesRepository {
 	override val data: MutableList<Pair<Long, Message>> = mutableListOf()
 
+	override suspend fun getById(id: Long): Message? = data.find { it.first == id }?.second
+
 	override suspend fun getLastItem(): Message? {
 		var maxKey = 0L
 
@@ -19,5 +21,7 @@ class MessagesRepositoryImpl : MessagesRepository {
 		return if (flag) item else null
 	}
 
-	override suspend fun removeItem(id: Long): Boolean = data.removeIf { it.first == id }
+	override suspend fun deleteById(id: Long): Boolean = data.removeIf { it.first == id }
+
+	override suspend fun getAll(): List<Message> = data.map { it.second }
 }

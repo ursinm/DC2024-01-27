@@ -27,17 +27,17 @@ class IssueServiceImpl(
 		val modified = Timestamp(System.currentTimeMillis())
 
 		val bean = issueRequestTo?.toBean(id, created, modified) ?: return null
-		val result = issueRepository.addItem(bean.id, bean)
+		val result = issueRepository.addItem(bean.id, bean) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun deleteById(id: Long): Boolean = issueRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = issueRepository.deleteById(id)
 
 	override suspend fun getById(id: Long): IssueResponseTo? {
-		val result = issueRepository.getItemById(id)?.second
+		val result = issueRepository.getById(id) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
 	override suspend fun update(issueRequestToId: IssueRequestToId?): IssueResponseTo? {
@@ -45,8 +45,8 @@ class IssueServiceImpl(
 		val modified = Timestamp(System.currentTimeMillis())
 
 		val bean = issueRequestToId?.toBean(created, modified) ?: return null
-		val result = issueRepository.addItem(bean.id, bean)
+		val result = issueRepository.addItem(bean.id, bean) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 }

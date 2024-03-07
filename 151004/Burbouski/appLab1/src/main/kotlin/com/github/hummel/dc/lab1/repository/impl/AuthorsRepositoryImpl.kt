@@ -6,6 +6,8 @@ import com.github.hummel.dc.lab1.repository.AuthorsRepository
 class AuthorsRepositoryImpl : AuthorsRepository {
 	override val data: MutableList<Pair<Long, Author>> = mutableListOf()
 
+	override suspend fun getById(id: Long): Author? = data.find { it.first == id }?.second
+
 	override suspend fun getLastItem(): Author? {
 		var maxKey = 0L
 
@@ -19,5 +21,7 @@ class AuthorsRepositoryImpl : AuthorsRepository {
 		return if (flag) item else null
 	}
 
-	override suspend fun removeItem(id: Long): Boolean = data.removeIf { it.first == id }
+	override suspend fun deleteById(id: Long): Boolean = data.removeIf { it.first == id }
+
+	override suspend fun getAll(): List<Author> = data.map { it.second }
 }

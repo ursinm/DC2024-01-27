@@ -23,23 +23,23 @@ class MessageServiceImpl(
 		} + 1
 
 		val bean = messageRequestTo?.toBean(id) ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+		val result = messageRepository.addItem(bean.id, bean) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
+	override suspend fun deleteById(id: Long): Boolean = messageRepository.deleteById(id)
 
 	override suspend fun getById(id: Long): MessageResponseTo? {
-		val result = messageRepository.getItemById(id)?.second
+		val result = messageRepository.getById(id) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
 	override suspend fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo? {
 		val bean = messageRequestToId?.toBean() ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+		val result = messageRepository.addItem(bean.id, bean) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 }
