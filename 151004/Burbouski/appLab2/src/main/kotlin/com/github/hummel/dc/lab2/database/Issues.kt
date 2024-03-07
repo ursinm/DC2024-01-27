@@ -73,17 +73,6 @@ enum class Issues(private val col: String) {
 			FROM $TABLE_NAME;
 			""".trimIndent()
 
-		val SELECT_ISSUES_BY_EDITOR_ID: String = """
-			SELECT
-				$COLUMN_ID,
-				$COLUMN_TITLE,
-				$COLUMN_CONTENT,
-				$COLUMN_CREATED,
-				$COLUMN_MODIFIED
-			FROM $TABLE_NAME
-			WHERE $COLUMN_AUTHOR_ID = ?;
-			""".trimIndent()
-
 		val UPDATE_ISSUE: String = """
 			UPDATE $TABLE_NAME
 			SET
