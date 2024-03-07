@@ -46,7 +46,7 @@ class IssueDaoImpl(private val connection: Connection) : IssueDao {
 		return@withContext try {
 			statement.executeUpdate()
 		} catch (e: Exception) {
-			throw Exception("Can not delete tweet record")
+			throw Exception("Can not delete item record")
 		}
 	}
 
@@ -99,25 +99,7 @@ class IssueDaoImpl(private val connection: Connection) : IssueDao {
 		return@withContext try {
 			statement.executeUpdate()
 		} catch (e: Exception) {
-			throw Exception("Can not modify tweet record")
+			throw Exception("Can not modify item record")
 		}
-	}
-
-	suspend fun readByAuthorId(authorId: Long): List<Issue?> = withContext(Dispatchers.IO) {
-		val result = mutableListOf<Issue>()
-		val statement = connection.prepareStatement(Issues.SELECT_ISSUES_BY_EDITOR_ID)
-		statement.setLong(1, authorId)
-
-		val resultSet = statement.executeQuery()
-		while (resultSet.next()) {
-			val id = resultSet.getLong(Issues.COLUMN_ID)
-			val title = resultSet.getString(Issues.COLUMN_TITLE)
-			val content = resultSet.getString(Issues.COLUMN_CONTENT)
-			val created = resultSet.getTimestamp(Issues.COLUMN_CREATED)
-			val modified = resultSet.getTimestamp(Issues.COLUMN_MODIFIED)
-			result.add(Issue(id, authorId, title, content, created, modified))
-		}
-
-		result
 	}
 }
