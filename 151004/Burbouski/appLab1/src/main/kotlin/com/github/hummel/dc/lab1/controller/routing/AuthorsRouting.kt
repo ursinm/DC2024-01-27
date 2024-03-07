@@ -13,18 +13,20 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.authorsRouting() {
-	val authorsService: AuthorService by inject()
+	val authorsService by inject<AuthorService>()
 
-	checkAuthors(authorsService)
+	route("/authors") {
+		checkAuthors(authorsService)
 
-	createAuthor(authorsService)
-	deleteAuthor(authorsService)
-	updateAuthor(authorsService)
-	getAuthor(authorsService)
+		createAuthor(authorsService)
+		deleteAuthor(authorsService)
+		updateAuthor(authorsService)
+		getAuthor(authorsService)
+	}
 }
 
 private fun Route.checkAuthors(authorsService: AuthorService) {
-	get("/api/v1.0/authors") {
+	get {
 		val authors = authorsService.getAll()
 
 		respond(isCorrect = {
@@ -38,7 +40,7 @@ private fun Route.checkAuthors(authorsService: AuthorService) {
 }
 
 private fun Route.createAuthor(authorsService: AuthorService) {
-	post("/api/v1.0/authors") {
+	post {
 		val authorRequestTo = try {
 			call.receive<AuthorRequestTo>()
 		} catch (e: Exception) {
@@ -53,18 +55,16 @@ private fun Route.createAuthor(authorsService: AuthorService) {
 			call.respond(status = HttpStatusCode.Created, author ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
 }
 
 private fun Route.getAuthor(authorsService: AuthorService) {
-	get("/api/v1.0/authors/{id?}") {
+	get("/{id?}") {
 		val id = call.parameters["id"] ?: return@get call.respond(
-			status = HttpStatusCode.BadRequest,
-			message = Response(HttpStatusCode.BadRequest.value)
+			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
 
 		val author = authorsService.getById(id.toLong())
@@ -75,18 +75,16 @@ private fun Route.getAuthor(authorsService: AuthorService) {
 			call.respond(status = HttpStatusCode.OK, author ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
 }
 
 private fun Route.deleteAuthor(authorsService: AuthorService) {
-	delete("/api/v1.0/authors/{id?}") {
+	delete("/{id?}") {
 		val id = call.parameters["id"] ?: return@delete call.respond(
-			status = HttpStatusCode.BadRequest,
-			message = Response(HttpStatusCode.BadRequest.value)
+			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
 
 		val author = authorsService.deleteById(id.toLong())
@@ -95,20 +93,18 @@ private fun Route.deleteAuthor(authorsService: AuthorService) {
 			author
 		}, onCorrect = {
 			call.respond(
-				status = HttpStatusCode.NoContent,
-				Response(HttpStatusCode.NoContent.value)
+				status = HttpStatusCode.NoContent, Response(HttpStatusCode.NoContent.value)
 			)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
 }
 
 private fun Route.updateAuthor(authorsService: AuthorService) {
-	put("/api/v1.0/authors") {
+	put {
 		val authorRequestToId = try {
 			call.receive<AuthorRequestToId>()
 		} catch (e: Exception) {
@@ -123,8 +119,7 @@ private fun Route.updateAuthor(authorsService: AuthorService) {
 			call.respond(status = HttpStatusCode.OK, author ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}

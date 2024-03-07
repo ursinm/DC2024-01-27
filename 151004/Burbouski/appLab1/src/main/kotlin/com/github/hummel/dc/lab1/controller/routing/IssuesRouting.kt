@@ -13,18 +13,20 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.issuesRouting() {
-	val issuesService: IssueService by inject()
+	val issuesService by inject<IssueService>()
 
-	checkIssues(issuesService)
+	route("/issues") {
+		checkIssues(issuesService)
 
-	createIssue(issuesService)
-	deleteIssue(issuesService)
-	updateIssue(issuesService)
-	getIssue(issuesService)
+		createIssue(issuesService)
+		deleteIssue(issuesService)
+		updateIssue(issuesService)
+		getIssue(issuesService)
+	}
 }
 
 private fun Route.checkIssues(issuesService: IssueService) {
-	get("/api/v1.0/issues") {
+	get {
 		val issues = issuesService.getAll()
 
 		respond(isCorrect = {
@@ -38,7 +40,7 @@ private fun Route.checkIssues(issuesService: IssueService) {
 }
 
 private fun Route.createIssue(issuesService: IssueService) {
-	post("/api/v1.0/issues") {
+	post {
 		val issueRequestTo = try {
 			call.receive<IssueRequestTo>()
 		} catch (e: Exception) {
@@ -61,7 +63,7 @@ private fun Route.createIssue(issuesService: IssueService) {
 }
 
 private fun Route.getIssue(issuesService: IssueService) {
-	get("/api/v1.0/issues/{id?}") {
+	get("/{id?}") {
 		val id = call.parameters["id"] ?: return@get call.respond(
 			status = HttpStatusCode.BadRequest,
 			message = Response(HttpStatusCode.BadRequest.value)
@@ -83,7 +85,7 @@ private fun Route.getIssue(issuesService: IssueService) {
 }
 
 private fun Route.deleteIssue(issuesService: IssueService) {
-	delete("/api/v1.0/issues/{id?}") {
+	delete("/{id?}") {
 		val id = call.parameters["id"] ?: return@delete call.respond(
 			status = HttpStatusCode.BadRequest,
 			message = Response(HttpStatusCode.BadRequest.value)
@@ -108,7 +110,7 @@ private fun Route.deleteIssue(issuesService: IssueService) {
 }
 
 private fun Route.updateIssue(issuesService: IssueService) {
-	put("/api/v1.0/issues") {
+	put {
 		val issueRequestToId = try {
 			call.receive<IssueRequestToId>()
 		} catch (e: Exception) {
