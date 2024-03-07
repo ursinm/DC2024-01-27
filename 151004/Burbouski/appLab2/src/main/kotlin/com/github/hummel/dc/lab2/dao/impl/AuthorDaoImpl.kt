@@ -1,6 +1,7 @@
-package com.github.hummel.dc.lab2.database
+package com.github.hummel.dc.lab2.dao.impl
 
 import com.github.hummel.dc.lab2.bean.Author
+import com.github.hummel.dc.lab2.dao.AuthorDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
@@ -13,7 +14,7 @@ private const val COLUMN_PASSWORD: String = "authors_password"
 private const val COLUMN_FIRSTNAME: String = "authors_firstname"
 private const val COLUMN_LASTNAME: String = "authors_lastname"
 
-private val CREATE_TABLE_AUTHORS = """
+private val CREATE_TABLE_AUTHORS: String = """
 	CREATE TABLE $TABLE_NAME
 	(
 		$COLUMN_ID SERIAL PRIMARY KEY, 
@@ -24,7 +25,7 @@ private val CREATE_TABLE_AUTHORS = """
 	);
 	""".trimIndent()
 
-private val INSERT_AUTHOR = """
+private val INSERT_AUTHOR: String = """
 	INSERT
 	INTO $TABLE_NAME
 	(
@@ -36,7 +37,7 @@ private val INSERT_AUTHOR = """
 	VALUES (?, ?, ?, ?);
 	""".trimIndent()
 
-private val SELECT_AUTHOR_BY_ID = """
+private val SELECT_AUTHOR_BY_ID: String = """
 	SELECT
 		$COLUMN_LOGIN, 
 		$COLUMN_PASSWORD, 
@@ -46,7 +47,7 @@ private val SELECT_AUTHOR_BY_ID = """
 	WHERE $COLUMN_ID = ?;
 	""".trimIndent()
 
-private val SELECT_AUTHORS = """
+private val SELECT_AUTHORS: String = """
 	SELECT 
 		$COLUMN_ID, 
 		$COLUMN_LOGIN, 
@@ -56,7 +57,7 @@ private val SELECT_AUTHORS = """
 	FROM $TABLE_NAME;
 	""".trimIndent()
 
-private val UPDATE_AUTHOR = """
+private val UPDATE_AUTHOR: String = """
 	UPDATE $TABLE_NAME 
 	SET 
 		$COLUMN_LOGIN = ?, 
@@ -66,19 +67,19 @@ private val UPDATE_AUTHOR = """
 	WHERE $COLUMN_ID = ?;
 	""".trimMargin()
 
-private val DELETE_AUTHOR = """
+private val DELETE_AUTHOR: String = """
 	DELETE
 	FROM $TABLE_NAME 
 	WHERE $COLUMN_ID = ?;
 	""".trimIndent()
 
-class AuthorDao(private val connection: Connection) {
+class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 	init {
 		val statement = connection.createStatement()
 		statement.executeUpdate(CREATE_TABLE_AUTHORS)
 	}
 
-	suspend fun create(authorEntity: Author): Long = withContext(Dispatchers.IO) {
+	override suspend fun create(authorEntity: Author): Long = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS)
 		statement.apply {
 			setString(1, authorEntity.login)
@@ -96,7 +97,7 @@ class AuthorDao(private val connection: Connection) {
 		}
 	}
 
-	suspend fun read(id: Long): Author = withContext(Dispatchers.IO) {
+	override suspend fun getById(id: Long): Author = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(SELECT_AUTHOR_BY_ID)
 		statement.setLong(1, id)
 
@@ -114,7 +115,7 @@ class AuthorDao(private val connection: Connection) {
 		}
 	}
 
-	suspend fun readAll(): List<Author?> = withContext(Dispatchers.IO) {
+	override suspend fun getAll(): List<Author?> = withContext(Dispatchers.IO) {
 		val result = mutableListOf<Author>()
 		val statement = connection.prepareStatement(SELECT_AUTHORS)
 
@@ -135,14 +136,14 @@ class AuthorDao(private val connection: Connection) {
 		result
 	}
 
-	suspend fun update(authorEntity: Author): Int = withContext(Dispatchers.IO) {
+	override suspend fun update(authorEntity: Author): Int = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(UPDATE_AUTHOR)
 		statement.apply {
 			setString(1, authorEntity.login)
 			setString(2, authorEntity.password)
 			setString(3, authorEntity.firstname)
 			setString(4, authorEntity.lastname)
-			setLong(5, authorEntity.id)
+			authorEntity.id?.let { setLong(5, it) }
 		}
 
 		return@withContext try {
@@ -152,7 +153,7 @@ class AuthorDao(private val connection: Connection) {
 		}
 	}
 
-	suspend fun delete(id: Long): Int = withContext(Dispatchers.IO) {
+	override suspend fun deleteById(id: Long): Int = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(DELETE_AUTHOR)
 		statement.setLong(1, id)
 

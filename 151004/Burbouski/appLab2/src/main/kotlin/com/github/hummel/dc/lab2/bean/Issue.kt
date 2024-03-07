@@ -7,7 +7,7 @@ import java.sql.Timestamp
 
 @Serializable
 data class Issue(
-	val id: Long,
+	val id: Long?,
 	val authorId: Long,
 	val title: String,
 	val content: String,

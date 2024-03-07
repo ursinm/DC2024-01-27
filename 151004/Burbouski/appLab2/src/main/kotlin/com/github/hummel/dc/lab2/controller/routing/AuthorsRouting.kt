@@ -53,8 +53,8 @@ private fun Route.createAuthor(authorsService: AuthorService) {
 			call.respond(status = HttpStatusCode.Created, author ?: return@respond)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.Forbidden,
+				Response(HttpStatusCode.Forbidden.value)
 			)
 		})
 	}

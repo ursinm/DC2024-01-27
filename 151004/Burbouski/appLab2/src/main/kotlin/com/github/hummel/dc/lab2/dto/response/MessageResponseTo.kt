@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MessageResponseTo(
-	private val id: Long,
+	private val id: Long?,
 	private val issueId: Long,
 	private val content: String
 )

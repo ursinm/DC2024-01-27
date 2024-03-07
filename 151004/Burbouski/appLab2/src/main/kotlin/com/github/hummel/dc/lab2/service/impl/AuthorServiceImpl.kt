@@ -11,7 +11,7 @@ class AuthorServiceImpl(
 ) : AuthorService {
 	override suspend fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo? {
 		val bean = authorRequestTo?.toBean(null) ?: return null
-		val id = authorRepository.create(bean)
+		val id = authorRepository.create(bean) ?: return null
 
 		return bean.copy(id = id).toResponse()
 	}
@@ -27,13 +27,13 @@ class AuthorServiceImpl(
 	}
 
 	override suspend fun getById(id: Long): AuthorResponseTo? {
-		val editorEntity = authorRepository.read(id) ?: return null
+		val editorEntity = authorRepository.getById(id) ?: return null
 
 		return editorEntity.toResponse()
 	}
 
-	override suspend fun deleteById(id: Long): Boolean = authorRepository.delete(id)
+	override suspend fun deleteById(id: Long): Boolean = authorRepository.deleteById(id)
 
 	override suspend fun getAll(): List<AuthorResponseTo> =
-		authorRepository.readAll().filterNotNull().map { it.toResponse() }
+		authorRepository.getAll().filterNotNull().map { it.toResponse() }
 }

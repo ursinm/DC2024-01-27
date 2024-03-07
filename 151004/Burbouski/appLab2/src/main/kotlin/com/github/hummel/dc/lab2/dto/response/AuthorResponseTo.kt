@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthorResponseTo(
-	private val id: Long,
+	private val id: Long?,
 	private val login: String,
 	private val password: String,
 	private val firstname: String,

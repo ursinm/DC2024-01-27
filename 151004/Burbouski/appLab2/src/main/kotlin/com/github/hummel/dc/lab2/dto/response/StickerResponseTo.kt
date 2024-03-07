@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StickerResponseTo(
-	private val id: Long, private val name: String
+	private val id: Long?, private val name: String
 )

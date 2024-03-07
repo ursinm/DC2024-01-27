@@ -1,33 +1,32 @@
 package com.github.hummel.dc.lab2.repository.impl
 
 import com.github.hummel.dc.lab2.bean.Author
-import com.github.hummel.dc.lab2.database.AuthorDao
+import com.github.hummel.dc.lab2.dao.AuthorDao
+import com.github.hummel.dc.lab2.dao.impl.AuthorDaoImpl
 import com.github.hummel.dc.lab2.repository.AuthorsRepository
 
 class AuthorsRepositoryImpl(
 	private val authorDao: AuthorDao
 ) : AuthorsRepository {
-	override suspend fun create(author: Author): Long {
-		return authorDao.create(author)
-	}
-
-	override suspend fun read(id: Long): Author? {
+	override suspend fun create(author: Author): Long? {
 		return try {
-			authorDao.read(id)
+			authorDao.create(author)
 		} catch (e: Exception) {
 			null
 		}
 	}
 
-	override suspend fun readAll(): List<Author?> {
-		return authorDao.readAll()
+	override suspend fun getById(id: Long): Author? {
+		return try {
+			authorDao.getById(id)
+		} catch (e: Exception) {
+			null
+		}
 	}
 
-	override suspend fun update(author: Author): Boolean {
-		return authorDao.update(author) > 0
-	}
+	override suspend fun getAll(): List<Author?> = authorDao.getAll()
 
-	override suspend fun delete(id: Long): Boolean {
-		return authorDao.delete(id) > 0
-	}
+	override suspend fun update(author: Author): Boolean = authorDao.update(author) > 0
+
+	override suspend fun deleteById(id: Long): Boolean = authorDao.deleteById(id) > 0
 }

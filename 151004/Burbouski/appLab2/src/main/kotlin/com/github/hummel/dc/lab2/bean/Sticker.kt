@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Sticker(
-	val id: Long, val name: String
+	val id: Long?, val name: String
 ) {
 	fun toResponse(): StickerResponseTo = StickerResponseTo(id, name)
 }
