@@ -1,6 +1,6 @@
 package com.github.hummel.dc.lab2.database
 
-import com.github.hummel.dc.lab1.bean.Author
+import com.github.hummel.dc.lab2.bean.Author
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
