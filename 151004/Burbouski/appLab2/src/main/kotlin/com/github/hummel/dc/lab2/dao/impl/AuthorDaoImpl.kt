@@ -97,21 +97,14 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 		}
 	}
 
-	override suspend fun getById(id: Long): Author = withContext(Dispatchers.IO) {
-		val statement = connection.prepareStatement(SELECT_AUTHOR_BY_ID)
+	override suspend fun deleteById(id: Long): Int = withContext(Dispatchers.IO) {
+		val statement = connection.prepareStatement(DELETE_AUTHOR)
 		statement.setLong(1, id)
 
-		val resultSet = statement.executeQuery()
-		if (resultSet.next()) {
-			val login = resultSet.getString(COLUMN_LOGIN)
-			val password = resultSet.getString(COLUMN_PASSWORD)
-			val firstname = resultSet.getString(COLUMN_FIRSTNAME)
-			val lastname = resultSet.getString(COLUMN_LASTNAME)
-			return@withContext Author(
-				id = id, login = login, password = password, firstname = firstname, lastname = lastname
-			)
-		} else {
-			throw Exception("Item record not found.")
+		return@withContext try {
+			statement.executeUpdate()
+		} catch (e: Exception) {
+			throw Exception("Can not delete item record.")
 		}
 	}
 
@@ -136,6 +129,24 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 		result
 	}
 
+	override suspend fun getById(id: Long): Author = withContext(Dispatchers.IO) {
+		val statement = connection.prepareStatement(SELECT_AUTHOR_BY_ID)
+		statement.setLong(1, id)
+
+		val resultSet = statement.executeQuery()
+		if (resultSet.next()) {
+			val login = resultSet.getString(COLUMN_LOGIN)
+			val password = resultSet.getString(COLUMN_PASSWORD)
+			val firstname = resultSet.getString(COLUMN_FIRSTNAME)
+			val lastname = resultSet.getString(COLUMN_LASTNAME)
+			return@withContext Author(
+				id = id, login = login, password = password, firstname = firstname, lastname = lastname
+			)
+		} else {
+			throw Exception("Item record not found.")
+		}
+	}
+
 	override suspend fun update(authorEntity: Author): Int = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(UPDATE_AUTHOR)
 		statement.apply {
@@ -150,17 +161,6 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 			statement.executeUpdate()
 		} catch (e: Exception) {
 			throw Exception("Can not modify item record.")
-		}
-	}
-
-	override suspend fun deleteById(id: Long): Int = withContext(Dispatchers.IO) {
-		val statement = connection.prepareStatement(DELETE_AUTHOR)
-		statement.setLong(1, id)
-
-		return@withContext try {
-			statement.executeUpdate()
-		} catch (e: Exception) {
-			throw Exception("Can not delete item record.")
 		}
 	}
 }
