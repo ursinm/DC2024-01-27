@@ -7,33 +7,39 @@ import com.github.hummel.dc.lab2.repository.AuthorsRepository
 import com.github.hummel.dc.lab2.service.AuthorService
 
 class AuthorServiceImpl(
-	private val authorRepository: AuthorsRepository
+	private val repository: AuthorsRepository
 ) : AuthorService {
-	override suspend fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo? {
-		val bean = authorRequestTo?.toBean(null) ?: return null
-		val id = authorRepository.create(bean) ?: return null
+	override suspend fun create(requestTo: AuthorRequestTo?): AuthorResponseTo? {
+		val bean = requestTo?.toBean(null) ?: return null
+		val id = repository.create(bean) ?: return null
+		val result = bean.copy(id = id)
 
-		return bean.copy(id = id).toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun update(authorRequestToId: AuthorRequestToId?): AuthorResponseTo? {
-		val bean = authorRequestToId?.toBean() ?: return null
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
 
-		if (!authorRepository.update(bean)) {
-			throw Exception("Exception during editor updating!")
-		}
+	override suspend fun getAll(): List<AuthorResponseTo> {
+		val result = repository.getAll()
 
-		return bean.toResponse()
+		return result.filterNotNull().map { it.toResponse() }
 	}
 
 	override suspend fun getById(id: Long): AuthorResponseTo? {
-		val editorEntity = authorRepository.getById(id) ?: return null
+		val result = repository.getById(id) ?: return null
 
-		return editorEntity.toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun deleteById(id: Long): Boolean = authorRepository.deleteById(id)
+	override suspend fun update(requestTo: AuthorRequestToId?): AuthorResponseTo? {
+		val bean = requestTo?.toBean() ?: return null
 
-	override suspend fun getAll(): List<AuthorResponseTo> =
-		authorRepository.getAll().filterNotNull().map { it.toResponse() }
+		if (!repository.update(bean)) {
+			throw Exception("Exception during editor updating!")
+		}
+
+		val result = bean.copy()
+
+		return result.toResponse()
+	}
 }
