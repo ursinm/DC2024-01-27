@@ -9,37 +9,31 @@ import com.github.hummel.dc.lab2.service.AuthorService
 class AuthorServiceImpl(
 	private val authorRepository: AuthorsRepository
 ) : AuthorService {
-	override suspend fun getAll(): List<AuthorResponseTo> {
-		val result = authorRepository.data.map { it.second }
-
-		return result.map { it.toResponse() }
-	}
-
 	override suspend fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo? {
-		val id = if (authorRepository.data.isEmpty()) {
-			-1
-		} else {
-			authorRepository.getLastItem()?.id ?: return null
-		} + 1
+		val bean = authorRequestTo?.toBean(null) ?: return null
+		val id = authorRepository.create(bean)
 
-		val bean = authorRequestTo?.toBean(id) ?: return null
-		val result = authorRepository.addItem(bean.id, bean)
-
-		return result?.toResponse()
-	}
-
-	override suspend fun deleteById(id: Long): Boolean = authorRepository.removeItem(id)
-
-	override suspend fun getById(id: Long): AuthorResponseTo? {
-		val result = authorRepository.getItemById(id)?.second
-
-		return result?.toResponse()
+		return bean.copy(id = id).toResponse()
 	}
 
 	override suspend fun update(authorRequestToId: AuthorRequestToId?): AuthorResponseTo? {
 		val bean = authorRequestToId?.toBean() ?: return null
-		val result = authorRepository.addItem(bean.id, bean)
 
-		return result?.toResponse()
+		if (!authorRepository.update(bean)) {
+			throw Exception("Exception during editor updating!")
+		}
+
+		return bean.toResponse()
 	}
+
+	override suspend fun getById(id: Long): AuthorResponseTo? {
+		val editorEntity = authorRepository.read(id) ?: return null
+
+		return editorEntity.toResponse()
+	}
+
+	override suspend fun deleteById(id: Long): Boolean = authorRepository.delete(id)
+
+	override suspend fun getAll(): List<AuthorResponseTo> =
+		authorRepository.readAll().filterNotNull().map { it.toResponse() }
 }

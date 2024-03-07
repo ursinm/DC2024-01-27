@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class AuthorRequestTo(
 	private val login: String, private val password: String, private val firstname: String, private val lastname: String
 ) {
-	fun toBean(id: Long): Author = Author(id, login, password, firstname, lastname)
+	fun toBean(id: Long?): Author = Author(id, login, password, firstname, lastname)
 
 	init {
 		require(login.length in 2..64)

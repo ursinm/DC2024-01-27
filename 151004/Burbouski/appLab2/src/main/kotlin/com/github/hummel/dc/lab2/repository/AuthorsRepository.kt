@@ -3,13 +3,13 @@ package com.github.hummel.dc.lab2.repository
 import com.github.hummel.dc.lab2.bean.Author
 
 interface AuthorsRepository {
-	val data: MutableList<Pair<Long, Author>>
+	suspend fun create(author: Author): Long
 
-	suspend fun getItemById(id: Long): Pair<Long, Author>? = data.find { it.first == id }
+	suspend fun read(id: Long): Author?
 
-	suspend fun addItem(id: Long, item: Author): Author?
+	suspend fun readAll(): List<Author?>
 
-	suspend fun getLastItem(): Author?
+	suspend fun update(author: Author): Boolean
 
-	suspend fun removeItem(id: Long): Boolean
+	suspend fun delete(id: Long): Boolean
 }

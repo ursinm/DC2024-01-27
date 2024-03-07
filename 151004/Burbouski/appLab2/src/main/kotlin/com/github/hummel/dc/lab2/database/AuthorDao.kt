@@ -135,14 +135,14 @@ class AuthorDao(private val connection: Connection) {
 		result
 	}
 
-	suspend fun update(id: Long, authorEntity: Author): Int = withContext(Dispatchers.IO) {
+	suspend fun update(authorEntity: Author): Int = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(UPDATE_AUTHOR)
 		statement.apply {
 			setString(1, authorEntity.login)
 			setString(2, authorEntity.password)
 			setString(3, authorEntity.firstname)
 			setString(4, authorEntity.lastname)
-			setLong(5, id)
+			setLong(5, authorEntity.id)
 		}
 
 		return@withContext try {
@@ -162,5 +162,4 @@ class AuthorDao(private val connection: Connection) {
 			throw Exception("Can not delete item record.")
 		}
 	}
-
 }
