@@ -5,11 +5,11 @@ import com.github.hummel.dc.lab2.bean.Message
 interface MessagesRepository {
 	val data: MutableList<Pair<Long, Message>>
 
-	fun getItemById(id: Long): Pair<Long, Message>? = data.find { it.first == id }
+	suspend fun getItemById(id: Long): Pair<Long, Message>? = data.find { it.first == id }
 
-	fun addItem(id: Long, item: Message): Message?
+	suspend fun addItem(id: Long, item: Message): Message?
 
-	fun getLastItem(): Message?
+	suspend fun getLastItem(): Message?
 
-	fun removeItem(id: Long): Boolean
+	suspend fun removeItem(id: Long): Boolean
 }
