@@ -74,7 +74,7 @@ enum class Authors(private val col: String) {
 				$COLUMN_FIRSTNAME = ?, 
 				$COLUMN_LASTNAME = ? 
 			WHERE $COLUMN_ID = ?;
-			""".trimMargin()
+			""".trimIndent()
 
 		val DELETE_AUTHOR: String = """
 			DELETE
