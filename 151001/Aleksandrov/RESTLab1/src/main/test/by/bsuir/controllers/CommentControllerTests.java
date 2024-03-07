@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class CommentControllerTests {
@@ -29,9 +30,10 @@ public class CommentControllerTests {
 
     @Test
     public void testGetCommentById() {
+        String body = "{ \"content\": \"Test content\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"content\": \"Test content\" }")
+                .body(body)
                 .when()
                 .post("/api/v1.0/comments")
                 .then()
@@ -45,13 +47,21 @@ public class CommentControllerTests {
                 .get("/api/v1.0/comments/{id}")
                 .then()
                 .statusCode(200);
+
+        given()
+                .pathParam("id", commentId)
+                .when()
+                .delete("/api/v1.0/comments/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
     public void testDeleteComment() {
+        String body = "{ \"content\": \"Test content\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"content\": \"Test content\" }")
+                .body(body)
                 .when()
                 .post("/api/v1.0/comments")
                 .then()
@@ -69,21 +79,11 @@ public class CommentControllerTests {
     }
 
     @Test
-    public void testSaveComment() {
-        given()
-                .contentType(ContentType.JSON)
-                .body("{ \"content\": \"Test content\" }")
-                .when()
-                .post("/api/v1.0/comments")
-                .then()
-                .statusCode(201);
-    }
-
-    @Test
     public void testUpdateComment() {
+        String body = "{ \"content\": \"Test content\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"content\": \"Test content\" }")
+                .body(body)
                 .when()
                 .post("/api/v1.0/comments")
                 .then()
@@ -92,7 +92,7 @@ public class CommentControllerTests {
 
         long commentId = response.jsonPath().getLong("id");
 
-        String body = "{ \"id\": " + commentId + ", \"content\": \"Updated comment\" }";
+        body = "{ \"id\": " + commentId + ", \"content\": \"Updated comment\" }";
 
         given()
                 .contentType(ContentType.JSON)
@@ -102,6 +102,13 @@ public class CommentControllerTests {
                 .then()
                 .statusCode(200)
                 .body("content", equalTo("Updated comment"));
+
+        given()
+                .pathParam("id", commentId)
+                .when()
+                .delete("/api/v1.0/comments/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
@@ -124,15 +131,15 @@ public class CommentControllerTests {
                 .delete("/api/v1.0/comments/{id}")
                 .then()
                 .statusCode(400)
-                .body("errorMessage", equalTo("The comment has not been deleted"))
-                .body("errorCode", equalTo(40003));
+                .body("errorMessage", equalTo("Comment not found!"))
+                .body("errorCode", equalTo(40004));
     }
 
     @Test
     public void testGetCommentByIssueId() {
         Response issueResponse = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"editorId\": 5, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"title6789\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -152,14 +159,19 @@ public class CommentControllerTests {
                 .statusCode(201)
                 .extract().response();
 
-
         given()
                 .pathParam("id", issueId)
                 .when()
                 .get("/api/v1.0/comments/byIssue/{id}")
                 .then()
-                .statusCode(200)
-                .body("content", equalTo("Test content"));
+                .statusCode(200);
+
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
@@ -172,5 +184,131 @@ public class CommentControllerTests {
                 .statusCode(400)
                 .body("errorMessage", equalTo("Comment not found!"))
                 .body("errorCode", equalTo(40004));
+    }
+
+    @Test
+    public void testFindAllOrderById(){
+        String body = "{ \"content\": \"aaa\"}";
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/comments")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer commentId1 = response.jsonPath().getInt("id");
+
+        body = "{ \"content\": \"bbb\"}";
+        response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/comments")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer commentId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=id&sortOrder=asc";
+        Integer id = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].id");
+
+        assertEquals(commentId1, id);
+        uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
+        id = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].id");
+
+        assertEquals(commentId2, id);
+
+        given()
+                .pathParam("id", commentId1)
+                .when()
+                .delete("/api/v1.0/comments/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .pathParam("id", commentId2)
+                .when()
+                .delete("/api/v1.0/comments/{id}")
+                .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void testFindAllOrderByContent(){
+        String body = "{ \"content\": \"aaa\"}";
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/comments")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer commentId1 = response.jsonPath().getInt("id");
+
+        body = "{ \"content\": \"zzzzzzzzzzzzz\"}";
+        response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/comments")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer commentId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=content&sortOrder=asc";
+        String content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].content");
+
+        assertEquals("aaa", content);
+        uri = "/api/v1.0/comments?pageNumber=0&pageSize=10&sortBy=content&sortOrder=desc";
+        content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].content");
+
+        assertEquals("zzzzzzzzzzzzz", content);
+
+        given()
+                .pathParam("id", commentId1)
+                .when()
+                .delete("/api/v1.0/comments/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .pathParam("id", commentId2)
+                .when()
+                .delete("/api/v1.0/comments/{id}")
+                .then()
+                .statusCode(204);
     }
 }

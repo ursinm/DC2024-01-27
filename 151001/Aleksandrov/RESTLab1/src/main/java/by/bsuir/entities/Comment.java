@@ -8,8 +8,16 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "tbl_comment", schema = "distcomp")
 public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private Long issueId;
+    @ManyToOne (cascade=CascadeType.REFRESH)
+    @JoinColumn (name="issue_id")
+    private Issue issue;
+    @Column(name = "content")
     private String content;
 }

@@ -1,17 +1,22 @@
 package by.bsuir.services;
 
-import by.bsuir.dao.LabelDao;
 import by.bsuir.dto.LabelRequestTo;
 import by.bsuir.dto.LabelResponseTo;
+import by.bsuir.entities.Comment;
 import by.bsuir.entities.Label;
 import by.bsuir.exceptions.DeleteException;
 import by.bsuir.exceptions.NotFoundException;
 import by.bsuir.exceptions.UpdateException;
 import by.bsuir.mapper.LabelListMapper;
 import by.bsuir.mapper.LabelMapper;
+import by.bsuir.repository.LabelRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,7 +29,7 @@ public class LabelService {
     @Autowired
     LabelMapper labelMapper;
     @Autowired
-    LabelDao labelDao;
+    LabelRepository labelDao;
     @Autowired
     LabelListMapper labelListMapper;
 
@@ -33,8 +38,15 @@ public class LabelService {
         return label.map(value -> labelMapper.labelToLabelResponse(value)).orElseThrow(() -> new NotFoundException("Label not found!", 40004L));
     }
 
-    public List<LabelResponseTo> getLabels() {
-        return labelListMapper.toLabelResponseList(labelDao.findAll());
+    public List<LabelResponseTo> getLabels(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Pageable pageable;
+        if (sortOrder!=null && sortOrder.equals("asc")){
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        } else{
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+        }
+        Page<Label> labels = labelDao.findAll(pageable);
+        return labelListMapper.toLabelResponseList(labels.toList());
     }
 
     public LabelResponseTo saveLabel(@Valid LabelRequestTo label) {
@@ -43,16 +55,24 @@ public class LabelService {
     }
 
     public void deleteLabel(@Min(0) Long id) throws DeleteException {
-        labelDao.delete(id);
+        if (!labelDao.existsById(id)) {
+            throw new DeleteException("Label not found!", 40004L);
+        } else {
+            labelDao.deleteById(id);
+        }
     }
 
     public LabelResponseTo updateLabel(@Valid LabelRequestTo label) throws UpdateException {
         Label labelToUpdate = labelMapper.labelRequestToLabel(label);
-        return labelMapper.labelToLabelResponse(labelDao.update(labelToUpdate));
+        if (!labelDao.existsById(labelToUpdate.getId())){
+            throw new UpdateException("Label not found!", 40004L);
+        } else {
+            return labelMapper.labelToLabelResponse(labelDao.save(labelToUpdate));
+        }
     }
 
-    public LabelResponseTo getLabelByIssueId(@Min(0) Long issueId) throws NotFoundException {
-        Optional<Label> label = labelDao.getLabelByIssueId(issueId);
-        return label.map(value -> labelMapper.labelToLabelResponse(value)).orElseThrow(() -> new NotFoundException("Label not found!", 40004L));
+    public List<LabelResponseTo> getLabelByIssueId(@Min(0) Long issueId) throws NotFoundException {
+        List<Label> label = labelDao.findLabelsByIssueId(issueId);
+        return labelListMapper.toLabelResponseList(label);
     }
 }

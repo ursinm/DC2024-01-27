@@ -1,12 +1,10 @@
 package by.bsuir.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.NumberFormat;
-
-import java.util.Set;
 
 @Data
 @NoArgsConstructor

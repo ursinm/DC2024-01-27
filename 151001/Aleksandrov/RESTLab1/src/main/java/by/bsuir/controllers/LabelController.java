@@ -18,8 +18,12 @@ public class LabelController {
     LabelService labelService;
 
     @GetMapping
-    public ResponseEntity<List<LabelResponseTo>> getLabels() {
-        return ResponseEntity.status(200).body(labelService.getLabels());
+    public ResponseEntity<List<LabelResponseTo>> getLabels(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(labelService.getLabels(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -45,7 +49,7 @@ public class LabelController {
     }
 
     @GetMapping("/byIssue/{id}")
-    public ResponseEntity<LabelResponseTo> getEditorByIssueId(@PathVariable Long id){
+    public ResponseEntity<List<LabelResponseTo>> getEditorByIssueId(@PathVariable Long id){
         return ResponseEntity.status(200).body(labelService.getLabelByIssueId(id));
     }
 }
