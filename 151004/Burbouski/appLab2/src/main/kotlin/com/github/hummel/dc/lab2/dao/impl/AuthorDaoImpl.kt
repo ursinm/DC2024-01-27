@@ -6,6 +6,7 @@ import com.github.hummel.dc.lab2.database.Authors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
+import java.sql.ResultSet
 import java.sql.Statement
 
 class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
@@ -13,6 +14,9 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 		val statement = connection.createStatement()
 		statement.executeUpdate(Authors.CREATE_TABLE_AUTHORS)
 	}
+
+	private fun ResultSet.getString(value: Authors): String = getString("$value")
+	private fun ResultSet.getLong(value: Authors): Long = getLong("$value")
 
 	override suspend fun create(item: Author): Long = withContext(Dispatchers.IO) {
 		val statement = connection.prepareStatement(Authors.INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS)
@@ -49,11 +53,11 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 
 		val resultSet = statement.executeQuery()
 		while (resultSet.next()) {
-			val id = resultSet.getLong(Authors.COLUMN_ID.toString())
-			val login = resultSet.getString(Authors.COLUMN_LOGIN.toString())
-			val password = resultSet.getString(Authors.COLUMN_PASSWORD.toString())
-			val firstname = resultSet.getString(Authors.COLUMN_FIRSTNAME.toString())
-			val lastname = resultSet.getString(Authors.COLUMN_LASTNAME.toString())
+			val id = resultSet.getLong(Authors.COLUMN_ID)
+			val login = resultSet.getString(Authors.COLUMN_LOGIN)
+			val password = resultSet.getString(Authors.COLUMN_PASSWORD)
+			val firstname = resultSet.getString(Authors.COLUMN_FIRSTNAME)
+			val lastname = resultSet.getString(Authors.COLUMN_LASTNAME)
 			result.add(
 				Author(
 					id = id, login = login, password = password, firstname = firstname, lastname = lastname
@@ -70,10 +74,10 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 
 		val resultSet = statement.executeQuery()
 		if (resultSet.next()) {
-			val login = resultSet.getString(Authors.COLUMN_LOGIN.toString())
-			val password = resultSet.getString(Authors.COLUMN_PASSWORD.toString())
-			val firstname = resultSet.getString(Authors.COLUMN_FIRSTNAME.toString())
-			val lastname = resultSet.getString(Authors.COLUMN_LASTNAME.toString())
+			val login = resultSet.getString(Authors.COLUMN_LOGIN)
+			val password = resultSet.getString(Authors.COLUMN_PASSWORD)
+			val firstname = resultSet.getString(Authors.COLUMN_FIRSTNAME)
+			val lastname = resultSet.getString(Authors.COLUMN_LASTNAME)
 			return@withContext Author(
 				id = id, login = login, password = password, firstname = firstname, lastname = lastname
 			)
