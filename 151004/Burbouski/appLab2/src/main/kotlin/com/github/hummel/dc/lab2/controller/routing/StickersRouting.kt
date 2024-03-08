@@ -1,6 +1,6 @@
 package com.github.hummel.dc.lab2.controller.routing
 
-import com.github.hummel.dc.lab2.bean.Response
+import com.github.hummel.dc.lab2.util.Response
 import com.github.hummel.dc.lab2.controller.respond
 import com.github.hummel.dc.lab2.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab2.dto.request.StickerRequestToId

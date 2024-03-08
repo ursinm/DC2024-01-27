@@ -1,6 +1,6 @@
 package com.github.hummel.dc.lab1.controller.routing
 
-import com.github.hummel.dc.lab1.bean.Response
+import com.github.hummel.dc.lab1.util.Response
 import com.github.hummel.dc.lab1.controller.respond
 import com.github.hummel.dc.lab1.dto.request.AuthorRequestTo
 import com.github.hummel.dc.lab1.dto.request.AuthorRequestToId
