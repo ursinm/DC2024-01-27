@@ -2,8 +2,12 @@ package com.github.hummel.dc.lab2.module
 
 import com.github.hummel.dc.lab2.dao.AuthorDao
 import com.github.hummel.dc.lab2.dao.IssueDao
+import com.github.hummel.dc.lab2.dao.MessageDao
+import com.github.hummel.dc.lab2.dao.StickerDao
 import com.github.hummel.dc.lab2.dao.impl.AuthorDaoImpl
 import com.github.hummel.dc.lab2.dao.impl.IssueDaoImpl
+import com.github.hummel.dc.lab2.dao.impl.MessageDaoImpl
+import com.github.hummel.dc.lab2.dao.impl.StickerDaoImpl
 import com.github.hummel.dc.lab2.repository.AuthorsRepository
 import com.github.hummel.dc.lab2.repository.IssuesRepository
 import com.github.hummel.dc.lab2.repository.MessagesRepository
@@ -33,24 +37,35 @@ val dataModule: Module = module {
 
 		IssueDaoImpl(dbConnection)
 	}
+	single<MessageDao> {
+		val dbConnection = get<Connection>()
+
+		MessageDaoImpl(dbConnection)
+	}
+	single<StickerDao> {
+		val dbConnection = get<Connection>()
+
+		StickerDaoImpl(dbConnection)
+	}
 
 	single<AuthorsRepository>(authorsRepositoryQualifier) {
 		val dao = get<AuthorDao>()
 
 		AuthorsRepositoryImpl(dao)
 	}
-
 	single<IssuesRepository>(issuesRepositoryQualifier) {
 		val dao = get<IssueDao>()
 
 		IssuesRepositoryImpl(dao)
 	}
-
 	single<MessagesRepository>(messagesRepositoryQualifier) {
-		MessagesRepositoryImpl()
-	}
+		val dao = get<MessageDao>()
 
+		MessagesRepositoryImpl(dao)
+	}
 	single<StickersRepository>(stickersRepositoryQualifier) {
-		StickersRepositoryImpl()
+		val dao = get<StickerDao>()
+
+		StickersRepositoryImpl(dao)
 	}
 }

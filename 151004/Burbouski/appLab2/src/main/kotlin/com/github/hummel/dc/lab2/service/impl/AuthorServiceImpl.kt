@@ -35,7 +35,7 @@ class AuthorServiceImpl(
 		val bean = requestTo?.toBean() ?: return null
 
 		if (!repository.update(bean)) {
-			throw Exception("Exception during editor updating!")
+			throw Exception("Exception during item updating!")
 		}
 
 		val result = bean.copy()

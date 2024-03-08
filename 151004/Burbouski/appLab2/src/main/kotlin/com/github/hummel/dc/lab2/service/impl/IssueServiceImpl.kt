@@ -42,7 +42,7 @@ class IssueServiceImpl(
 		val bean = requestTo?.toBean(created, modified) ?: return null
 
 		if (!repository.update(bean)) {
-			throw Exception("Exception during editor updating!")
+			throw Exception("Exception during item updating!")
 		}
 
 		val result = bean.copy()

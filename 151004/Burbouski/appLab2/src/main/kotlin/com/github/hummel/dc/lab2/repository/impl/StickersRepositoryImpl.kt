@@ -1,23 +1,31 @@
 package com.github.hummel.dc.lab2.repository.impl
 
 import com.github.hummel.dc.lab2.bean.Sticker
+import com.github.hummel.dc.lab2.dao.StickerDao
 import com.github.hummel.dc.lab2.repository.StickersRepository
 
-class StickersRepositoryImpl : StickersRepository {
-	override val data: MutableList<Pair<Long, Sticker>> = mutableListOf()
-
-	override suspend fun getLastItem(): Sticker? {
-		var maxKey = 0L
-
-		data.forEach { maxKey = maxOf(it.first, maxKey) }
-
-		return data.find { it.first == maxKey }?.second
+class StickersRepositoryImpl(
+	private val dao: StickerDao
+) : StickersRepository {
+	override suspend fun create(item: Sticker): Long? {
+		return try {
+			dao.create(item)
+		} catch (e: Exception) {
+			null
+		}
 	}
 
-	override suspend fun addItem(id: Long, item: Sticker): Sticker? {
-		val flag = data.add(id to item)
-		return if (flag) item else null
+	override suspend fun deleteById(id: Long): Boolean = dao.deleteById(id) > 0
+
+	override suspend fun getAll(): List<Sticker?> = dao.getAll()
+
+	override suspend fun getById(id: Long): Sticker? {
+		return try {
+			dao.getById(id)
+		} catch (e: Exception) {
+			null
+		}
 	}
 
-	override suspend fun removeItem(id: Long): Boolean = data.removeIf { it.first == id }
+	override suspend fun update(item: Sticker): Boolean = dao.update(item) > 0
 }

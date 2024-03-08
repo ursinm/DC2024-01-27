@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class StickerRequestTo(
 	private val name: String
 ) {
-	fun toBean(id: Long): Sticker = Sticker(
+	fun toBean(id: Long?): Sticker = Sticker(
 		id, name
 	)
 

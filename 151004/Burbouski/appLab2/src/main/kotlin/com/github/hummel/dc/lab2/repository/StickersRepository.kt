@@ -3,13 +3,13 @@ package com.github.hummel.dc.lab2.repository
 import com.github.hummel.dc.lab2.bean.Sticker
 
 interface StickersRepository {
-	val data: MutableList<Pair<Long, Sticker>>
+	suspend fun create(item: Sticker): Long?
 
-	suspend fun getItemById(id: Long): Pair<Long, Sticker>? = data.find { it.first == id }
+	suspend fun getById(id: Long): Sticker?
 
-	suspend fun addItem(id: Long, item: Sticker): Sticker?
+	suspend fun getAll(): List<Sticker?>
 
-	suspend fun getLastItem(): Sticker?
+	suspend fun update(item: Sticker): Boolean
 
-	suspend fun removeItem(id: Long): Boolean
+	suspend fun deleteById(id: Long): Boolean
 }

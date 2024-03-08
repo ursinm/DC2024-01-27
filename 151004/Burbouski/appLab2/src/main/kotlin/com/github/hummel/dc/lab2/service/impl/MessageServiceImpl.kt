@@ -7,39 +7,39 @@ import com.github.hummel.dc.lab2.repository.MessagesRepository
 import com.github.hummel.dc.lab2.service.MessageService
 
 class MessageServiceImpl(
-	private val messageRepository: MessagesRepository
+	private val repository: MessagesRepository
 ) : MessageService {
+	override suspend fun create(requestTo: MessageRequestTo?): MessageResponseTo? {
+		val bean = requestTo?.toBean(null) ?: return null
+		val id = repository.create(bean) ?: return null
+		val result = bean.copy(id = id)
+
+		return result.toResponse()
+	}
+
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
+
 	override suspend fun getAll(): List<MessageResponseTo> {
-		val result = messageRepository.data.map { it.second }
+		val result = repository.getAll()
 
-		return result.map { it.toResponse() }
+		return result.filterNotNull().map { it.toResponse() }
 	}
-
-	override suspend fun create(messageRequestTo: MessageRequestTo?): MessageResponseTo? {
-		val id = if (messageRepository.data.isEmpty()) {
-			-1
-		} else {
-			messageRepository.getLastItem()?.id ?: return null
-		} + 1
-
-		val bean = messageRequestTo?.toBean(id) ?: return null
-		val result = messageRepository.addItem(bean.id!!, bean)
-
-		return result?.toResponse()
-	}
-
-	override suspend fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
 
 	override suspend fun getById(id: Long): MessageResponseTo? {
-		val result = messageRepository.getItemById(id)?.second
+		val result = repository.getById(id) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override suspend fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo? {
-		val bean = messageRequestToId?.toBean() ?: return null
-		val result = messageRepository.addItem(bean.id!!, bean)
+	override suspend fun update(requestTo: MessageRequestToId?): MessageResponseTo? {
+		val bean = requestTo?.toBean() ?: return null
 
-		return result?.toResponse()
+		if (!repository.update(bean)) {
+			throw Exception("Exception during item updating!")
+		}
+
+		val result = bean.copy()
+
+		return result.toResponse()
 	}
 }
