@@ -27,8 +27,7 @@ enum class Issues(private val col: String) {
 
 	companion object {
 		val CREATE_TABLE_ISSUES: String = """
-			CREATE TABLE $TABLE_NAME
-			(
+			CREATE TABLE $TABLE_NAME (
 				$COLUMN_ID SERIAL PRIMARY KEY,
 				$COLUMN_AUTHOR_ID BIGINT,
 				$COLUMN_TITLE VARCHAR(64) UNIQUE,
@@ -40,15 +39,13 @@ enum class Issues(private val col: String) {
 			""".trimIndent()
 
 		val INSERT_ISSUE: String = """
-			INSERT INTO $TABLE_NAME
-			(
+			INSERT INTO $TABLE_NAME (
 				$COLUMN_AUTHOR_ID,
 				$COLUMN_TITLE,
 				$COLUMN_CONTENT,
 				$COLUMN_CREATED,
 				$COLUMN_MODIFIED
-			)
-			VALUES (?, ?, ?, ?, ?);
+			) VALUES (?, ?, ?, ?, ?);
 			""".trimIndent()
 
 		val SELECT_ISSUE_BY_ID: String = """

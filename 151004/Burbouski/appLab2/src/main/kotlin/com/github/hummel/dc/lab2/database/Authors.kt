@@ -24,8 +24,7 @@ enum class Authors(private val col: String) {
 
 	companion object {
 		val CREATE_TABLE_AUTHORS: String = """
-			CREATE TABLE $TABLE_NAME
-			(
+			CREATE TABLE $TABLE_NAME (
 				$COLUMN_ID SERIAL PRIMARY KEY, 
 				$COLUMN_LOGIN VARCHAR(64) UNIQUE, 
 				$COLUMN_PASSWORD VARCHAR(128), 
@@ -36,14 +35,12 @@ enum class Authors(private val col: String) {
 
 		val INSERT_AUTHOR: String = """
 			INSERT
-			INTO $TABLE_NAME
-			(
+			INTO $TABLE_NAME (
 				$COLUMN_LOGIN, 
 				$COLUMN_PASSWORD, 
 				$COLUMN_FIRSTNAME, 
 				$COLUMN_LASTNAME
-			)
-			VALUES (?, ?, ?, ?);
+			) VALUES (?, ?, ?, ?);
 			""".trimIndent()
 
 		val SELECT_AUTHOR_BY_ID: String = """
