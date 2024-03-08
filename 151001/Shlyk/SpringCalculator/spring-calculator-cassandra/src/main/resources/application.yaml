@@ -4,8 +4,17 @@ spring:
   application:
     name: 'Discussion'
   cassandra:
-    password:
-    username:
-    keyspace-name: news-notes
+    keyspace-name: distcomp
+    contact-points: 127.0.0.1
+    port: 9042
+    username: cassandra
+    password: cassandra
+    local-datacenter: datacenter1
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    #    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: classpath:db/changelog/db/changelog/2024/03/07-01-changelog-init.sql
+    driver-class-name: com.ing.data.cassandra.jdbc.CassandraDriver
+    url: 'jdbc:cassandra://localhost:9042/distcomp;DefaultKeyspace=distcomp'
+    user: cassandra
+    password: cassandra
+    default-schema: distcomp

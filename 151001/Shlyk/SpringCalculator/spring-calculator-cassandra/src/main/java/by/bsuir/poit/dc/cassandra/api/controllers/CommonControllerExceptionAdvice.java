@@ -1,10 +1,10 @@
-package by.bsuir.poit.dc.rest.api.controllers;
+package by.bsuir.poit.dc.cassandra.api.controllers;
 
-import by.bsuir.poit.dc.rest.api.dto.response.ErrorDto;
-import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
-import by.bsuir.poit.dc.rest.api.exceptions.ResourceException;
-import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
-import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
+import by.bsuir.poit.dc.cassandra.api.dto.response.ErrorDto;
+import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceBusyException;
+import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceException;
+import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceModifyingException;
+import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

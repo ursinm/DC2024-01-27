@@ -11,24 +11,23 @@ import org.springframework.data.cassandra.core.mapping.Table;
 
 /**
  * @author Paval Shlyk
- * @since 06/03/2024
+ * @since 08/03/2024
  */
 @Table("news_note")
 @AllArgsConstructor
 @Getter
 @Setter
-public class Note {
+public class NoteByNews {
+    @PrimaryKeyColumn(
+	name = "news_id",
+	type = PrimaryKeyType.PARTITIONED,
+	ordering = Ordering.ASCENDING)
+    private Long newsId;
     @PrimaryKeyColumn(
 	name = "note_id",
-	type = PrimaryKeyType.PARTITIONED,
-	ordinal = 0)
+	type = PrimaryKeyType.CLUSTERED,
+	ordinal = 1)
     private Long id;
-    @Column
-    private Long newsId;
-//    @PrimaryKeyColumn(
-//	name = "country",
-//	type = PrimaryKeyType.CLUSTERED,
-//	ordinal = 2)
     @Column
     private String country;
     @Column

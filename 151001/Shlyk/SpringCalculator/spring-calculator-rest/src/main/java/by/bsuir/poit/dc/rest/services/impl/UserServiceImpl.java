@@ -6,6 +6,7 @@ import by.bsuir.poit.dc.rest.api.dto.mappers.UserMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
 import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.UserRepository;
@@ -81,6 +82,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newUserModifyingException",
+	args = "userId")
     public PresenceDto deleteUser(long userId) {
 	return PresenceDto
 		   .wrap(userRepository.existsById(userId))
@@ -88,7 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Keep
-    public ResourceModifyingException newUserModifyingException(long userId, Throwable e) {
+    private static ResourceModifyingException newUserModifyingException(long userId, Throwable e) {
 	final String frontMsg = STR."Failed to modify user by id=\{userId}";
 	final String msg = STR."\{frontMsg} \{e.getMessage()}";
 	log.warn(msg);
@@ -96,7 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Keep
-    public ResourceModifyingException newUserAlreadyExistsException(Throwable e) {
+    private static ResourceModifyingException newUserAlreadyExistsException(Throwable e) {
 	final String msg = STR."Failed to create new user. Actual cause =\{e.getMessage()}";
 	log.warn(msg);
 	return new ResourceModifyingException(msg, 32);

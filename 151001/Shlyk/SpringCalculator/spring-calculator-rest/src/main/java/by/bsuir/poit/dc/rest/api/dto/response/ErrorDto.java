@@ -1,4 +1,4 @@
-package by.bsuir.poit.dc.rest.api.dto.request;
+package by.bsuir.poit.dc.rest.api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.annotation.Nullable;

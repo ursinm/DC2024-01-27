@@ -43,9 +43,12 @@ public class NoteController {
     }
 
     @DeleteMapping("/{noteId}")
-    public Object deleteNoteById(
+    public ResponseEntity<?> deleteNoteById(
 	@PathVariable long noteId) {
-	return noteService.delete(noteId);
+	var status = noteService.delete(noteId).isPresent()
+			 ? HttpStatus.NO_CONTENT
+			 : HttpStatus.NOT_FOUND;
+	return ResponseEntity.status(status).build();
     }
 
 }

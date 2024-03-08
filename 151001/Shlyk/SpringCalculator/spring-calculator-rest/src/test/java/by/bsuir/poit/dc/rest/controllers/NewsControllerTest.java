@@ -1,12 +1,10 @@
 package by.bsuir.poit.dc.rest.controllers;
 
 import by.bsuir.poit.dc.rest.dao.NewsRepository;
-import com.sun.source.tree.ModuleTree;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -102,6 +100,7 @@ public class NewsControllerTest extends AbstractControllerTest {
     }
 
     private NewsRepository newsRepository;
+
     @Order(4)
     public void databaseConnectionFailedTest() throws Exception {
 	Mockito.when(newsRepository.findById(anyLong()))

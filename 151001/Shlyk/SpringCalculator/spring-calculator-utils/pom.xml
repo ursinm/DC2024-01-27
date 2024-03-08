@@ -24,4 +24,7 @@
             <artifactId>spring-data-commons</artifactId>
         </dependency>
     </dependencies>
+    <build>
+
+    </build>
 </project>

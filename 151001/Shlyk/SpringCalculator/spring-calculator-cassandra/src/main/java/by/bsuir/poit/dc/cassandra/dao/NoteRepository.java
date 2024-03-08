@@ -10,5 +10,5 @@ import java.util.List;
  * @since 06/03/2024
  */
 public interface NoteRepository extends CassandraRepository<Note, Long> {
-    List<Note> findByNewsId(long id);
+    List<Note> findAllByNewsId(long id);
 }

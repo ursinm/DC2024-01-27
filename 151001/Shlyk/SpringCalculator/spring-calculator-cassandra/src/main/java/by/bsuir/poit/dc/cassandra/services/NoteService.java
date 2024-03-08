@@ -2,6 +2,7 @@ package by.bsuir.poit.dc.cassandra.services;
 
 import by.bsuir.poit.dc.cassandra.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.cassandra.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.cassandra.api.dto.response.PresenceDto;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface NoteService {
 
     NoteDto update(long noteId, UpdateNoteDto dto);
 
-    boolean delete(long noteId);
+    PresenceDto delete(long noteId);
 
     NoteDto getById(long noteId);
 

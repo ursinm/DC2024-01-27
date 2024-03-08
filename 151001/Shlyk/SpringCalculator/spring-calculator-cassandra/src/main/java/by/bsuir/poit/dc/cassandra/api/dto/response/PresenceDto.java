@@ -1,10 +1,11 @@
-package by.bsuir.poit.dc.rest.api.dto.response;
+package by.bsuir.poit.dc.cassandra.api.dto.response;
 
 /**
  * @author Paval Shlyk
- * @since 22/02/2024
+ * @since 08/03/2024
  */
 public record PresenceDto(boolean isPresent) {
+
     public static PresenceDto wrap(boolean isDeleted) {
 	return new PresenceDto(isDeleted);
     }
