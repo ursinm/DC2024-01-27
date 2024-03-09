@@ -118,14 +118,13 @@ class NoteControllerTest {
 	    .body("""
 		   			{
 		   			"id": 2,
-					"country": "bel",
+					"country": "ru",
 					"newsId": 1,
-					"content": "The another very long text"
+					"content": "The small text"
 			}
 		""")
 	    .put("/api/v1.0/notes")
 	    .then().assertThat()
-	    .status(HttpStatus.OK)
-	    .body("id", equalTo(3));
+	    .status(HttpStatus.BAD_REQUEST);
     }
 }

@@ -6,8 +6,10 @@ import by.bsuir.poit.dc.cassandra.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.cassandra.api.mappers.NoteMapper;
+import by.bsuir.poit.dc.cassandra.dao.NoteByNewsRepository;
 import by.bsuir.poit.dc.cassandra.dao.NoteRepository;
 import by.bsuir.poit.dc.cassandra.model.Note;
+import by.bsuir.poit.dc.cassandra.model.NoteByNews;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
 import by.bsuir.poit.dc.context.CatchLevel;
 import by.bsuir.poit.dc.context.CatchThrows;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -31,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @CatchLevel(DataAccessException.class)
 public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
+    private final NoteByNewsRepository noteByNewsRepository;
     private final NoteMapper noteMapper;
     private final AtomicLong nextNoteId = new AtomicLong(1L);
 
@@ -40,25 +44,32 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteModifyingException",
 	args = "noteId")
     public PresenceDto delete(long noteId) {
-	return PresenceDto
-		   .wrap(noteRepository.existsById(noteId))
-		   .ifPresent(() -> noteRepository.deleteById(noteId));
+	Optional<Note> noteOptional = noteRepository.findById(noteId);
+	if (noteOptional.isPresent()) {
+	    var note = noteOptional.get();
+	    noteRepository.deleteById(noteId);
+	    noteByNewsRepository.deleteByIdAndNewsId(noteId, note.getNewsId());
+	}
+	return PresenceDto.wrap(noteOptional.isPresent());
     }
 
     @Override
+    @Transactional
     @CatchThrows(
 	call = "newNoteAlreadyPresentException")
     public NoteDto save(UpdateNoteDto dto) {
 	long id = nextNoteId.getAndIncrement();
 	Note entity = noteMapper.toEntity(id, dto);
+	NoteByNews noteByNews = noteMapper.toNewsEntity(entity);
 	Note saved = noteRepository.save(entity);
+	NoteByNews _ = noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
     }
 
     @Override
     public List<NoteDto> getAllByNewsId(long newsId) {
-	List<Note> entities = noteRepository.findAllByNewsId(newsId);
-	return noteMapper.toDtoList(entities);
+	List<NoteByNews> entities = noteByNewsRepository.findByNewsId(newsId);
+	return noteMapper.toDtoListFromNoteByNews(entities);
     }
 
     @Override
@@ -70,9 +81,13 @@ public class NoteServiceImpl implements NoteService {
 	Note entity = noteRepository
 			  .findById(noteId)
 			  .orElseThrow(() -> newNoteNotFountException(noteId));
-	long id = nextNoteId.getAndIncrement();
-	Note _ = noteMapper.partialUpdate(entity, id, dto);
+	NoteByNews noteByNews = noteByNewsRepository
+				    .findByIdAndNewsId(noteId, entity.getNewsId())
+				    .orElseThrow(() -> newNoteNotFountException(noteId));
+	Note _ = noteMapper.partialUpdate(entity, dto);
+	NoteByNews _ = noteMapper.partialUpdate(noteByNews, dto);
 	Note saved = noteRepository.save(entity);
+	noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
     }
 

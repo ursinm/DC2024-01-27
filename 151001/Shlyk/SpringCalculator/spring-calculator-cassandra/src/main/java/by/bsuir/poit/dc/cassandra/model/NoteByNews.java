@@ -13,7 +13,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
  * @author Paval Shlyk
  * @since 08/03/2024
  */
-@Table("news_note")
+@Table("note_by_news")
 @AllArgsConstructor
 @Getter
 @Setter
