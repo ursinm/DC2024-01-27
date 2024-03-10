@@ -9,6 +9,7 @@ import by.bsuir.dc.service.mapper.TweetMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -31,6 +32,9 @@ public class TweetService {
 
     public TweetResponseDto create(TweetRequestDto dto) {
         Tweet newEntity = tweetMapper.toEntity(dto);
+        Instant now = Instant.now();
+        newEntity.setCreated(now);
+        newEntity.setModified(now);
         return tweetMapper.toDto(tweetRepository.save(newEntity));
     }
 
@@ -51,6 +55,7 @@ public class TweetService {
             entity.setTitle(dto.title());
         if (dto.content() != null)
             entity.setContent(dto.content());
+        entity.setModified(Instant.now());
         return tweetMapper.toDto(tweetRepository.save(entity));
     }
 }

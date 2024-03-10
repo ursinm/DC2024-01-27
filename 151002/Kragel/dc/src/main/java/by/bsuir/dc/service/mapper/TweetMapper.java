@@ -5,7 +5,6 @@ import by.bsuir.dc.dto.response.TweetResponseDto;
 import by.bsuir.dc.entity.Tweet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.util.List;
 

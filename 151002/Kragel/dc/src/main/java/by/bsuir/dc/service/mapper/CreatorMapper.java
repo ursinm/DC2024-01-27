@@ -5,7 +5,6 @@ import by.bsuir.dc.dto.response.CreatorResponseDto;
 import by.bsuir.dc.entity.Creator;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
