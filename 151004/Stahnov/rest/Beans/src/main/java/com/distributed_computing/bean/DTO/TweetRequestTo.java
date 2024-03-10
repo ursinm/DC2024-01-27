@@ -1,4 +1,4 @@
-package com.distributed_computing.rest.bean.DTO;
+package com.distributed_computing.bean.DTO;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;

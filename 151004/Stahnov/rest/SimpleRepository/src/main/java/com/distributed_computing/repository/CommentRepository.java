@@ -1,6 +1,6 @@
-package com.distributed_computing.rest.repository;
+package com.distributed_computing.repository;
 
-import com.distributed_computing.rest.bean.Comment;
+import com.distributed_computing.bean.Comment;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

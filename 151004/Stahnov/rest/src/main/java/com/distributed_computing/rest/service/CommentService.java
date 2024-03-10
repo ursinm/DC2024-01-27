@@ -1,8 +1,8 @@
 package com.distributed_computing.rest.service;
 
+import com.distributed_computing.repository.CommentRepository;
+import com.distributed_computing.bean.Comment;
 import com.distributed_computing.rest.exception.NoSuchComment;
-import com.distributed_computing.rest.bean.Comment;
-import com.distributed_computing.rest.repository.CommentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

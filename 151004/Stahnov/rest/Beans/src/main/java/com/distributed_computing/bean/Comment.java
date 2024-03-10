@@ -1,12 +1,12 @@
-package com.distributed_computing.rest.bean;
+package com.distributed_computing.bean;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class TweetMarker {
+public class Comment {
     int id;
     int tweetId;
-    int markerId;
+    String content;
 }

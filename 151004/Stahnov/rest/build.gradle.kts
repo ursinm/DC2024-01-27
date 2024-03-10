@@ -4,32 +4,54 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.4"
 }
 
-group = "com.distributed_computing"
-version = "0.0.1-SNAPSHOT"
-
-java {
-	sourceCompatibility = JavaVersion.VERSION_17
+dependencies{
+	implementation(project(":SimpleRepository"))
+	implementation(project(":Beans"))
 }
 
-configurations {
-	compileOnly {
-		extendsFrom(configurations.annotationProcessor.get())
+allprojects{
+	task("hello").doLast{
+		println("Hello, I'm ${project.name}")
 	}
+
+	apply{plugin("java")}
+	apply{plugin("org.springframework.boot")}
+	apply{plugin("io.spring.dependency-management")}
+
+	group = "com.distributed_computing"
+	version = "0.0.1-SNAPSHOT"
+
+	configurations {
+		compileOnly {
+			extendsFrom(configurations.annotationProcessor.get())
+		}
+	}
+
+	tasks.withType<Test> {
+		useJUnitPlatform()
+	}
+
+	java {
+		sourceCompatibility = JavaVersion.VERSION_17
+	}
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		implementation("org.springframework.boot:spring-boot-starter-validation")
+		implementation("org.springframework.boot:spring-boot-starter-web")
+		implementation("org.modelmapper:modelmapper:3.0.0")
+		compileOnly("org.projectlombok:lombok")
+		annotationProcessor("org.projectlombok:lombok")
+		testImplementation("org.springframework.boot:spring-boot-starter-test")
+	}
+
 }
 
-repositories {
-	mavenCentral()
-}
 
-dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.modelmapper:modelmapper:3.2.0")
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
 
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
+
+
+

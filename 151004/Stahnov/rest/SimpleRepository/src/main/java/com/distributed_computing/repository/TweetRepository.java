@@ -1,6 +1,6 @@
-package com.distributed_computing.rest.repository;
+package com.distributed_computing.repository;
 
-import com.distributed_computing.rest.bean.Tweet;
+import com.distributed_computing.bean.Tweet;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

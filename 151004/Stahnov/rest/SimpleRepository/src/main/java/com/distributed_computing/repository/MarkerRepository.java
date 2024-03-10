@@ -1,6 +1,6 @@
-package com.distributed_computing.rest.repository;
+package com.distributed_computing.repository;
 
-import com.distributed_computing.rest.bean.Marker;
+import com.distributed_computing.bean.Marker;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

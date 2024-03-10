@@ -3,9 +3,9 @@ package com.distributed_computing.rest.controller;
 import com.distributed_computing.rest.exception.ErrorResponse;
 import com.distributed_computing.rest.exception.IncorrectValuesException;
 import com.distributed_computing.rest.exception.NoSuchComment;
-import com.distributed_computing.rest.bean.Comment;
-import com.distributed_computing.rest.bean.DTO.CommentRequestTo;
-import com.distributed_computing.rest.bean.DTO.CommentResponseTo;
+import com.distributed_computing.bean.Comment;
+import com.distributed_computing.bean.DTO.CommentRequestTo;
+import com.distributed_computing.bean.DTO.CommentResponseTo;
 import com.distributed_computing.rest.service.CommentService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -68,7 +68,7 @@ public class CommentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CommentResponseTo> getComment(@PathVariable int id){
-        return new ResponseEntity<>(modelMapper.map(commentService.getById(id), CommentResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(modelMapper.map(commentService.getById(id).get(), CommentResponseTo.class), HttpStatus.valueOf(200));
     }
 
     @ExceptionHandler

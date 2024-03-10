@@ -1,8 +1,8 @@
 package com.distributed_computing.rest.service;
 
+import com.distributed_computing.repository.TweetRepository;
+import com.distributed_computing.bean.Tweet;
 import com.distributed_computing.rest.exception.NoSuchTweet;
-import com.distributed_computing.rest.bean.Tweet;
-import com.distributed_computing.rest.repository.TweetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,11 +1,11 @@
-package com.distributed_computing.rest.bean;
+package com.distributed_computing.bean.DTO;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class Marker {
+public class MarkerResponseTo {
     int id;
     String name;
 }

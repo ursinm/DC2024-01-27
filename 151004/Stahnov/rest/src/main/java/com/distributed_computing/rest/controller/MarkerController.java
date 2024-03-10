@@ -3,9 +3,9 @@ package com.distributed_computing.rest.controller;
 import com.distributed_computing.rest.exception.ErrorResponse;
 import com.distributed_computing.rest.exception.IncorrectValuesException;
 import com.distributed_computing.rest.exception.NoSuchMarker;
-import com.distributed_computing.rest.bean.DTO.MarkerRequestTo;
-import com.distributed_computing.rest.bean.DTO.MarkerResponseTo;
-import com.distributed_computing.rest.bean.Marker;
+import com.distributed_computing.bean.DTO.MarkerRequestTo;
+import com.distributed_computing.bean.DTO.MarkerResponseTo;
+import com.distributed_computing.bean.Marker;
 import com.distributed_computing.rest.service.MarkerService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -68,7 +68,7 @@ public class MarkerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MarkerResponseTo> getMarker(@PathVariable int id){
-        return new ResponseEntity<>(modelMapper.map(markerService.getById(id), MarkerResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(modelMapper.map(markerService.getById(id).get(), MarkerResponseTo.class), HttpStatus.valueOf(200));
     }
 
     @ExceptionHandler

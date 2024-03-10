@@ -1,8 +1,8 @@
 package com.distributed_computing.rest.service;
 
+import com.distributed_computing.repository.MarkerRepository;
+import com.distributed_computing.bean.Marker;
 import com.distributed_computing.rest.exception.NoSuchMarker;
-import com.distributed_computing.rest.bean.Marker;
-import com.distributed_computing.rest.repository.MarkerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
