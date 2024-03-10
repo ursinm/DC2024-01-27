@@ -1,22 +1,20 @@
 package by.bsuir.rv.dto;
 
-import by.bsuir.rv.bean.IdentifiedBean;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class StickerRequestTo extends IdentifiedBean {
-    private String name;
-    private BigInteger issueId;
+@AllArgsConstructor
+public class StickerRequestTo {
+    private BigInteger id;
 
-    public StickerRequestTo(BigInteger id, String name, BigInteger issueId) {
-        super(id);
-        this.name = name;
-        this.issueId = issueId;
-    }
+    @Size(min = 2, max = 32)
+    private String name;
+    private List<BigInteger> issueIds;
 }
