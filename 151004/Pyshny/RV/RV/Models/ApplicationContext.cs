@@ -34,7 +34,7 @@ namespace RV.Models
                 j =>
                 {
                     j.HasKey(t => t.id);
-                    j.ToTable("NewsSticker");
+                    j.ToTable("tbl_NewsSticker");
                 });
 
             modelBuilder.Entity<User>()

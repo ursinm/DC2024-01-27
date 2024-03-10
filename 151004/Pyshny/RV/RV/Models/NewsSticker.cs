@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RV.Models
 {
+    [Table("tbl_NewsSticker")]
     public class NewsSticker
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
