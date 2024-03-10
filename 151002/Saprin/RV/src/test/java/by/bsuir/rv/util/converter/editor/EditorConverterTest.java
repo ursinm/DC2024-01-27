@@ -19,11 +19,11 @@ class EditorConverterTest {
         EditorResponseTo response = editorConverter.convertToResponse(editor);
 
         assertNotNull(response);
-        assertEquals(editor.getId(), response.getId());
-        assertEquals(editor.getLogin(), response.getLogin());
-        assertEquals(editor.getPassword(), response.getPassword());
-        assertEquals(editor.getFirstname(), response.getFirstname());
-        assertEquals(editor.getLastname(), response.getLastname());
+        assertEquals(editor.getEd_id(), response.getId());
+        assertEquals(editor.getEd_login(), response.getLogin());
+        assertEquals(editor.getEd_password(), response.getPassword());
+        assertEquals(editor.getEd_firstname(), response.getFirstname());
+        assertEquals(editor.getEd_lastname(), response.getLastname());
     }
 
     @Test
@@ -34,10 +34,10 @@ class EditorConverterTest {
         Editor editor = editorConverter.convertToEntity(editorRequest);
 
         assertNotNull(editor);
-        assertEquals(editorRequest.getId(), editor.getId());
-        assertEquals(editorRequest.getLogin(), editor.getLogin());
-        assertEquals(editorRequest.getPassword(), editor.getPassword());
-        assertEquals(editorRequest.getFirstname(), editor.getFirstname());
-        assertEquals(editorRequest.getLastname(), editor.getLastname());
+        assertEquals(editorRequest.getId(), editor.getEd_id());
+        assertEquals(editorRequest.getLogin(), editor.getEd_login());
+        assertEquals(editorRequest.getPassword(), editor.getEd_password());
+        assertEquals(editorRequest.getFirstname(), editor.getEd_firstname());
+        assertEquals(editorRequest.getLastname(), editor.getEd_lastname());
     }
 }
