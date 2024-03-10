@@ -5,13 +5,13 @@ import com.github.hummel.dc.lab1.dto.request.MessageRequestToId
 import com.github.hummel.dc.lab1.dto.response.MessageResponseTo
 
 interface MessageService {
-	fun getAll(): List<MessageResponseTo>
+	suspend fun create(requestTo: MessageRequestTo?): MessageResponseTo?
 
-	fun create(messageRequestTo: MessageRequestTo?): MessageResponseTo?
+	suspend fun deleteById(id: Long): Boolean
 
-	fun deleteById(id: Long): Boolean
+	suspend fun getAll(): List<MessageResponseTo>
 
-	fun getById(id: Long): MessageResponseTo?
+	suspend fun getById(id: Long): MessageResponseTo?
 
-	fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo?
+	suspend fun update(requestTo: MessageRequestToId?): MessageResponseTo?
 }

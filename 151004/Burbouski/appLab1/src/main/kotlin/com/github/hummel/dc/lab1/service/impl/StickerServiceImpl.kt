@@ -1,46 +1,40 @@
 package com.github.hummel.dc.lab1.service.impl
 
-import com.github.hummel.dc.lab1.bean.Sticker
 import com.github.hummel.dc.lab1.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab1.dto.request.StickerRequestToId
 import com.github.hummel.dc.lab1.dto.response.StickerResponseTo
+import com.github.hummel.dc.lab1.repository.StickersRepository
 import com.github.hummel.dc.lab1.service.StickerService
-import com.github.hummel.dc.lab1.util.BaseRepository
 
 class StickerServiceImpl(
-	private val messageRepository: BaseRepository<Sticker, Long>
+	private val repository: StickersRepository
 ) : StickerService {
-	override fun getAll(): List<StickerResponseTo> {
-		val result = messageRepository.data.map { it.second }
+	override suspend fun create(requestTo: StickerRequestTo?): StickerResponseTo? {
+		val id = repository.getNextId() ?: return null
+		val bean = requestTo?.toBean(id) ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
 
-		return result.map { it.toResponse() }
+		return result.toResponse()
 	}
 
-	override fun create(messageRequestTo: StickerRequestTo?): StickerResponseTo? {
-		val id = if (messageRepository.data.isEmpty()) {
-			-1
-		} else {
-			messageRepository.getLastItem()?.id ?: return null
-		} + 1
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
 
-		val bean = messageRequestTo?.toBean(id) ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+	override suspend fun getAll(): List<StickerResponseTo> {
+		val result = repository.getAll()
 
-		return result?.toResponse()
+		return result.filterNotNull().map { it.toResponse() }
 	}
 
-	override fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
+	override suspend fun getById(id: Long): StickerResponseTo? {
+		val result = repository.getById(id) ?: return null
 
-	override fun getById(id: Long): StickerResponseTo? {
-		val result = messageRepository.getItemById(id)?.second
-
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override fun update(messageRequestToId: StickerRequestToId?): StickerResponseTo? {
-		val bean = messageRequestToId?.toBean() ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+	override suspend fun update(requestTo: StickerRequestToId?): StickerResponseTo? {
+		val bean = requestTo?.toBean() ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 }
