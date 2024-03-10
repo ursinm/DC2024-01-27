@@ -1,4 +1,4 @@
-package com.github.hummel.dc.lab1.bean
+package com.github.hummel.dc.lab2.util
 
 import kotlinx.serialization.Serializable
 
