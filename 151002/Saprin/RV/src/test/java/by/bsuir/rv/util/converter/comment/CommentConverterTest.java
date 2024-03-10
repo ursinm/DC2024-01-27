@@ -1,6 +1,7 @@
 package by.bsuir.rv.util.converter.comment;
 
 import by.bsuir.rv.bean.Comment;
+import by.bsuir.rv.bean.Editor;
 import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.dto.CommentRequestTo;
 import by.bsuir.rv.dto.CommentResponseTo;
@@ -13,31 +14,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CommentConverterTest {
 
-    private final Issue issue = new Issue(BigInteger.ONE, BigInteger.ONE, "Title", "Text", new Date(), new Date());
+    private final Issue issue = new Issue(BigInteger.ONE, new Editor(), "Title", "Text", new Date(), new Date());
 
     @Test
     void convertToResponse_shouldConvertCommentToResponse() {
-        Comment comment = new Comment(BigInteger.ONE, BigInteger.ONE, "Test Comment");
+        Comment comment = new Comment(BigInteger.ONE, issue, "Test Comment");
         CommentConverter commentConverter = new CommentConverter();
 
         CommentResponseTo response = commentConverter.convertToResponse(comment);
 
         assertNotNull(response);
-        assertEquals(comment.getId(), response.getId());
-        assertEquals(issue.getId(), response.getIssueId());
-        assertEquals(comment.getContent(), response.getContent());
+        assertEquals(comment.getCom_id(), response.getId());
+        assertEquals(issue.getIss_id(), response.getIssueId());
+        assertEquals(comment.getCom_content(), response.getContent());
     }
 
     @Test
     void convertToEntity_shouldConvertCommentRequestToComment() {
-        CommentRequestTo commentRequest = new CommentRequestTo(BigInteger.ONE, issue.getId(), "Test Comment");
+        CommentRequestTo commentRequest = new CommentRequestTo(BigInteger.ONE, issue.getIss_id(), "Test Comment");
         CommentConverter commentConverter = new CommentConverter();
 
-        Comment comment = commentConverter.convertToEntity(commentRequest);
+        Comment comment = commentConverter.convertToEntity(commentRequest, issue);
 
         assertNotNull(comment);
-        assertEquals(commentRequest.getId(), comment.getId());
-        assertEquals(commentRequest.getContent(), comment.getContent());
-        assertEquals(commentRequest.getIssueId(), comment.getIssueId());
+        assertEquals(commentRequest.getId(), comment.getCom_id());
+        assertEquals(commentRequest.getContent(), comment.getCom_content());
+        assertEquals(commentRequest.getIssueId(), comment.getCom_issue().getIss_id());
     }
 }

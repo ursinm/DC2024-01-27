@@ -1,22 +1,31 @@
 package by.bsuir.rv.bean;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "tbl_sticker")
 @Data
 @NoArgsConstructor
-public class Sticker extends IdentifiedBean {
-    private String name;
-    private BigInteger issueId;
+@AllArgsConstructor
+public class Sticker {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigInteger st_id;
 
-    public Sticker(BigInteger id, String name, BigInteger issueId) {
-        super(id);
-        this.name = name;
-        this.issueId = issueId;
-    }
+    @Column(name = "st_name")
+    private String st_name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_m2m_issue_sticker",
+            joinColumns = @JoinColumn(name = "st_id"),
+            inverseJoinColumns = @JoinColumn(name = "iss_id")
+    )
+    private List<Issue> issues;
 }
