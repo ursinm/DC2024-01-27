@@ -11,6 +11,7 @@ using DC_Lab1.Services.Interfaces;
 using DC_Lab1.DTO.Interface;
 using DC_Lab1.DTO;
 using DC_Lab1.Services;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace DC_Lab1.Controllers
 {
@@ -86,7 +87,7 @@ namespace DC_Lab1.Controllers
         }
 
         [HttpDelete("{PostId}")]
-        public async Task DeletePost(int PostId)
+        public async Task<IActionResult> DeletePost(int PostId)
         {
             try
             {
@@ -96,7 +97,10 @@ namespace DC_Lab1.Controllers
             catch
             {
                 Response.StatusCode = 401;
+                return BadRequest();
             }
+
+            return NoContent();
 
 
 

@@ -3,9 +3,9 @@ using DC_Lab1.DTO.Interface;
 
 namespace DC_Lab1.DTO
 {
-    public class EditorRequestTo(string? Login, string? Password, string? Firstname, string? Lastname) : IRequestTo
+    public class EditorRequestTo(int Id,string? Login, string? Password, string? Firstname, string? Lastname) : IRequestTo
     {
-        public int Id { get; set; } = 0;
+        public int Id { get; set; } = Id;
         public string? Login { get; set; } = Login;
 
         public string? Password { get; set; } = Password;

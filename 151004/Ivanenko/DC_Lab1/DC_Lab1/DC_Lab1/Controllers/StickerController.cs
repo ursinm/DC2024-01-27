@@ -78,7 +78,7 @@ namespace DC_Lab1.Controllers
         }
 
         [HttpDelete("{StickerId}")]
-        public async Task DeleteSticker(int StickerId)
+        public async Task<IActionResult> DeleteSticker(int StickerId)
         {
             try
             {
@@ -88,8 +88,10 @@ namespace DC_Lab1.Controllers
             catch
             {
                 Response.StatusCode = 401;
+                return BadRequest();
             }
 
+            return NoContent();
 
 
         }

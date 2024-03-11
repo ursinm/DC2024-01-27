@@ -2,9 +2,9 @@
 
 namespace DC_Lab1.DTO
 {
-    public class StickerResponseTo(int? Id, string? Name) : IResponseTo
+    public class StickerResponseTo(int Id, string? Name) : IResponseTo
     {
-        public int? Id { get; set; } = Id;
+        public int Id { get; set; } = Id;
 
         public string? Name { get; set; } = Name;
     }

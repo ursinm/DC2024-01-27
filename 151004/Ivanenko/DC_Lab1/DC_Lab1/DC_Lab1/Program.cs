@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<LabDbContext>(db => db.UseInMemoryDatabase("LabContext"));
+builder.Services.AddDbContext<LabDbContext>();
 builder.Services
     .AddScoped<IEditorService, EditorService>()
     .AddScoped<ITweetService, TweetService>()

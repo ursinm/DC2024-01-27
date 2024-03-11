@@ -9,11 +9,13 @@ public partial class LabDbContext : DbContext
 {
     public LabDbContext()
     {
+        Database.EnsureCreated();
     }
 
     public LabDbContext(DbContextOptions<LabDbContext> options)
         : base(options)
     {
+        Database.EnsureCreated();
     }
 
     public virtual DbSet<Editor> Editors { get; set; }
@@ -24,8 +26,8 @@ public partial class LabDbContext : DbContext
 
     public virtual DbSet<Tweet> Tweets { get; set; }
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //    => optionsBuilder.UseSqlite("Data Source=C:\\Users\\dimon\\OneDrive\\Рабочий стол\\Study\\Универ\\Курс 3\\Семестр 6\\РВ\\Лаба 1\\LabDb.db");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseSqlite("DataSource=file::memory:?cache=shared");
 
     //protected override void OnModelCreating(ModelBuilder modelBuilder)
     //{

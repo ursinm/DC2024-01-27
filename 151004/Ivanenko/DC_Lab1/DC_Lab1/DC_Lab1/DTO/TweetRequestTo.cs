@@ -3,9 +3,9 @@ using DC_Lab1.Models;
 
 namespace DC_Lab1.DTO
 {
-    public class TweetRequestTo( int? EditorId, string? Title, string? Content) : IRequestTo
+    public class TweetRequestTo(int Id, int? EditorId, string? Title, string? Content) : IRequestTo
     {
-        public int Id { get; set; } = 0;
+        public int Id { get; set; } = Id;
 
         public int? EditorId { get; set; } = EditorId;
 

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using DC_Lab1.Services.Interfaces;
 using AutoMapper;
 using DC_Lab1.Models;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace DC_Lab1.Services
 {
@@ -12,26 +13,20 @@ namespace DC_Lab1.Services
         public async Task<IResponseTo> CreateEnt(IRequestTo Dto)
         {
             var PostDto = (PostRequestTo)Dto;
-            try
-            {
-                if (Validate(PostDto))
-                {
-                    var Post = _mapper.Map<Post>(PostDto);
-                    dbContext.Posts.Add(Post);
-                    await dbContext.SaveChangesAsync();
-                    var response = _mapper.Map<PostResponseTo>(Post);
-                    return response;
 
-                }
-                else
-                {
-                    throw new ArgumentException();
-                }
-            }
-            catch
+            if (!Validate(PostDto))
             {
-                throw new ArgumentException();
+                throw new InvalidDataException("Incorrect data for CREATE Post");
+
             }
+            var Post = _mapper.Map<Post>(PostDto);
+            dbContext.Posts.Add(Post);
+            await dbContext.SaveChangesAsync();
+            var response = _mapper.Map<PostResponseTo>(Post);
+            return response;
+
+
+
 
 
         }
@@ -47,22 +42,19 @@ namespace DC_Lab1.Services
             }
             catch
             {
-                throw new ArgumentException();
+                throw new Exception("Deletting Post exception");
             }
 
         }
 
         public async Task<IResponseTo> GetEntById(int id)
         {
-            try
-            {
-                return _mapper.Map<PostResponseTo>(await dbContext.Posts.FindAsync(id));
 
-            }
-            catch
-            {
-                throw new ArgumentException();
-            }
+            var post = _mapper.Map<PostResponseTo>(await dbContext.Posts.FindAsync(id));
+            return post is not null ? _mapper.Map<PostResponseTo>(post) : throw new ArgumentNullException($"Not found post: {id}");
+
+
+
         }
 
         public IEnumerable<IResponseTo> GetAllEnt()
@@ -74,34 +66,26 @@ namespace DC_Lab1.Services
             }
             catch
             {
-                throw new ArgumentException();
+                throw new Exception("Getting all posts exception");
             }
         }
 
         public async Task<IResponseTo> UpdateEnt(IRequestTo Dto)
         {
             var PostDto = (PostRequestTo)Dto;
-            try
-            {
-                if (Validate(PostDto))
-                {
-                    var newPost = _mapper.Map<Post>(PostDto);
-                    dbContext.Posts.Update(newPost);
-                    await dbContext.SaveChangesAsync();
-                    var Post = _mapper.Map<PostResponseTo>(await dbContext.Posts.FindAsync(newPost.Id));
-                    return Post;
-                }
-                else
-                {
-                    throw new ArgumentException();
 
-                }
-            }
-            catch
-            {
+            if (!Validate(PostDto))
 
-                throw new ArgumentException();
+            {
+                throw new InvalidDataException("Incorrect data for UPDATE Post");
+
             }
+            var newPost = _mapper.Map<Post>(PostDto);
+            dbContext.Posts.Update(newPost);
+            await dbContext.SaveChangesAsync();
+            var Post = _mapper.Map<PostResponseTo>(await dbContext.Posts.FindAsync(newPost.Id));
+            return Post;
+
 
         }
 
@@ -109,7 +93,7 @@ namespace DC_Lab1.Services
         {
             if (PostDto?.Content?.Length < 2 || PostDto?.Content?.Length > 2048)
                 return false;
-           
+
             return true;
         }
     }

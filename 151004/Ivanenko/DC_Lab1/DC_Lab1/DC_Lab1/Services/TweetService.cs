@@ -6,6 +6,7 @@ using DC_Lab1.Services.Interfaces;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DC_Lab1.Services
 {
@@ -14,30 +15,20 @@ namespace DC_Lab1.Services
         public async Task<IResponseTo> CreateEnt(IRequestTo Dto)
         {
             var TweetDto = (TweetRequestTo)Dto;
-
-            try
+            if (!Validate(TweetDto))
             {
-                if (Validate(TweetDto))
-                {
-                    var Tweet = _mapper.Map<Tweet>(TweetDto);
-                    string time = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-                    Tweet.Created = time;
-                    Tweet.Modified = time;
-                    dbContext.Tweets.Add(Tweet);
-                    await dbContext.SaveChangesAsync();
-                    var response = _mapper.Map<TweetResponseTo>(Tweet);
-                    return response;
+                throw new InvalidDataException("Incorrect data for CREATE Tweet");
 
-                }
-                else
-                {
-                    throw new ArgumentException();
-                }
             }
-            catch
-            {
-                throw new ArgumentException();
-            }
+            var Tweet = _mapper.Map<Tweet>(TweetDto);
+            string time = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+            Tweet.Created = time;
+            Tweet.Modified = time;
+            dbContext.Tweets.Add(Tweet);
+            await dbContext.SaveChangesAsync();
+            var response = _mapper.Map<TweetResponseTo>(Tweet);
+            return response;
+
 
         }
 
@@ -52,21 +43,17 @@ namespace DC_Lab1.Services
             }
             catch
             {
-                throw new ArgumentException();
+                throw new Exception("Deletting tweet exception");
             }
         }
 
         public async Task<IResponseTo> GetEntById(int id)
         {
-            try
-            {
-                return _mapper.Map<TweetResponseTo>(await dbContext.Tweets.FindAsync(id));
 
-            }
-            catch
-            {
-                throw new ArgumentException();
-            }
+            var tweet = _mapper.Map<TweetResponseTo>(await dbContext.Tweets.FindAsync(id));
+            return tweet is not null ? _mapper.Map<TweetResponseTo>(tweet) : throw new ArgumentNullException($"Not found tweet: {id}");
+
+
         }
 
         public IEnumerable<IResponseTo> GetAllEnt()
@@ -78,36 +65,28 @@ namespace DC_Lab1.Services
             }
             catch
             {
-                throw new ArgumentException();
+                throw new Exception("Gettting all tweets exception");
             }
         }
 
         public async Task<IResponseTo> UpdateEnt(IRequestTo Dto)
         {
             var TweetDto = (TweetRequestTo)Dto;
-            try
-            {
-                if (Validate(TweetDto))
-                {
-                    var newTweet = _mapper.Map<Tweet>(TweetDto);
-                    string time = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
-                    newTweet.Modified = time;
-                    dbContext.Tweets.Update(newTweet);
-                    await dbContext.SaveChangesAsync();
-                    var Tweet = _mapper.Map<TweetResponseTo>(await dbContext.Tweets.FindAsync(newTweet.Id));
-                    return Tweet;
-                }
-                else
-                {
-                    throw new ArgumentException();
 
-                }
-            }
-            catch
+            if (!Validate(TweetDto))
             {
+                throw new InvalidDataException("Incorrect data for UPDATE Tweet");
 
-                throw new ArgumentException();
             }
+            var newTweet = _mapper.Map<Tweet>(TweetDto);
+            string time = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+            newTweet.Modified = time;
+            dbContext.Tweets.Update(newTweet);
+            await dbContext.SaveChangesAsync();
+            var Tweet = _mapper.Map<TweetResponseTo>(await dbContext.Tweets.FindAsync(newTweet.Id));
+            return Tweet;
+
+
         }
 
         public bool Validate(TweetRequestTo TweetDto)
@@ -116,7 +95,7 @@ namespace DC_Lab1.Services
                 return false;
             if (TweetDto?.Content?.Length < 8 && TweetDto?.Content?.Length > 2048)
                 return false;
-            
+
             return true;
         }
     }

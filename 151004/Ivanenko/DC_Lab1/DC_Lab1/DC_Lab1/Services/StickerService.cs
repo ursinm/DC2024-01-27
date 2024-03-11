@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using AutoMapper;
 using DC_Lab1.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace DC_Lab1.Services
 {
@@ -14,22 +15,21 @@ namespace DC_Lab1.Services
         {
             var StickerDto = (StickerRequestTo)Dto;
 
-            try
+            if (!Validate(StickerDto))
             {
-
-                var Sticker = _mapper.Map<Sticker>(StickerDto);
-                dbContext.Stickers.Add(Sticker);
-                await dbContext.SaveChangesAsync();
-                var response = _mapper.Map<StickerResponseTo>(Sticker);
-                return response;
-
-
+                throw new InvalidDataException("Incorrect data for CREATE Sticker");
 
             }
-            catch
-            {
-                throw new ArgumentException();
-            }
+
+            var Sticker = _mapper.Map<Sticker>(StickerDto);
+            dbContext.Stickers.Add(Sticker);
+            await dbContext.SaveChangesAsync();
+            var response = _mapper.Map<StickerResponseTo>(Sticker);
+            return response;
+
+
+
+
         }
 
         public async Task DeleteEnt(int id)
@@ -43,21 +43,16 @@ namespace DC_Lab1.Services
             }
             catch
             {
-                throw new ArgumentException();
+                throw new Exception("Deletting Sticker exception");
             }
         }
 
         public async Task<IResponseTo> GetEntById(int id)
         {
-            try
-            {
-                return _mapper.Map<StickerResponseTo>(await dbContext.Stickers.FindAsync(id));
 
-            }
-            catch
-            {
-                throw new ArgumentException();
-            }
+            var Sticker = _mapper.Map<StickerResponseTo>(await dbContext.Stickers.FindAsync(id));
+            return Sticker is not null ? _mapper.Map<StickerResponseTo>(Sticker) : throw new ArgumentNullException($"Not found sticker: {id}");
+
         }
 
         public IEnumerable<IResponseTo> GetAllEnt()
@@ -69,28 +64,34 @@ namespace DC_Lab1.Services
             }
             catch
             {
-                throw new ArgumentException();
+                throw new Exception("Getting all strickers exception");
             }
         }
 
         public async Task<IResponseTo> UpdateEnt(IRequestTo Dto)
         {
             var StickerDto = (StickerRequestTo)Dto;
-            try
-            {
 
-                var newSticker = _mapper.Map<Sticker>(StickerDto);
-                dbContext.Stickers.Update(newSticker);
-                await dbContext.SaveChangesAsync();
-                var Sticker = _mapper.Map<StickerResponseTo>(await dbContext.Stickers.FindAsync(newSticker.Id));
-                return Sticker;
+            if (!Validate(StickerDto))
+            {
+                throw new InvalidDataException("Incorrect data for UPDATE Sticker");
+
 
             }
-            catch
-            {
+            var newSticker = _mapper.Map<Sticker>(StickerDto);
+            dbContext.Stickers.Update(newSticker);
+            await dbContext.SaveChangesAsync();
+            var Sticker = _mapper.Map<StickerResponseTo>(await dbContext.Stickers.FindAsync(newSticker.Id));
+            return Sticker;
 
-                throw new ArgumentException();
-            }
+
+        }
+
+        public bool Validate(StickerRequestTo dto)
+        {
+            if (dto.Name?.Length < 2 || dto.Name?.Length > 32)
+                return false;
+            return true;
         }
 
 

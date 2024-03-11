@@ -86,7 +86,7 @@ namespace DC_Lab1.Controllers
         }
 
         [HttpDelete("{EditorId}")]
-        public  async Task DeleteEditor(int EditorId)
+        public  async Task<IActionResult> DeleteEditor(int EditorId)
         {
             try
             {
@@ -96,8 +96,10 @@ namespace DC_Lab1.Controllers
             catch
             {
                 Response.StatusCode = 401;
+                return BadRequest();
             }
 
+            return NoContent();
            
             
         }
