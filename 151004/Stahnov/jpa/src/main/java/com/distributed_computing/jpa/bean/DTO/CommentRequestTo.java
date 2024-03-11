@@ -13,7 +13,7 @@ public class CommentRequestTo {
 
     @NotNull
     @Min(value = 0)
-    int tweetId;
+    Integer tweetId;
 
     @NotNull
     @Size(min = 2, max = 2048, message = "Incorrect content size")

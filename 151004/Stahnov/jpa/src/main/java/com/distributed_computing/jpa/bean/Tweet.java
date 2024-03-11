@@ -2,7 +2,6 @@ package com.distributed_computing.jpa.bean;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -39,17 +39,6 @@ public class CreatorController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-
-    /*
-    @PostMapping("/creatorsByTweet")
-    public ResponseEntity<CreatorResponseTo> getCreatorByTweetId(@RequestBody @Valid TweetRequestTo tweetRequestTo, BindingResult bindingResult){
-        if(bindingResult.hasFieldErrors("id")){
-            throw new IncorrectValuesException("Incorrect input values");
-        }
-        return new ResponseEntity<>(modelMapper.map(creatorService.getCreatorByTweetId(tweetRequestTo.getId()).get(), CreatorResponseTo.class), HttpStatus.OK);
-    }
-     */
-
     @PostMapping
     public ResponseEntity<CreatorResponseTo> createCreator(@RequestBody @Valid CreatorRequestTo creatorRequestTo, BindingResult bindingResult){
         Creator newCreator = modelMapper.map(creatorRequestTo, Creator.class);

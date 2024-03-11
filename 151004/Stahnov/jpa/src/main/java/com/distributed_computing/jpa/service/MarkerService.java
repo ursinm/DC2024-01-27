@@ -3,24 +3,19 @@ package com.distributed_computing.jpa.service;
 import com.distributed_computing.jpa.bean.Marker;
 import com.distributed_computing.jpa.exception.NoSuchMarker;
 import com.distributed_computing.jpa.repository.MarkerRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MarkerService {
-    private static int ind = 0;
 
     private final MarkerRepository markerRepository;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public MarkerService(MarkerRepository markerRepository, ModelMapper modelMapper) {
+    public MarkerService(MarkerRepository markerRepository) {
         this.markerRepository = markerRepository;
-        this.modelMapper = modelMapper;
     }
 
     public List<Marker> getAll(){

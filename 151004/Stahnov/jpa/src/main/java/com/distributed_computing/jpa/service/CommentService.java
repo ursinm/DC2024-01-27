@@ -5,7 +5,6 @@ import com.distributed_computing.jpa.exception.IncorrectValuesException;
 import com.distributed_computing.jpa.exception.NoSuchComment;
 import com.distributed_computing.jpa.repository.CommentRepository;
 import com.distributed_computing.jpa.repository.TweetRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +15,11 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final TweetRepository tweetRepository;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, TweetRepository tweetRepository, ModelMapper modelMapper) {
+    public CommentService(CommentRepository commentRepository, TweetRepository tweetRepository) {
         this.commentRepository = commentRepository;
         this.tweetRepository = tweetRepository;
-        this.modelMapper = modelMapper;
     }
 
     public List<Comment> getAll(){
