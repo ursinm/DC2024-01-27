@@ -1,23 +1,23 @@
 package by.bsuir.dc.rest_basics.entities;
 
-import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
-import lombok.Getter;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
-@Getter
+@Entity
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class Message extends AbstractEntity {
+@Table(name = "tblMessage")
+public class Message {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private Long storyId;
 
     private String content;
-
-    public Message(Long id, Long storyId, String content) {
-        setId(id);
-        this.storyId = storyId;
-        this.content = content;
-    }
 
 }
