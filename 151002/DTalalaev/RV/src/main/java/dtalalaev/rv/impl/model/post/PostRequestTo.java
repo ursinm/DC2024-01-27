@@ -2,6 +2,7 @@ package dtalalaev.rv.impl.model.post;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Size;
@@ -9,7 +10,7 @@ import java.math.BigInteger;
 
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 public class PostRequestTo {
     private BigInteger id;
     private BigInteger storyId;

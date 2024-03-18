@@ -1,8 +1,10 @@
 package dtalalaev.rv.impl.model.story;
 
+import dtalalaev.rv.impl.model.creator.CreatorRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,6 +28,7 @@ public class Story {
 
     @PrePersist
     protected void onCreate() {
+
         created = new Date();
         modified = (Date) created.clone();
     }
