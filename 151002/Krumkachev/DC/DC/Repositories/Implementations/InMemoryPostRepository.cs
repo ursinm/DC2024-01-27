@@ -18,7 +18,7 @@ namespace DC.Repositories.Implementations
 			return posts;
 		}
 
-		public async Task<Post> GetByIdAsync(long id)
+		public async Task<Post?> GetByIdAsync(long id)
 		{
 			Post? result = null;
 			await Task.Run(() =>

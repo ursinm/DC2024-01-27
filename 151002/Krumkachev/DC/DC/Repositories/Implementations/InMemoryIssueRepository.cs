@@ -18,7 +18,7 @@ namespace DC.Repositories.Implementations
 			return issues;
 		}
 
-		public async Task<Issue> GetByIdAsync(long id)
+		public async Task<Issue?> GetByIdAsync(long id)
 		{
 			Issue? result = null;
 			await Task.Run(() =>
