@@ -32,6 +32,7 @@ public class Issue {
     @ManyToMany
     @JoinTable(
             name = "tbl_issue_label",
+            schema = "distcomp",
             joinColumns = @JoinColumn(name = "issue_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id")
     )

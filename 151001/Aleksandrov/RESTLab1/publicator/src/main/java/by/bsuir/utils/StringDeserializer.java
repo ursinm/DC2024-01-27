@@ -1,7 +1,6 @@
 package by.bsuir.utils;
 
 import by.bsuir.exceptions.NumberInsteadOfStringException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;

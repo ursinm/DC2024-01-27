@@ -2,7 +2,6 @@ package by.bsuir.services;
 
 import by.bsuir.dto.EditorRequestTo;
 import by.bsuir.dto.EditorResponseTo;
-import by.bsuir.entities.Comment;
 import by.bsuir.entities.Editor;
 import by.bsuir.exceptions.DeleteException;
 import by.bsuir.exceptions.DuplicationException;
@@ -41,18 +40,18 @@ public class EditorService {
 
     public List<EditorResponseTo> getEditors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
-        if (sortOrder!=null && sortOrder.equals("asc")){
+        if (sortOrder != null && sortOrder.equals("asc")) {
             pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-        } else{
+        } else {
             pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
         }
         Page<Editor> editors = editorDao.findAll(pageable);
         return editorListMapper.toEditorResponseList(editors.toList());
     }
 
-    public EditorResponseTo saveEditor(@Valid EditorRequestTo editor) throws DuplicationException{
+    public EditorResponseTo saveEditor(@Valid EditorRequestTo editor) throws DuplicationException {
         Editor editorToSave = editorMapper.editorRequestToEditor(editor);
-        if (editorDao.existsByLogin(editorToSave.getLogin())){
+        if (editorDao.existsByLogin(editorToSave.getLogin())) {
             throw new DuplicationException("Login duplication", 40005L);
         }
         return editorMapper.editorToEditorResponse(editorDao.save(editorToSave));
@@ -68,7 +67,7 @@ public class EditorService {
 
     public EditorResponseTo updateEditor(@Valid EditorRequestTo editor) throws UpdateException {
         Editor editorToUpdate = editorMapper.editorRequestToEditor(editor);
-        if (!editorDao.existsById(editorToUpdate.getId())){
+        if (!editorDao.existsById(editorToUpdate.getId())) {
             throw new UpdateException("Editor not found!", 40004L);
         } else {
             return editorMapper.editorToEditorResponse(editorDao.save(editorToUpdate));

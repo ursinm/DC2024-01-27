@@ -2,7 +2,6 @@ package by.bsuir.services;
 
 import by.bsuir.dto.IssueRequestTo;
 import by.bsuir.dto.IssueResponseTo;
-import by.bsuir.entities.Comment;
 import by.bsuir.entities.Issue;
 import by.bsuir.exceptions.DeleteException;
 import by.bsuir.exceptions.DuplicationException;
@@ -44,9 +43,9 @@ public class IssueService {
 
     public List<IssueResponseTo> getIssues(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
-        if (sortOrder!=null && sortOrder.equals("asc")){
+        if (sortOrder != null && sortOrder.equals("asc")) {
             pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-        } else{
+        } else {
             pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
         }
         Page<Issue> issues = issueDao.findAll(pageable);

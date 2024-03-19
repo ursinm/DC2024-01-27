@@ -1,14 +1,16 @@
-package by.bsuir.dto;
+package by.bsuir.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponseTo {
-    private Long id;
-    private String content;
+public class CommentKey implements Serializable {
+    private String country;
     private Long issueId;
+    private Long id;
 }

@@ -1,4 +1,4 @@
-package by.bsuir.dto;
+package by.bsuir.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponseTo {
-    private Long id;
-    private String content;
-    private Long issueId;
+public class ErrorMessage {
+    private Long errorCode;
+    private String errorMessage;
 }

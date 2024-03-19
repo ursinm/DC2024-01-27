@@ -2,11 +2,11 @@ package by.bsuir.controllers;
 
 import by.bsuir.dto.CommentRequestTo;
 import by.bsuir.dto.CommentResponseTo;
-import by.bsuir.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -14,41 +14,63 @@ import java.util.List;
 @RequestMapping("/api/v1.0/comments")
 public class CommentController {
     @Autowired
-    CommentService commentService;
+    private RestClient restClient;
+    private String uriBase = "http://localhost:24130/api/v1.0/comments";
 
     @GetMapping
-    public ResponseEntity<List<CommentResponseTo>> getComments(
-            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
-            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false, defaultValue = "id") String sortBy,
-            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
-        return ResponseEntity.status(200).body(commentService.getComments(pageNumber, pageSize, sortBy, sortOrder));
+    public ResponseEntity<List<?>> getComments(@RequestHeader HttpHeaders headers) {
+        return ResponseEntity.status(200).body(restClient.get()
+                .uri(uriBase)
+                .retrieve()
+                .body(List.class));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommentResponseTo> getComment(@PathVariable Long id) {
-        return ResponseEntity.status(200).body(commentService.getCommentById(id));
+    public ResponseEntity<CommentResponseTo> getComment(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
+        return ResponseEntity.status(200).body(restClient.get()
+                .uri(uriBase + "/" + id)
+                .retrieve()
+                .body(CommentResponseTo.class));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
-        commentService.deleteComment(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteComment(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(restClient.delete()
+                .uri(uriBase + "/" + id)
+                .retrieve()
+                .toBodilessEntity().getBody());
     }
 
     @PostMapping
-    public ResponseEntity<CommentResponseTo> saveComment(@RequestBody CommentRequestTo comment) {
-        CommentResponseTo savedComment = commentService.saveComment(comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
+    public ResponseEntity<CommentResponseTo> saveComment(@RequestHeader HttpHeaders headers, @RequestBody CommentRequestTo comment) {
+        return ResponseEntity.status(201).body(restClient.post()
+                .uri(uriBase)
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentLength(49)
+                .body(comment)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .body(CommentResponseTo.class));
     }
 
     @PutMapping()
-    public ResponseEntity<CommentResponseTo> updateComment(@RequestBody CommentRequestTo comment) {
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.updateComment(comment));
+    public ResponseEntity<CommentResponseTo> updateComment(@RequestHeader HttpHeaders headers, @RequestBody CommentRequestTo comment) {
+        return ResponseEntity.status(200).body(restClient.put()
+                .uri(uriBase)
+                .contentType(MediaType.APPLICATION_JSON)
+                .contentLength(61)
+                .body(comment)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .body(CommentResponseTo.class));
     }
 
     @GetMapping("/byIssue/{id}")
-    public ResponseEntity<List<CommentResponseTo>> getEditorByIssueId(@PathVariable Long id) {
-        return ResponseEntity.status(200).body(commentService.getCommentByIssueId(id));
+    public ResponseEntity<?> getEditorByIssueId(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
+        return restClient.get()
+                .uri(uriBase + "/byIssue/" + id)
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .retrieve()
+                .body(ResponseEntity.class);
     }
 }

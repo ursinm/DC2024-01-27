@@ -2,10 +2,11 @@ package by.bsuir;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-public class RestApplication {
+public class DiscussionRestApplication {
     public static void main(String[] args) {
-        SpringApplication.run(RestApplication.class);
+        SpringApplication.run(DiscussionRestApplication.class);
     }
 }

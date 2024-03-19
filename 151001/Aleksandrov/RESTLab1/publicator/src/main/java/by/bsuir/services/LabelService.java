@@ -2,7 +2,6 @@ package by.bsuir.services;
 
 import by.bsuir.dto.LabelRequestTo;
 import by.bsuir.dto.LabelResponseTo;
-import by.bsuir.entities.Comment;
 import by.bsuir.entities.Label;
 import by.bsuir.exceptions.DeleteException;
 import by.bsuir.exceptions.NotFoundException;
@@ -40,9 +39,9 @@ public class LabelService {
 
     public List<LabelResponseTo> getLabels(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
-        if (sortOrder!=null && sortOrder.equals("asc")){
+        if (sortOrder != null && sortOrder.equals("asc")) {
             pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-        } else{
+        } else {
             pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
         }
         Page<Label> labels = labelDao.findAll(pageable);
@@ -64,7 +63,7 @@ public class LabelService {
 
     public LabelResponseTo updateLabel(@Valid LabelRequestTo label) throws UpdateException {
         Label labelToUpdate = labelMapper.labelRequestToLabel(label);
-        if (!labelDao.existsById(labelToUpdate.getId())){
+        if (!labelDao.existsById(labelToUpdate.getId())) {
             throw new UpdateException("Label not found!", 40004L);
         } else {
             return labelMapper.labelToLabelResponse(labelDao.save(labelToUpdate));
