@@ -39,6 +39,7 @@
         <spring-openapi.version>2.1.0</spring-openapi.version>
         <jmh.version>1.37</jmh.version>
         <test-containers.version>1.19.5</test-containers.version>
+        <spring-modulith.version>1.0.5</spring-modulith.version>
     </properties>
     <dependencies>
         <dependency>
@@ -122,6 +123,13 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.modulith</groupId>
+                <artifactId>spring-modulith-bom</artifactId>
+                <version>${spring-modulith.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
