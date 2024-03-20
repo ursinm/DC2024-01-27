@@ -2,6 +2,7 @@ package by.bsuir.rv.controller;
 
 import by.bsuir.rv.dto.CommentRequestTo;
 import by.bsuir.rv.dto.CommentResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntititesNotFoundException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.service.comment.ICommentService;
@@ -55,7 +56,7 @@ class CommentControllerTest {
     }
 
     @Test
-    void testAddComment() {
+    void testAddComment() throws DuplicateEntityException, EntityNotFoundException {
         CommentRequestTo commentRequest = new CommentRequestTo();
 
         commentController.addComment(commentRequest);
@@ -64,7 +65,7 @@ class CommentControllerTest {
     }
 
     @Test
-    void testUpdateComment() throws EntityNotFoundException {
+    void testUpdateComment() throws EntityNotFoundException, DuplicateEntityException {
         CommentRequestTo updatedComment = new CommentRequestTo();
 
         commentController.updateComment(updatedComment);

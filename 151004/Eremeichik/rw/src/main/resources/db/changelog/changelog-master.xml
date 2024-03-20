@@ -1,0 +1,74 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+    <changeSet id="create-table-tbl_user" author="Kirill">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tbl_user" />
+                <tableExists tableName="tbl_messages" />
+                <tableExists tableName="tbl_stickers" />
+                <tableExists tableName="tbl_news" />
+            </not>
+        </preConditions>
+        <createTable tableName="tbl_user">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="firstname" type="VARCHAR(255)"/>
+            <column name="lastname" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="tbl_message">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="content" type="VARCHAR(255)" />
+            <column name="newsId" type="BIGINT" >
+                <constraints nullable="false" foreignKeyName="fk_news_id" references="tbl_news(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="tbl_news">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="title" type="VARCHAR(255)" />
+            <column name="content" type="VARCHAR(255)" />
+            <column name="creationDate" type="TIMESTAMP" />
+            <column name="updateDate" type="TIMESTAMP" />
+            <column name="userId" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_user_id" references="tbl_user(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="sticker" >
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="VARCHAR(255)" />
+        </createTable>
+        <createTable tableName="news_stickers">
+            <column name="news_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="sticker_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="news_stickers" columnNames="news_id, sticker_id" />
+        <addForeignKeyConstraint baseTableName="news_stickers"
+                                 baseColumnNames="news_id"
+                                 referencedTableName="tbl_news"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_news_stickers_news" />
+        <addForeignKeyConstraint baseTableName="news_stickers"
+                                 baseColumnNames="sticker_id"
+                                 referencedTableName="sticker"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_news_stickers_sticker" />
+    </changeSet>
+</databaseChangeLog>

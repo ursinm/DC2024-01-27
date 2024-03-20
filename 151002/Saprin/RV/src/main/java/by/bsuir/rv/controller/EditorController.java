@@ -2,6 +2,7 @@ package by.bsuir.rv.controller;
 
 import by.bsuir.rv.dto.EditorRequestTo;
 import by.bsuir.rv.dto.EditorResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.service.editor.IEditorService;
 import jakarta.validation.Valid;
@@ -35,7 +36,7 @@ public class EditorController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public EditorResponseTo createEditor(@Valid @RequestBody EditorRequestTo editor) {
+    public EditorResponseTo createEditor(@Valid @RequestBody EditorRequestTo editor) throws DuplicateEntityException {
         return editorService.createEditor(editor);
     }
 

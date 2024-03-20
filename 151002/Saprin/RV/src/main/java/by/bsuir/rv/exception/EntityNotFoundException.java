@@ -1,6 +1,5 @@
 package by.bsuir.rv.exception;
 
-import by.bsuir.rv.repository.exception.RepositoryException;
 
 import java.math.BigInteger;
 
