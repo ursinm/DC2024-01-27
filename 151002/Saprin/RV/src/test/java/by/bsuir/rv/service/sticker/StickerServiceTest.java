@@ -1,11 +1,12 @@
 package by.bsuir.rv.service.sticker;
 
+import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.bean.Sticker;
 import by.bsuir.rv.dto.StickerRequestTo;
 import by.bsuir.rv.dto.StickerResponseTo;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.exception.RepositoryException;
-import by.bsuir.rv.repository.sticker.StickerRepositoryMemory;
+import by.bsuir.rv.repository.issue.IssueRepository;
+import by.bsuir.rv.repository.sticker.StickerRepository;
 import by.bsuir.rv.service.sticker.impl.StickerService;
 import by.bsuir.rv.util.converter.sticker.StickerConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +16,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,7 +30,10 @@ public class StickerServiceTest {
     private StickerConverter stickerConverter;
 
     @Mock
-    private StickerRepositoryMemory stickerRepository;
+    private StickerRepository stickerRepository;
+
+    @Mock
+    private IssueRepository issueRepository;
 
     @InjectMocks
     private StickerService stickerService;
@@ -39,7 +45,7 @@ public class StickerServiceTest {
 
     @Test
     void getStickers_shouldReturnStickerList() {
-        Sticker sticker = new Sticker(BigInteger.valueOf(1), "TestSticker", BigInteger.valueOf(1));
+        Sticker sticker = new Sticker(BigInteger.valueOf(1), "TestSticker", new ArrayList<>());
         when(stickerRepository.findAll()).thenReturn(Collections.singletonList(sticker));
         when(stickerConverter.convertToResponse(sticker)).thenReturn(new StickerResponseTo());
 
@@ -53,10 +59,10 @@ public class StickerServiceTest {
     }
 
     @Test
-    void getStickerById_shouldReturnStickerById() throws EntityNotFoundException, RepositoryException {
+    void getStickerById_shouldReturnStickerById() throws EntityNotFoundException {
         BigInteger stickerId =  BigInteger.ONE;
-        Sticker sticker = new Sticker(stickerId, "TestSticker",  BigInteger.ONE);
-        when(stickerRepository.findById(stickerId)).thenReturn(sticker);
+        Sticker sticker = new Sticker(stickerId, "TestSticker", new ArrayList<>());
+        when(stickerRepository.findById(stickerId)).thenReturn(Optional.of(sticker));
         when(stickerConverter.convertToResponse(sticker)).thenReturn(new StickerResponseTo());
 
         StickerResponseTo result = stickerService.getStickerById(stickerId);
@@ -69,44 +75,49 @@ public class StickerServiceTest {
 
     @Test
     void createSticker_shouldReturnCreatedSticker() {
-        StickerRequestTo requestTo = new StickerRequestTo(BigInteger.ONE, "TestSticker", BigInteger.ONE);
-        Sticker sticker = new Sticker(BigInteger.valueOf(1), "TestSticker",  BigInteger.ONE);
-        when(stickerConverter.convertToEntity(requestTo)).thenReturn(sticker);
+        StickerRequestTo requestTo = new StickerRequestTo(BigInteger.ONE, "TestSticker", new ArrayList<>());
+        Sticker sticker = new Sticker(BigInteger.valueOf(1), "TestSticker",  new ArrayList<>());
+        when(stickerConverter.convertToEntity(requestTo, new ArrayList<>())).thenReturn(sticker);
         when(stickerRepository.save(sticker)).thenReturn(sticker);
         when(stickerConverter.convertToResponse(sticker)).thenReturn(new StickerResponseTo());
+        when(issueRepository.findAllById(sticker.getIssues().stream().map(Issue::getIss_id).toList())).thenReturn(new ArrayList<>());
 
         StickerResponseTo result = stickerService.createSticker(requestTo);
 
         assertNotNull(result);
 
-        verify(stickerConverter, times(1)).convertToEntity(requestTo);
+        verify(stickerConverter, times(1)).convertToEntity(requestTo, new ArrayList<>());
         verify(stickerRepository, times(1)).save(sticker);
         verify(stickerConverter, times(1)).convertToResponse(sticker);
     }
 
     @Test
-    void updateSticker_shouldReturnUpdatedSticker() throws EntityNotFoundException, RepositoryException {
+    void updateSticker_shouldReturnUpdatedSticker() throws EntityNotFoundException {
         BigInteger stickerId = BigInteger.valueOf(1);
-        StickerRequestTo requestTo = new StickerRequestTo(stickerId, "UpdatedSticker",  BigInteger.ONE);
-        Sticker sticker = new Sticker(stickerId, "TestSticker",  BigInteger.ONE);
-        when(stickerRepository.findById(stickerId)).thenReturn(sticker);
-        when(stickerConverter.convertToEntity(requestTo)).thenReturn(sticker);
+        StickerRequestTo requestTo = new StickerRequestTo(stickerId, "UpdatedSticker", new ArrayList<>());
+        Sticker sticker = new Sticker(stickerId, "TestSticker", new ArrayList<>());
+        when(stickerRepository.findById(stickerId)).thenReturn(Optional.of(sticker));
+        when(stickerConverter.convertToEntity(requestTo, new ArrayList<>())).thenReturn(sticker);
         when(stickerRepository.save(sticker)).thenReturn(sticker);
         when(stickerConverter.convertToResponse(sticker)).thenReturn(new StickerResponseTo());
+        when(issueRepository.findAllById(Collections.singletonList(stickerId))).thenReturn(new ArrayList<>());
 
         StickerResponseTo result = stickerService.updateSticker(requestTo);
 
         assertNotNull(result);
 
         verify(stickerRepository, times(1)).findById(stickerId);
-        verify(stickerConverter, times(1)).convertToEntity(requestTo);
+        verify(stickerConverter, times(1)).convertToEntity(requestTo, new ArrayList<>());
         verify(stickerRepository, times(1)).save(sticker);
         verify(stickerConverter, times(1)).convertToResponse(sticker);
     }
 
     @Test
-    void deleteSticker_shouldDeleteSticker() throws RepositoryException {
+    void deleteSticker_shouldDeleteSticker() {
         BigInteger stickerId = BigInteger.valueOf(1);
+
+        when(stickerRepository.findById(stickerId)).thenReturn(Optional.of(new Sticker()));
+
         doNothing().when(stickerRepository).deleteById(stickerId);
 
         assertDoesNotThrow(() -> stickerService.deleteSticker(stickerId));
