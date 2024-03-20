@@ -4,5 +4,5 @@ import by.rusakovich.newsdistributedsystem.model.entity.impl.News;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class NewsMemoryRepository extends MemoryEntityRepositoryLongId<News> {
+public class NewsMemoryRepository extends MemoryEntityRepositoryLongId<News<Long>> {
 }

@@ -29,10 +29,10 @@ public abstract class MemoryEntityRepository<Id, Entity extends IEntity<Id>> imp
     }
 
     @Override
-    public void deleteById(Id id) {
+    public Optional<Entity> deleteById(Id id) {
         rwLock.writeLock().lock();
         try {
-            rep.remove(id);
+            return Optional.of(rep.remove(id));
         } finally {
             rwLock.writeLock().unlock();
         }
@@ -49,7 +49,28 @@ public abstract class MemoryEntityRepository<Id, Entity extends IEntity<Id>> imp
         } finally {
             rwLock.writeLock().unlock();
         }
-        // for consistency
+        return Optional.of(entity);
+    }
+
+    @Override
+    public Optional<Entity> update(Entity entity) {
+        if(entity.getId() == null){
+            return Optional.empty();
+        }
+
+        rwLock.readLock().lock();
+        // if nothing for update -> empty result
+        if(!rep.containsKey(entity.getId())){
+            return Optional.empty();
+        }
+        rwLock.readLock().unlock();
+
+        rwLock.writeLock().lock();
+        try {
+            rep.put(entity.getId(), entity);
+        } finally {
+            rwLock.writeLock().unlock();
+        }
         return Optional.of(entity);
     }
 
