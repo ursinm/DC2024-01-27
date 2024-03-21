@@ -1,6 +1,6 @@
 package com.github.hummel.dc.lab1.controller.routing
 
-import com.github.hummel.dc.lab1.bean.Response
+import com.github.hummel.dc.lab1.util.Response
 import com.github.hummel.dc.lab1.controller.respond
 import com.github.hummel.dc.lab1.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab1.dto.request.StickerRequestToId
@@ -13,18 +13,20 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.stickersRouting() {
-	val stickersService: StickerService by inject()
+	val stickersService by inject<StickerService>()
 
-	checkStickers(stickersService)
+	route("/stickers") {
+		checkStickers(stickersService)
 
-	createSticker(stickersService)
-	deleteSticker(stickersService)
-	updateSticker(stickersService)
-	getSticker(stickersService)
+		createSticker(stickersService)
+		deleteSticker(stickersService)
+		updateSticker(stickersService)
+		getSticker(stickersService)
+	}
 }
 
 private fun Route.checkStickers(stickersService: StickerService) {
-	get("/api/v1.0/stickers") {
+	get {
 		val stickers = stickersService.getAll()
 
 		respond(isCorrect = {
@@ -38,7 +40,7 @@ private fun Route.checkStickers(stickersService: StickerService) {
 }
 
 private fun Route.createSticker(stickersService: StickerService) {
-	post("/api/v1.0/stickers") {
+	post {
 		val stickerRequestTo = try {
 			call.receive<StickerRequestTo>()
 		} catch (e: Exception) {
@@ -60,7 +62,7 @@ private fun Route.createSticker(stickersService: StickerService) {
 }
 
 private fun Route.getSticker(stickersService: StickerService) {
-	get("/api/v1.0/stickers/{id?}") {
+	get("/{id?}") {
 		val id = call.parameters["id"] ?: return@get call.respond(
 			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
@@ -80,7 +82,7 @@ private fun Route.getSticker(stickersService: StickerService) {
 }
 
 private fun Route.deleteSticker(stickersService: StickerService) {
-	delete("/api/v1.0/stickers/{id?}") {
+	delete("/{id?}") {
 		val id = call.parameters["id"] ?: return@delete call.respond(
 			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
@@ -102,7 +104,7 @@ private fun Route.deleteSticker(stickersService: StickerService) {
 }
 
 private fun Route.updateSticker(stickersService: StickerService) {
-	put("/api/v1.0/stickers") {
+	put {
 		val stickerRequestToId = try {
 			call.receive<StickerRequestToId>()
 		} catch (e: Exception) {

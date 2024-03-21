@@ -1,6 +1,6 @@
 package com.github.hummel.dc.lab1.controller.routing
 
-import com.github.hummel.dc.lab1.bean.Response
+import com.github.hummel.dc.lab1.util.Response
 import com.github.hummel.dc.lab1.controller.respond
 import com.github.hummel.dc.lab1.dto.request.MessageRequestTo
 import com.github.hummel.dc.lab1.dto.request.MessageRequestToId
@@ -13,18 +13,20 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 fun Route.messagesRouting() {
-	val messagesService: MessageService by inject()
+	val messagesService by inject<MessageService>()
 
-	checkMessages(messagesService)
+	route("/messages") {
+		checkMessages(messagesService)
 
-	createMessage(messagesService)
-	deleteMessage(messagesService)
-	updateMessage(messagesService)
-	getMessage(messagesService)
+		createMessage(messagesService)
+		deleteMessage(messagesService)
+		updateMessage(messagesService)
+		getMessage(messagesService)
+	}
 }
 
 private fun Route.checkMessages(messagesService: MessageService) {
-	get("/api/v1.0/messages") {
+	get {
 		val messages = messagesService.getAll()
 
 		respond(isCorrect = {
@@ -38,7 +40,7 @@ private fun Route.checkMessages(messagesService: MessageService) {
 }
 
 private fun Route.createMessage(messagesService: MessageService) {
-	post("/api/v1.0/messages") {
+	post {
 		val messageRequestTo = try {
 			call.receive<MessageRequestTo>()
 		} catch (e: Exception) {
@@ -60,7 +62,7 @@ private fun Route.createMessage(messagesService: MessageService) {
 }
 
 private fun Route.getMessage(messagesService: MessageService) {
-	get("/api/v1.0/messages/{id?}") {
+	get("/{id?}") {
 		val id = call.parameters["id"] ?: return@get call.respond(
 			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
@@ -80,7 +82,7 @@ private fun Route.getMessage(messagesService: MessageService) {
 }
 
 private fun Route.deleteMessage(messagesService: MessageService) {
-	delete("/api/v1.0/messages/{id?}") {
+	delete("/{id?}") {
 		val id = call.parameters["id"] ?: return@delete call.respond(
 			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
@@ -102,7 +104,7 @@ private fun Route.deleteMessage(messagesService: MessageService) {
 }
 
 private fun Route.updateMessage(messagesService: MessageService) {
-	put("/api/v1.0/messages") {
+	put {
 		val messageRequestToId = try {
 			call.receive<MessageRequestToId>()
 		} catch (e: Exception) {

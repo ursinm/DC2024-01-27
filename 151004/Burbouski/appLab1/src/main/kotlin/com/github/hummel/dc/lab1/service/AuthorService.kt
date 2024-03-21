@@ -5,13 +5,13 @@ import com.github.hummel.dc.lab1.dto.request.AuthorRequestToId
 import com.github.hummel.dc.lab1.dto.response.AuthorResponseTo
 
 interface AuthorService {
-	fun getAll(): List<AuthorResponseTo>
+	suspend fun create(requestTo: AuthorRequestTo?): AuthorResponseTo?
 
-	fun create(authorRequestTo: AuthorRequestTo?): AuthorResponseTo?
+	suspend fun deleteById(id: Long): Boolean
 
-	fun deleteById(id: Long): Boolean
+	suspend fun getAll(): List<AuthorResponseTo>
 
-	fun getById(id: Long): AuthorResponseTo?
+	suspend fun getById(id: Long): AuthorResponseTo?
 
-	fun update(authorRequestToId: AuthorRequestToId?): AuthorResponseTo?
+	suspend fun update(requestTo: AuthorRequestToId?): AuthorResponseTo?
 }
