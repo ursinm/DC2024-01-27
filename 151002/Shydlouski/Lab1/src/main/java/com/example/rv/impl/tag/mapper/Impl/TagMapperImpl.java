@@ -1,7 +1,14 @@
-package com.example.rv.impl.tag;
+package com.example.rv.impl.tag.mapper.Impl;
 
+import com.example.rv.impl.tag.Tag;
+import com.example.rv.impl.tag.mapper.TagMapper;
+import com.example.rv.impl.tag.dto.TagRequestTo;
+import com.example.rv.impl.tag.dto.TagResponseTo;
+import com.example.rv.impl.tweet.Tweet;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -10,9 +17,15 @@ import java.util.stream.StreamSupport;
 public class TagMapperImpl implements TagMapper {
     @Override
     public TagRequestTo tagToRequestTo(Tag tag) {
+        List<BigInteger> ids = new ArrayList<>();
+        for (var item: tag.getTweets()) {
+            ids.add(item.getId());
+        }
+
         return new TagRequestTo(
-                tag.getId(),
-                tag.getName()
+                tag.getTg_id(),
+                tag.getName(),
+                ids
         );
     }
 
@@ -24,25 +37,25 @@ public class TagMapperImpl implements TagMapper {
     }
 
     @Override
-    public Tag dtoToEntity(TagRequestTo tagRequestTo) {
+    public Tag dtoToEntity(TagRequestTo tagRequestTo, List<Tweet> twets) {
         return new Tag(
-                tagRequestTo.id(),
-                tagRequestTo.name()
+                tagRequestTo.getId(),
+                tagRequestTo.getName(),
+                twets
         );
     }
 
     @Override
-    public List<Tag> dtoToEntity(Iterable<TagRequestTo> tagRequestTos) {
-        return StreamSupport.stream(tagRequestTos.spliterator(), false)
-                .map(this::dtoToEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public TagResponseTo tagToResponseTo(Tag tag) {
+        List<BigInteger> ids = new ArrayList<>();
+        for (var item: tag.getTweets()) {
+            ids.add(item.getId());
+        }
+
         return new TagResponseTo(
-                tag.getId(),
-                tag.getName()
+                tag.getTg_id(),
+                tag.getName(),
+                ids
         );
     }
 
