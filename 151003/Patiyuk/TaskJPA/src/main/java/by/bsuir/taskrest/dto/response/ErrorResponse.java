@@ -1,6 +1,7 @@
 package by.bsuir.taskrest.dto.response;
 
 import lombok.Builder;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -11,13 +12,8 @@ public record ErrorResponse(
         LocalDateTime timestamp
 ) {
     public static class ErrorResponseBuilder {
-        public ErrorResponseBuilder code(Integer code) {
-            this.code += code;
-            return this;
-        }
-
-        public ErrorResponseBuilder subCode(Integer subCode) {
-            this.code += subCode;
+        public ErrorResponseBuilder code(HttpStatus status, int subCode) {
+            this.code = String.valueOf(status.value() + subCode);
             return this;
         }
     }

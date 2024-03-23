@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
-public class CustomExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(CreateEntityException.class)
     public ResponseEntity<ErrorResponse> handleCreateEntityException(CreateEntityException e) {
@@ -54,8 +54,7 @@ public class CustomExceptionHandler {
                                 .replace("{", "")
                                 .replace("}", "")
                                 .replace("=", ": "))
-                        .code(BAD_REQUEST.value())
-                        .subCode(1)
+                        .code(BAD_REQUEST, 1)
                         .timestamp(LocalDateTime.now())
                         .build());
     }
@@ -65,8 +64,7 @@ public class CustomExceptionHandler {
                 .status(httpStatus)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
-                        .code(httpStatus.value())
-                        .subCode(subCode)
+                        .code(httpStatus, subCode)
                         .timestamp(LocalDateTime.now())
                         .build());
     }
