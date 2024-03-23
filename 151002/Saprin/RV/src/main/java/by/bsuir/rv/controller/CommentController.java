@@ -2,9 +2,11 @@ package by.bsuir.rv.controller;
 
 import by.bsuir.rv.dto.CommentRequestTo;
 import by.bsuir.rv.dto.CommentResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntititesNotFoundException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.service.comment.ICommentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -38,13 +40,13 @@ public class CommentController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentResponseTo addComment(@RequestBody CommentRequestTo comment) {
+    public CommentResponseTo addComment(@RequestBody @Valid CommentRequestTo comment) throws DuplicateEntityException, EntityNotFoundException {
         return commentService.addComment(comment);
     }
 
     @PutMapping()
     @ResponseStatus(HttpStatus.OK)
-    public CommentResponseTo updateComment(@RequestBody CommentRequestTo comment) throws EntityNotFoundException {
+    public CommentResponseTo updateComment(@RequestBody @Valid CommentRequestTo comment) throws EntityNotFoundException, DuplicateEntityException {
         return commentService.updateComment(comment);
     }
 

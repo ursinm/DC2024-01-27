@@ -1,6 +1,7 @@
 package by.bsuir.rv.exception.handler;
 
 import by.bsuir.rv.exception.ApiError;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntititesNotFoundException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +18,7 @@ public class GlobalExceptionHandler {
     private final Integer ENTITY_NOT_FOUND_CODE = 1;
     private final Integer ENTITIES_NOT_FOUND_CODE = 2;
 
-    @ExceptionHandler({EntityNotFoundException.class, EntititesNotFoundException.class})
+    @ExceptionHandler({EntityNotFoundException.class, EntititesNotFoundException.class, DuplicateEntityException.class})
     public final ResponseEntity<ApiError> handleException(Exception exception, WebRequest request) {
         HttpHeaders headers = new HttpHeaders();
 
@@ -31,6 +32,12 @@ public class GlobalExceptionHandler {
         if (exception instanceof EntititesNotFoundException) {
             HttpStatus status = HttpStatus.NOT_FOUND;
             ApiError apiError = new ApiError(exception.getMessage(), HttpStatus.NOT_FOUND.value() * 100 + ENTITIES_NOT_FOUND_CODE);
+            return new ResponseEntity<>(apiError, headers, status);
+        }
+
+        if (exception instanceof DuplicateEntityException) {
+            HttpStatus status = HttpStatus.FORBIDDEN;
+            ApiError apiError = new ApiError(exception.getMessage(), HttpStatus.CONFLICT.value() * 100);
             return new ResponseEntity<>(apiError, headers, status);
         }
 
