@@ -1,0 +1,435 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\responses\\storyresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\responses\\storyresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\responses\\postresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\responses\\postresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\responses\\stickerresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\responses\\stickerresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\responses\\creatorresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\responses\\creatorresponseto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\requests\\storyrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\requests\\storyrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\requests\\stickerrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\requests\\stickerrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\requests\\postrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\requests\\postrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\dto\\requests\\creatorrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\dto\\requests\\creatorrequestto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\datamodel\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\datamodel\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\datamodel\\sticker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\datamodel\\sticker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\datamodel\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\datamodel\\post.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\datamodel\\creator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\datamodel\\creator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\entity\\entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\entity\\entity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{23BE4644-3763-4603-BE7E-F70375E62BDA}|docker-compose.dcproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{23BE4644-3763-4603-BE7E-F70375E62BDA}|docker-compose.dcproj|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{23BE4644-3763-4603-BE7E-F70375E62BDA}|docker-compose.dcproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\.dockerignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{23BE4644-3763-4603-BE7E-F70375E62BDA}|docker-compose.dcproj|solutionrelative:.dockerignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{23BE4644-3763-4603-BE7E-F70375E62BDA}|docker-compose.dcproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{23BE4644-3763-4603-BE7E-F70375E62BDA}|docker-compose.dcproj|solutionrelative:launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\webapplicationdc1.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\webapplicationdc1.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\webapplicationdc1.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\webapplicationdc1.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|d:\\bugor\\6sem\\distibutedcomputing\\projects\\rest\\webapplicationdc1\\webapplicationdc1\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0F96D385-D897-40D1-8E03-0807F3CB9F51}|WebApplicationDC1\\WebApplicationDC1.csproj|solutionrelative:webapplicationdc1\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:2:0:{34c7837f-3b3a-449c-bdf0-bdad86cbaf4a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PostResponseTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\PostResponseTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Responses\\PostResponseTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\PostResponseTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Responses\\PostResponseTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAA4AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:45:19.098Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "StickerResponseTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\StickerResponseTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Responses\\StickerResponseTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\StickerResponseTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Responses\\StickerResponseTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:45:12.261Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "StoryResponseTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\StoryResponseTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Responses\\StoryResponseTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\StoryResponseTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Responses\\StoryResponseTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:45:06.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CreatorResponseTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\CreatorResponseTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Responses\\CreatorResponseTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Responses\\CreatorResponseTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Responses\\CreatorResponseTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:45:00.522Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PostRequestTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\PostRequestTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Requests\\PostRequestTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\PostRequestTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Requests\\PostRequestTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:44:44.609Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "StickerRequestTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\StickerRequestTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Requests\\StickerRequestTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\StickerRequestTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Requests\\StickerRequestTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:44:38.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "StoryRequestTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\StoryRequestTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Requests\\StoryRequestTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\StoryRequestTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Requests\\StoryRequestTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:44:08.373Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CreatorRequestTo.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\CreatorRequestTo.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DTO\\Requests\\CreatorRequestTo.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DTO\\Requests\\CreatorRequestTo.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DTO\\Requests\\CreatorRequestTo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:44:02.889Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Sticker.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Sticker.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DataModel\\Sticker.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Sticker.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DataModel\\Sticker.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:31:43.431Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Post.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Post.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DataModel\\Post.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Post.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DataModel\\Post.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:31:37.331Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Story.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Story.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DataModel\\Story.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Story.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DataModel\\Story.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:31:32.149Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Creator.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Creator.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\DataModel\\Creator.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\DataModel\\Creator.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\DataModel\\Creator.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:31:24.734Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Entity.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\Entity.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Entity\\Entity.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Entity\\Entity.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Entity\\Entity.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-24T00:29:50.307Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "docker-compose.yml",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\docker-compose.yml",
+              "RelativeDocumentMoniker": "docker-compose.yml",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\docker-compose.yml",
+              "RelativeToolTip": "docker-compose.yml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2024-03-24T00:14:53.118Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\launchSettings.json",
+              "RelativeDocumentMoniker": "launchSettings.json",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\launchSettings.json",
+              "RelativeToolTip": "launchSettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-03-24T00:14:48.724Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "WebApplicationDC1",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\WebApplicationDC1.csproj",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\WebApplicationDC1.csproj",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\WebApplicationDC1.csproj",
+              "RelativeToolTip": "WebApplicationDC1\\WebApplicationDC1.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-03-23T23:54:47.331Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": ".dockerignore",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\.dockerignore",
+              "RelativeDocumentMoniker": ".dockerignore",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\.dockerignore",
+              "RelativeToolTip": ".dockerignore",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-03-23T23:16:05.251Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Properties\\launchSettings.json",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Properties\\launchSettings.json",
+              "RelativeToolTip": "WebApplicationDC1\\Properties\\launchSettings.json",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAAB0AAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-03-23T23:09:52.803Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Dockerfile",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Dockerfile",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Dockerfile",
+              "RelativeToolTip": "WebApplicationDC1\\Dockerfile",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-03-23T23:09:39.266Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-23T20:01:58.981Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\appsettings.json",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\appsettings.json",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\appsettings.json",
+              "RelativeToolTip": "WebApplicationDC1\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-03-23T20:01:34.868Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "WeatherForecast.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\WeatherForecast.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\WeatherForecast.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\WeatherForecast.cs",
+              "RelativeToolTip": "WebApplicationDC1\\WeatherForecast.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-23T20:01:05.929Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Program.cs",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\Program.cs",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\Program.cs",
+              "RelativeToolTip": "WebApplicationDC1\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-23T20:01:02.124Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "WebApplicationDC1.http",
+              "DocumentMoniker": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\WebApplicationDC1.http",
+              "RelativeDocumentMoniker": "WebApplicationDC1\\WebApplicationDC1.http",
+              "ToolTip": "D:\\Bugor\\6sem\\DistibutedComputing\\projects\\rest\\WebApplicationDC1\\WebApplicationDC1\\WebApplicationDC1.http",
+              "RelativeToolTip": "WebApplicationDC1\\WebApplicationDC1.http",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2024-03-23T19:59:52.254Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

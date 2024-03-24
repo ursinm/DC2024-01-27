@@ -1,0 +1,14 @@
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\WebApplicationDC1.deps.json
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\WebApplicationDC1.runtimeconfig.json
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\appsettings.Development.json
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\appsettings.json
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\WebApplicationDC1.exe
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\WebApplicationDC1.dll
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\Swashbuckle.AspNetCore.Swagger.dll
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\Microsoft.OpenApi.dll
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\bin\Debug\WebApplicationDC1.pdb
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\obj\Debug\docker-compose.dcproj.AssemblyReference.cache
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache
+D:\Bugor\6sem\DistibutedComputing\projects\rest\WebApplicationDC1\obj\Debug\docker-c.35A3FFBA.Up2Date
