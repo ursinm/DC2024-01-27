@@ -1,4 +1,8 @@
-package com.example.rv.impl.editor;
+package com.example.rv.impl.editor.mapper;
+
+import com.example.rv.impl.editor.Editor;
+import com.example.rv.impl.editor.dto.EditorRequestTo;
+import com.example.rv.impl.editor.dto.EditorResponseTo;
 
 import java.util.List;
 

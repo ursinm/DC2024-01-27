@@ -1,6 +1,11 @@
-package com.example.rv.impl.note;
+package com.example.rv.impl.note.mapper.Impl;
 
 
+import com.example.rv.impl.note.Note;
+import com.example.rv.impl.note.dto.NoteRequestTo;
+import com.example.rv.impl.note.dto.NoteResponseTo;
+import com.example.rv.impl.note.mapper.NoteMapper;
+import com.example.rv.impl.tweet.Tweet;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +18,7 @@ public class NoteMapperImpl implements NoteMapper {
     public NoteRequestTo noteToRequestTo(Note note) {
         return new NoteRequestTo(
                 note.getId(),
-                note.getTweetId(),
+                note.getTweet().getId(),
                 note.getContent()
         );
     }
@@ -26,26 +31,19 @@ public class NoteMapperImpl implements NoteMapper {
     }
 
     @Override
-    public Note dtoToEntity(NoteRequestTo noteRequestTo) {
+    public Note dtoToEntity(NoteRequestTo noteRequestTo, Tweet tweet) {
         return new Note(
-                noteRequestTo.id(),
-                noteRequestTo.tweetId(),
-                noteRequestTo.content()
+                noteRequestTo.getId(),
+                tweet,
+                noteRequestTo.getContent()
         );
-    }
-
-    @Override
-    public List<Note> dtoToEntity(Iterable<NoteRequestTo> noteRequestTos) {
-        return StreamSupport.stream(noteRequestTos.spliterator(), false)
-                .map(this::dtoToEntity)
-                .collect(Collectors.toList());
     }
 
     @Override
     public NoteResponseTo noteToResponseTo(Note note) {
         return new NoteResponseTo(
                 note.getId(),
-                note.getTweetId(),
+                note.getTweet().getId(),
                 note.getContent());
     }
 

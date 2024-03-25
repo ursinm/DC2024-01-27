@@ -1,5 +1,9 @@
-package com.example.rv.impl.editor;
+package com.example.rv.impl.editor.mapper.Impl;
 
+import com.example.rv.impl.editor.Editor;
+import com.example.rv.impl.editor.dto.EditorRequestTo;
+import com.example.rv.impl.editor.dto.EditorResponseTo;
+import com.example.rv.impl.editor.mapper.EditorMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,11 +30,11 @@ public class EditorMapperImpl implements EditorMapper {
 
     @Override
     public Editor dtoToEntity(EditorRequestTo editorRequestTo) {
-        return new Editor(editorRequestTo.id(),
-                editorRequestTo.login(),
-                editorRequestTo.password(),
-                editorRequestTo.firstname(),
-                editorRequestTo.lastname());
+        return new Editor(editorRequestTo.getId(),
+                editorRequestTo.getLogin(),
+                editorRequestTo.getPassword(),
+                editorRequestTo.getFirstname(),
+                editorRequestTo.getLastname());
     }
 
     @Override

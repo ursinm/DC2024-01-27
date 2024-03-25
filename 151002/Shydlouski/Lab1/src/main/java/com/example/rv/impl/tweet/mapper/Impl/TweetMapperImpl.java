@@ -1,5 +1,10 @@
-package com.example.rv.impl.tweet;
+package com.example.rv.impl.tweet.mapper.Impl;
 
+import com.example.rv.impl.editor.Editor;
+import com.example.rv.impl.tweet.Tweet;
+import com.example.rv.impl.tweet.dto.TweetRequestTo;
+import com.example.rv.impl.tweet.dto.TweetResponseTo;
+import com.example.rv.impl.tweet.mapper.TweetMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +17,7 @@ public class TweetMapperImpl implements TweetMapper {
     public TweetRequestTo tweetToRequestTo(Tweet tweet) {
         return new TweetRequestTo(
                 tweet.getId(),
-                tweet.getEditorId(),
+                tweet.getEditor().getId(),
                 tweet.getTitle(),
                 tweet.getContent(),
                 tweet.getCreated(),
@@ -28,28 +33,21 @@ public class TweetMapperImpl implements TweetMapper {
     }
 
     @Override
-    public Tweet dtoToEntity(TweetRequestTo tweetRequestTo) {
+    public Tweet dtoToEntity(TweetRequestTo tweetRequestTo, Editor editor) {
         return new Tweet(
-                tweetRequestTo.id(),
-                tweetRequestTo.editorId(),
-                tweetRequestTo.title(),
-                tweetRequestTo.content(),
-                tweetRequestTo.created(),
-                tweetRequestTo.modified());
-    }
-
-    @Override
-    public List<Tweet> dtoToEntity(Iterable<TweetRequestTo> tweetRequestTos) {
-        return StreamSupport.stream(tweetRequestTos.spliterator(), false)
-                .map(this::dtoToEntity)
-                .collect(Collectors.toList());
+                tweetRequestTo.getId(),
+                editor,
+                tweetRequestTo.getTitle(),
+                tweetRequestTo.getContent(),
+                tweetRequestTo.getModified(),
+                tweetRequestTo.getCreated());
     }
 
     @Override
     public TweetResponseTo tweetToResponseTo(Tweet tweet) {
         return new TweetResponseTo(
                 tweet.getId(),
-                tweet.getEditorId(),
+                tweet.getEditor().getId(),
                 tweet.getTitle(),
                 tweet.getContent(),
                 tweet.getCreated(),
