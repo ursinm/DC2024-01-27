@@ -19,7 +19,7 @@ namespace DC.Repositories.Implementations
 			return creators;
 		}
 
-		public async Task<Creator> GetByIdAsync(long id)
+		public async Task<Creator?> GetByIdAsync(long id)
 		{
 			Creator? result = null;
 			await Task.Run(() =>

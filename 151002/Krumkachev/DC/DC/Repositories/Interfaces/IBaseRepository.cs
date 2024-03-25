@@ -1,10 +1,12 @@
-﻿namespace DC.Repositories.Interfaces
+﻿using DC.Models;
+
+namespace DC.Repositories.Interfaces
 {
-	public interface IBaseRepository<T> where T : class
+	public interface IBaseRepository<T> where T : BaseModel
 	{
 		Task<IEnumerable<T>> GetAllAsync();
 
-		Task<T> GetByIdAsync(long id);
+		Task<T?> GetByIdAsync(long id);
 
 		Task<T> CreateAsync(T entity);
 

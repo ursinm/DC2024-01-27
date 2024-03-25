@@ -17,7 +17,7 @@ namespace DC.Repositories.Implementations
 			return labels;
 		}
 
-		public async Task<Label> GetByIdAsync(long id)
+		public async Task<Label?> GetByIdAsync(long id)
 		{
 			Label? result = null;
 			await Task.Run(() =>

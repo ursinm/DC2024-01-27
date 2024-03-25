@@ -1,9 +1,9 @@
 ﻿namespace DC.Models
 {
-	public class Label
+	public class Label : BaseModel
 	{
-		public long Id { get; set; }
+		public string Name { get; set; } = string.Empty;
 
-		public string Name { get; set; }
+		public List<Issue> Issues { get; set; } = [];
 	}
 }
