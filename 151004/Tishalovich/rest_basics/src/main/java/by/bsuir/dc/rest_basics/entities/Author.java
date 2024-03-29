@@ -2,6 +2,7 @@ package by.bsuir.dc.rest_basics.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,6 +15,7 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String login;
 
     private String password;
@@ -22,4 +24,6 @@ public class Author {
 
     private String lastName;
 
+    @OneToMany(mappedBy = "author")
+    private List<Story> stories;
 }

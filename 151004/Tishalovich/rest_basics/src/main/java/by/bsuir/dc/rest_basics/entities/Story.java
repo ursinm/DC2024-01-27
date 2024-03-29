@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -16,8 +17,11 @@ public class Story {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long authorId;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
 
+    @Column(unique = true)
     private String title;
 
     private String content;
@@ -26,4 +30,6 @@ public class Story {
 
     private Date modified;
 
+    @OneToMany(mappedBy = "story")
+    public List<Message> messages;
 }
