@@ -1,71 +1,59 @@
 package com.example.rv.api.Controllers;
 
+import com.example.rv.api.exception.DuplicateEntityException;
+import com.example.rv.api.exception.EntityNotFoundException;
+import com.example.rv.impl.note.dto.NoteRequestTo;
+import com.example.rv.impl.note.dto.NoteResponseTo;
 import com.example.rv.impl.tag.*;
+import com.example.rv.impl.tag.Service.TagService;
+import com.example.rv.impl.tag.dto.TagRequestTo;
+import com.example.rv.impl.tag.dto.TagResponseTo;
+import com.example.rv.impl.tag.mapper.Impl.TagMapperImpl;
+import com.example.rv.impl.tag.mapper.TagMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = "/api/v1.0")
+@RequestMapping(value = "/api/v1.0/tags")
+@RequiredArgsConstructor
 public class TagController {
     private final TagService tagService;
 
-    public TagController(TagService tagService) {
-        this.tagService = tagService;
-    }
-
-
-    @RequestMapping(value = "/tags", method = RequestMethod.GET)
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    List<TagResponseTo> getTags() {
-        return tagService.tagMapper.tagToResponseTo(tagService.tagCrudRepository.getAll());
+    public List<TagResponseTo> getTags() {
+        return tagService.getTags();
     }
 
-    @RequestMapping(value = "/tags", method = RequestMethod.POST)
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public TagResponseTo getTagById(@PathVariable BigInteger id) throws EntityNotFoundException {
+        return tagService.getTagById(id);
+    }
+
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    TagResponseTo makeTag(@RequestBody TagRequestTo tagRequestTo) {
-
-        var toBack = tagService.tagCrudRepository.save(
-                tagService.tagMapper.dtoToEntity(tagRequestTo)
-        );
-
-        Tag tag = toBack.orElse(null);
-
-        assert tag != null;
-        return tagService.tagMapper.tagToResponseTo(tag);
+    public TagResponseTo saveTag(@Valid @RequestBody TagRequestTo tagTo) throws DuplicateEntityException, EntityNotFoundException {
+        return tagService.saveTag(tagTo);
     }
 
-    @RequestMapping(value = "/tags/{id}", method = RequestMethod.GET)
-    TagResponseTo getTag(@PathVariable Long id) {
-        return tagService.tagMapper.tagToResponseTo(
-                Objects.requireNonNull(tagService.tagCrudRepository.getById(id).orElse(null)));
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public TagResponseTo updateNote(@Valid @RequestBody TagRequestTo tagTo) throws DuplicateEntityException, EntityNotFoundException {
+        return tagService.updateTag(tagTo);
     }
 
-    @RequestMapping(value = "/tags", method = RequestMethod.PUT)
-    TagResponseTo updateTag(@RequestBody TagRequestTo tagRequestTo, HttpServletResponse response) {
-        Tag tag = tagService.tagMapper.dtoToEntity(tagRequestTo);
-        var newTag = tagService.tagCrudRepository.update(tag).orElse(null);
-        if (newTag != null) {
-            response.setStatus(200);
-            return tagService.tagMapper.tagToResponseTo(newTag);
-        } else {
-            response.setStatus(403);
-            return tagService.tagMapper.tagToResponseTo(tag);
-        }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteNote(@PathVariable BigInteger id) throws EntityNotFoundException {
+        tagService.deleteTagById(id);
     }
 
-    @RequestMapping(value = "/tags/{id}", method = RequestMethod.DELETE)
-    int deleteTag(@PathVariable Long id, HttpServletResponse response) {
-        Tag tagToDelete = tagService.tagCrudRepository.getById(id).orElse(null);
-        if (Objects.isNull(tagToDelete)) {
-            response.setStatus(403);
-        } else {
-            tagService.tagCrudRepository.delete(tagToDelete);
-            response.setStatus(204);
-        }
-        return 0;
-    }
 }

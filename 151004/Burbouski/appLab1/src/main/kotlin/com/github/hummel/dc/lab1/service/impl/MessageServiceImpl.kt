@@ -1,46 +1,40 @@
 package com.github.hummel.dc.lab1.service.impl
 
-import com.github.hummel.dc.lab1.bean.Message
 import com.github.hummel.dc.lab1.dto.request.MessageRequestTo
 import com.github.hummel.dc.lab1.dto.request.MessageRequestToId
 import com.github.hummel.dc.lab1.dto.response.MessageResponseTo
+import com.github.hummel.dc.lab1.repository.MessagesRepository
 import com.github.hummel.dc.lab1.service.MessageService
-import com.github.hummel.dc.lab1.util.BaseRepository
 
 class MessageServiceImpl(
-	private val messageRepository: BaseRepository<Message, Long>
+	private val repository: MessagesRepository
 ) : MessageService {
-	override fun getAll(): List<MessageResponseTo> {
-		val result = messageRepository.data.map { it.second }
+	override suspend fun create(requestTo: MessageRequestTo?): MessageResponseTo? {
+		val id = repository.getNextId() ?: return null
+		val bean = requestTo?.toBean(id) ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
 
-		return result.map { it.toResponse() }
+		return result.toResponse()
 	}
 
-	override fun create(messageRequestTo: MessageRequestTo?): MessageResponseTo? {
-		val id = if (messageRepository.data.isEmpty()) {
-			-1
-		} else {
-			messageRepository.getLastItem()?.id ?: return null
-		} + 1
+	override suspend fun deleteById(id: Long): Boolean = repository.deleteById(id)
 
-		val bean = messageRequestTo?.toBean(id) ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+	override suspend fun getAll(): List<MessageResponseTo> {
+		val result = repository.getAll()
 
-		return result?.toResponse()
+		return result.filterNotNull().map { it.toResponse() }
 	}
 
-	override fun deleteById(id: Long): Boolean = messageRepository.removeItem(id)
+	override suspend fun getById(id: Long): MessageResponseTo? {
+		val result = repository.getById(id) ?: return null
 
-	override fun getById(id: Long): MessageResponseTo? {
-		val result = messageRepository.getItemById(id)?.second
-
-		return result?.toResponse()
+		return result.toResponse()
 	}
 
-	override fun update(messageRequestToId: MessageRequestToId?): MessageResponseTo? {
-		val bean = messageRequestToId?.toBean() ?: return null
-		val result = messageRepository.addItem(bean.id, bean)
+	override suspend fun update(requestTo: MessageRequestToId?): MessageResponseTo? {
+		val bean = requestTo?.toBean() ?: return null
+		val result = repository.create(bean.id, bean) ?: return null
 
-		return result?.toResponse()
+		return result.toResponse()
 	}
 }

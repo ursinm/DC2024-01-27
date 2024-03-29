@@ -4,98 +4,94 @@ import by.bsuir.rv.bean.Comment;
 import by.bsuir.rv.bean.Issue;
 import by.bsuir.rv.dto.CommentRequestTo;
 import by.bsuir.rv.dto.CommentResponseTo;
-import by.bsuir.rv.exception.EntititesNotFoundException;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntityNotFoundException;
-import by.bsuir.rv.repository.comment.CommentRepositoryMemory;
-import by.bsuir.rv.repository.exception.RepositoryException;
-import by.bsuir.rv.repository.issue.IssueRepositoryMemory;
+import by.bsuir.rv.repository.comment.CommentRepository;
+import by.bsuir.rv.repository.issue.IssueRepository;
 import by.bsuir.rv.service.comment.ICommentService;
 import by.bsuir.rv.util.converter.comment.CommentConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService implements ICommentService {
+    private final CommentRepository commentRepository;
+    private final IssueRepository issueRepository;
 
     private final CommentConverter commentConverter;
-    private final CommentRepositoryMemory commentRepositoryMemory;
-    private final IssueRepositoryMemory issueRepositoryMemory;
 
     private final String ENTITY_NAME = "comment";
 
     @Autowired
-    public CommentService(CommentConverter commentConverter, CommentRepositoryMemory commentRepositoryMemory, IssueRepositoryMemory issueRepositoryMemory) {
+    public CommentService(CommentConverter commentConverter, CommentRepository commentRepository, IssueRepository issueRepository) {
         this.commentConverter = commentConverter;
-        this.commentRepositoryMemory = commentRepositoryMemory;
-        this.issueRepositoryMemory = issueRepositoryMemory;
+        this.commentRepository = commentRepository;
+        this.issueRepository = issueRepository;
     }
 
     @Override
-    public List<CommentResponseTo> getComments() throws EntititesNotFoundException {
-        List<Comment> comments = commentRepositoryMemory.findAll();
-        List<BigInteger> ids = comments.stream().map(Comment::getIssueId).toList();
-        List<Issue> issues;
-        try {
-             issues = issueRepositoryMemory.findAllById(ids);
-        } catch (RepositoryException e) {
-            throw new EntititesNotFoundException(ENTITY_NAME, ids);
-        }
-
-        List<CommentResponseTo> result = new ArrayList<>();
+    public List<CommentResponseTo> getComments() {
+        List<Comment> comments = commentRepository.findAll();
+        List<CommentResponseTo> responses = new ArrayList<>();
         for (Comment comment : comments) {
-            result.add(commentConverter.convertToResponse(comment));
+            responses.add(commentConverter.convertToResponse(comment));
         }
-
-        return result;
+        return responses;
     }
 
     @Override
-    public CommentResponseTo addComment(CommentRequestTo comment) {
-        Comment entity = commentConverter.convertToEntity(comment);
-        Comment saved = commentRepositoryMemory.save(entity);
-        return commentConverter.convertToResponse(saved);
+    public CommentResponseTo addComment(CommentRequestTo comment) throws EntityNotFoundException, DuplicateEntityException {
+        Optional<Issue> issue = issueRepository.findById(comment.getIssueId());
+        if (issue.isEmpty()) {
+            throw new EntityNotFoundException("Issue", comment.getIssueId());
+        }
+        Comment entity = commentConverter.convertToEntity(comment, issue.get());
+        try {
+            Comment saved = commentRepository.save(entity);
+            return commentConverter.convertToResponse(saved);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateEntityException(ENTITY_NAME, "");
+        }
     }
 
     @Override
     public void deleteComment(BigInteger id) throws EntityNotFoundException {
-        try {
-            commentRepositoryMemory.deleteById(id);
-        } catch (RepositoryException e) {
+        if (commentRepository.findById(id).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, id);
         }
+        commentRepository.deleteById(id);
     }
 
     @Override
-    public CommentResponseTo updateComment(CommentRequestTo comment) throws EntityNotFoundException {
-        try {
-            commentRepositoryMemory.findById(comment.getId());
-        } catch (RepositoryException e) {
+    public CommentResponseTo updateComment(CommentRequestTo comment) throws EntityNotFoundException, DuplicateEntityException {
+        if (commentRepository.findById(comment.getId()).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, comment.getId());
         }
-        Comment entity = commentConverter.convertToEntity(comment);
-        Comment saved = commentRepositoryMemory.save(entity);
-        return commentConverter.convertToResponse(saved);
+        Optional<Issue> issue = issueRepository.findById(comment.getIssueId());
+        if (issue.isEmpty()) {
+            throw new EntityNotFoundException("Issue", comment.getIssueId());
+        }
+        Comment entity = commentConverter.convertToEntity(comment, issue.get());
+        try {
+            Comment saved = commentRepository.save(entity);
+            return commentConverter.convertToResponse(saved);
+        } catch (DataIntegrityViolationException e) {
+            throw new DuplicateEntityException(ENTITY_NAME, "");
+        }
     }
 
     @Override
     public CommentResponseTo getCommentById(BigInteger id) throws EntityNotFoundException {
-        Comment comment;
-        Issue issue;
-        try {
-            comment = commentRepositoryMemory.findById(id);
-        } catch (RepositoryException e) {
+        Optional<Comment> comment = commentRepository.findById(id);
+        if (comment.isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, id);
         }
-
-        try {
-            issue = issueRepositoryMemory.findById(comment.getIssueId());
-        } catch (RepositoryException e) {
-            throw new EntityNotFoundException("Issue", id);
-        }
-        return commentConverter.convertToResponse(comment);
+        return commentConverter.convertToResponse(comment.get());
     }
 }
