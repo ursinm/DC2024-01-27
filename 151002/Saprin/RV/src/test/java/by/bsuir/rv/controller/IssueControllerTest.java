@@ -2,6 +2,7 @@ package by.bsuir.rv.controller;
 
 import by.bsuir.rv.dto.IssueRequestTo;
 import by.bsuir.rv.dto.IssueResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntititesNotFoundException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.service.issue.IIssueService;
@@ -53,7 +54,7 @@ public class IssueControllerTest {
     }
 
     @Test
-    void testCreateIssue() throws EntititesNotFoundException, EntityNotFoundException {
+    void testCreateIssue() throws EntititesNotFoundException, EntityNotFoundException, DuplicateEntityException {
         IssueRequestTo issueRequest = new IssueRequestTo();
         when(issueService.addIssue(issueRequest)).thenReturn(new IssueResponseTo());
 
@@ -63,7 +64,7 @@ public class IssueControllerTest {
     }
 
     @Test
-    void testUpdateIssue() throws EntititesNotFoundException, EntityNotFoundException {
+    void testUpdateIssue() throws EntititesNotFoundException, EntityNotFoundException, DuplicateEntityException {
         IssueRequestTo issueRequest = new IssueRequestTo();
         when(issueService.updateIssue(issueRequest)).thenReturn(new IssueResponseTo());
 
