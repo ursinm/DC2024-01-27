@@ -5,8 +5,6 @@ import by.rusakovich.newsdistributedsystem.error.response.ErrorResponseTO;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.ConversionError;
 import by.rusakovich.newsdistributedsystem.service.exception.CantCreate;
 import by.rusakovich.newsdistributedsystem.service.exception.NotFound;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

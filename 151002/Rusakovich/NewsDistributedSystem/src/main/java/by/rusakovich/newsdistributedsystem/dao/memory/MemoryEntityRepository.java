@@ -2,8 +2,6 @@ package by.rusakovich.newsdistributedsystem.dao.memory;
 
 import by.rusakovich.newsdistributedsystem.dao.IEntityRepository;
 import by.rusakovich.newsdistributedsystem.model.entity.IEntity;
-import by.rusakovich.newsdistributedsystem.model.entity.impl.Author;
-import by.rusakovich.newsdistributedsystem.model.entity.impl.News;
 
 import java.util.HashMap;
 import java.util.Map;

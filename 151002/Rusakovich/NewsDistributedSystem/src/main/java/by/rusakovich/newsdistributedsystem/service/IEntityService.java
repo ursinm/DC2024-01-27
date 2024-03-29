@@ -1,7 +1,5 @@
 package by.rusakovich.newsdistributedsystem.service;
 
-import by.rusakovich.newsdistributedsystem.model.entity.IEntity;
-
 import java.util.List;
 
 public interface IEntityService<Id, RequestTO, ResponseTO> {

@@ -4,7 +4,6 @@ import by.rusakovich.newsdistributedsystem.model.dto.author.AuthorRequestTO;
 import by.rusakovich.newsdistributedsystem.model.dto.author.AuthorResponseTO;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.ConversionError;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.EntityMapper;
-import by.rusakovich.newsdistributedsystem.model.dto.news.NewsRequestTO;
 import by.rusakovich.newsdistributedsystem.model.entity.impl.Author;
 import org.mapstruct.Mapper;
 
