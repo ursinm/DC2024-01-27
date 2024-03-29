@@ -1,5 +1,6 @@
 package by.rusakovich.newsdistributedsystem.model.dto.mapper.impl;
 
+import by.rusakovich.newsdistributedsystem.model.dto.mapper.ConversionError;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.EntityMapper;
 import by.rusakovich.newsdistributedsystem.model.dto.news.NewsRequestTO;
 import by.rusakovich.newsdistributedsystem.model.dto.news.NewsResponseTO;
@@ -9,11 +10,14 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = AuthorMapper.class)
+@Mapper(componentModel = "spring")
 public interface NewsMapper extends EntityMapper<Long, News<Long>, NewsRequestTO, NewsResponseTO> {
 
-    News<Long> mapToEntity(NewsRequestTO request);
-    List<NewsResponseTO> mapToResponseList(Iterable<News<Long>> entities);
-    NewsResponseTO mapToResponse(News<Long> entity);
+    @Override
+    News<Long> mapToEntity(NewsRequestTO request)throws ConversionError;
+    @Override
+    List<NewsResponseTO> mapToResponseList(Iterable<News<Long>> entities)throws ConversionError;
+    @Override
+    NewsResponseTO mapToResponse(News<Long> entity)throws ConversionError;
 }
 

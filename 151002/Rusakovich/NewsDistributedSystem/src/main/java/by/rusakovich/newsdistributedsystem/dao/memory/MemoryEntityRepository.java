@@ -2,6 +2,8 @@ package by.rusakovich.newsdistributedsystem.dao.memory;
 
 import by.rusakovich.newsdistributedsystem.dao.IEntityRepository;
 import by.rusakovich.newsdistributedsystem.model.entity.IEntity;
+import by.rusakovich.newsdistributedsystem.model.entity.impl.Author;
+import by.rusakovich.newsdistributedsystem.model.entity.impl.News;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +31,11 @@ public abstract class MemoryEntityRepository<Id, Entity extends IEntity<Id>> imp
     }
 
     @Override
-    public Optional<Entity> deleteById(Id id) {
+    public boolean deleteById(Id id) {
         rwLock.writeLock().lock();
         try {
-            return Optional.of(rep.remove(id));
+            var result = rep.remove(id);
+            return result != null;
         } finally {
             rwLock.writeLock().unlock();
         }
@@ -40,10 +43,10 @@ public abstract class MemoryEntityRepository<Id, Entity extends IEntity<Id>> imp
 
     @Override
     public Optional<Entity> create(Entity entity) {
+        rwLock.writeLock().lock();
         if(entity.getId() == null){
             entity.setId(getNewId());
         }
-        rwLock.writeLock().lock();
         try {
             rep.put(entity.getId(), entity);
         } finally {
@@ -57,10 +60,9 @@ public abstract class MemoryEntityRepository<Id, Entity extends IEntity<Id>> imp
         if(entity.getId() == null){
             return Optional.empty();
         }
-
         rwLock.readLock().lock();
-        // if nothing for update -> empty result
         if(!rep.containsKey(entity.getId())){
+            rwLock.readLock().unlock();
             return Optional.empty();
         }
         rwLock.readLock().unlock();

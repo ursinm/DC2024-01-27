@@ -7,31 +7,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class Controller<Id, RequestTO, ResponseTO, Service extends IEntityService<Id, RequestTO, ResponseTO>>{
 
     private final Service service;
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<ResponseTO> create(@RequestBody @Valid RequestTO to){
         ResponseTO result = service.create(to);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @GetMapping
-    public ResponseEntity<Iterable<ResponseTO>> readAll(){
-        Iterable<ResponseTO> result = service.readAll();
+    @GetMapping("")
+    public ResponseEntity<List<ResponseTO>> readAll(){
+        List<ResponseTO> result = service.readAll();
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/{id}")
+    @RequestMapping("/{id}")
     public ResponseEntity<ResponseTO> read(@PathVariable Id id){
         ResponseTO result = service.readById(id);
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseTO> update(@RequestBody @Valid RequestTO to){
+    @PutMapping("")
+    public ResponseEntity<ResponseTO> update(@Valid @RequestBody RequestTO to){
         ResponseTO result = service.update(to);
         return ResponseEntity.ok(result);
     }
