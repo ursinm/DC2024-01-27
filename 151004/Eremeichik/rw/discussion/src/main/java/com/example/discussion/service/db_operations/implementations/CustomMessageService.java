@@ -1,19 +1,19 @@
-package com.example.rw.service.db_operations.implementations;
+package com.example.discussion.service.db_operations.implementations;
 
-import com.example.rw.exception.model.not_found.EntityNotFoundException;
-import com.example.rw.model.entity.implementations.Message;
-import com.example.rw.model.entity.implementations.User;
-import com.example.rw.repository.interfaces.MessageRepository;
-import com.example.rw.service.db_operations.interfaces.MessageService;
+import com.example.discussion.exception.model.not_found.EntityNotFoundException;
+import com.example.discussion.model.entity.implementations.Message;
+import com.example.discussion.repository.interfaces.MessageRepository;
+import com.example.discussion.service.db_operations.interfaces.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
 public class CustomMessageService implements MessageService {
-
+    private final AtomicLong id = new AtomicLong(0L);
     private final MessageRepository messageRepository;
 
     @Override
@@ -30,6 +30,7 @@ public class CustomMessageService implements MessageService {
 
     @Override
     public void save(Message entity) {
+        entity.setId(id.incrementAndGet());
         messageRepository.save(entity);
     }
 
