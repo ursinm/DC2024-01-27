@@ -1,14 +1,21 @@
 package by.bsuir.dc.rest_basics.entities;
 
-import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
+import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
+@Entity
 @Data
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @NoArgsConstructor
-public class Author extends AbstractEntity {
+@AllArgsConstructor
+@Table(name = "tblAuthor")
+public class Author {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
     private String login;
 
     private String password;
@@ -17,11 +24,6 @@ public class Author extends AbstractEntity {
 
     private String lastName;
 
-    public Author(Long id, String login, String password, String firstName, String lastName) {
-        setId(id);
-        this.login = login;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
+    @OneToMany(mappedBy = "author")
+    private List<Story> stories;
 }
