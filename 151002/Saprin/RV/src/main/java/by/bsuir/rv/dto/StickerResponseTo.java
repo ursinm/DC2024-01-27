@@ -1,22 +1,21 @@
 package by.bsuir.rv.dto;
 
-import by.bsuir.rv.bean.IdentifiedBean;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class StickerResponseTo extends IdentifiedBean {
+public class StickerResponseTo {
+    private BigInteger id;
     private String name;
-    private BigInteger issueId;
+    private List<BigInteger> issueIds;
 
-    public StickerResponseTo(BigInteger id, String name, BigInteger issueId) {
-        super(id);
+    public StickerResponseTo(BigInteger id, String name, List<BigInteger> issueIds) {
+        this.id = id;
         this.name = name;
-        this.issueId = issueId;
+        this.issueIds = issueIds;
     }
 }

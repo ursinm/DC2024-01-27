@@ -2,6 +2,7 @@ package by.bsuir.rv.controller;
 
 import by.bsuir.rv.dto.EditorRequestTo;
 import by.bsuir.rv.dto.EditorResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.service.editor.IEditorService;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +56,7 @@ class EditorControllerTest {
     }
 
     @Test
-    void testCreateEditor() {
+    void testCreateEditor() throws DuplicateEntityException {
         EditorRequestTo editorRequest = new EditorRequestTo();
         EditorResponseTo createdEditor = new EditorResponseTo();
         when(editorService.createEditor(any())).thenReturn(createdEditor);

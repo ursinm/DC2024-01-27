@@ -1,26 +1,31 @@
 package by.bsuir.rv.bean;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 
-@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "tbl_editor")
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class Editor extends IdentifiedBean {
-    private String login;
-    private String password;
-    private String firstname;
-    private String lastname;
+public class Editor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigInteger ed_id;
 
-    public Editor(BigInteger id, String login, String password, String firstname, String lastname) {
-        super(id);
-        this.login = login;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-    }
+    @Column(name = "ed_login", unique = true)
+    private String ed_login;
+
+    @Column(name = "ed_password")
+    private String ed_password;
+
+    @Column(name = "ed_firstname")
+    private String ed_firstname;
+
+    @Column(name = "ed_lastname")
+    private String ed_lastname;
 }

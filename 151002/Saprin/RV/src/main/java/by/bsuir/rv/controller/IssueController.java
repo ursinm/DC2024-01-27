@@ -2,6 +2,7 @@ package by.bsuir.rv.controller;
 
 import by.bsuir.rv.dto.IssueRequestTo;
 import by.bsuir.rv.dto.IssueResponseTo;
+import by.bsuir.rv.exception.DuplicateEntityException;
 import by.bsuir.rv.exception.EntititesNotFoundException;
 import by.bsuir.rv.exception.EntityNotFoundException;
 import by.bsuir.rv.service.issue.IIssueService;
@@ -37,13 +38,13 @@ public class IssueController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public IssueResponseTo createIssue(@Valid @RequestBody IssueRequestTo issue) throws EntititesNotFoundException, EntityNotFoundException {
+    public IssueResponseTo createIssue(@Valid @RequestBody IssueRequestTo issue) throws EntititesNotFoundException, EntityNotFoundException, DuplicateEntityException {
         return issueService.addIssue(issue);
     }
 
     @PutMapping()
     @ResponseStatus(HttpStatus.OK)
-    public IssueResponseTo updateIssue(@Valid @RequestBody IssueRequestTo issue) throws EntititesNotFoundException, EntityNotFoundException {
+    public IssueResponseTo updateIssue(@Valid @RequestBody IssueRequestTo issue) throws EntititesNotFoundException, EntityNotFoundException, DuplicateEntityException {
         return issueService.updateIssue(issue);
     }
 
