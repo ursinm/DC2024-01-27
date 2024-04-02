@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RV.Views.DTO
+namespace Discussion.Views.DTO
 {
-    public class NoteDTO
+    public class NoteAddDTO
     {
-        [Required]
-        public int id { get; set; }
         [Required]
         public int newsId { get; set; }
         [Required]
         public string content { get; set; }
-        public string country { get; set; }
     }
 }

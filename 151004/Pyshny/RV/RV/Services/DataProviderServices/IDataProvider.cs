@@ -62,7 +62,8 @@ namespace RV.Services.DataProviderServices
 
         NoteDTO INoteDataProvider.CreateNote(NoteAddDTO item)
         {
-            return noteDataProvider.CreateNote(item);
+            var res = noteDataProvider.CreateNote(item);
+            return res;
         }
 
         List<NoteDTO> INoteDataProvider.GetNotes()

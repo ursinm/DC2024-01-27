@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RV.Views.DTO
+namespace Discussion.Views.DTO
 {
     public class NoteDTO
     {
@@ -10,6 +10,7 @@ namespace RV.Views.DTO
         public int newsId { get; set; }
         [Required]
         public string content { get; set; }
+        [Required]
         public string country { get; set; }
     }
 }
