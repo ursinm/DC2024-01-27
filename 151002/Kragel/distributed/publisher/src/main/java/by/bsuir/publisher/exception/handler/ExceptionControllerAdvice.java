@@ -1,6 +1,8 @@
 package by.bsuir.publisher.exception.handler;
 
 import by.bsuir.publisher.dto.response.ErrorResponseDto;
+import by.bsuir.publisher.exception.NoteExchangeFailedException;
+import by.bsuir.publisher.exception.NoteExchangeTimeoutException;
 import by.bsuir.publisher.exception.ResourceNotFoundException;
 import by.bsuir.publisher.util.ErrorUtil;
 import org.hibernate.exception.ConstraintViolationException;
@@ -42,6 +44,18 @@ public class ExceptionControllerAdvice {
                     + c.getErrorCode() + ", State: " + c.getSQLState());
         }
         return ErrorUtil.errorResponseEntity(HttpStatus.FORBIDDEN, 0, "Invalid request data");
+    }
+
+    @ExceptionHandler(NoteExchangeTimeoutException.class)
+    public ResponseEntity<ErrorResponseDto> handleNoteExchangeTimeoutException(
+            final NoteExchangeTimeoutException ex) {
+        return ErrorUtil.errorResponseEntity(HttpStatus.NOT_FOUND, 2, ex.getMessage());
+    }
+
+    @ExceptionHandler(NoteExchangeFailedException.class)
+    public ResponseEntity<ErrorResponseDto> handleNoteExchangeFailedException(
+            final NoteExchangeFailedException ex) {
+        return ErrorUtil.errorResponseEntity(HttpStatus.NOT_FOUND, 3, ex.getMessage());
     }
 
     @ExceptionHandler(Throwable.class)

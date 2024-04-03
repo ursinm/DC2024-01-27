@@ -2,8 +2,8 @@ package by.bsuir.publisher.service;
 
 import by.bsuir.publisher.dto.request.CreatorRequestDto;
 import by.bsuir.publisher.dto.response.CreatorResponseDto;
-import by.bsuir.publisher.model.Creator;
 import by.bsuir.publisher.exception.ResourceNotFoundException;
+import by.bsuir.publisher.model.Creator;
 import by.bsuir.publisher.repository.CreatorRepository;
 import by.bsuir.publisher.service.mapper.CreatorMapper;
 import lombok.RequiredArgsConstructor;

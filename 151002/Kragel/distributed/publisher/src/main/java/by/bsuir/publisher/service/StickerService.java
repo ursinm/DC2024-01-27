@@ -2,8 +2,8 @@ package by.bsuir.publisher.service;
 
 import by.bsuir.publisher.dto.request.StickerRequestDto;
 import by.bsuir.publisher.dto.response.StickerResponseDto;
-import by.bsuir.publisher.model.Sticker;
 import by.bsuir.publisher.exception.ResourceNotFoundException;
+import by.bsuir.publisher.model.Sticker;
 import by.bsuir.publisher.repository.StickerRepository;
 import by.bsuir.publisher.service.mapper.StickerMapper;
 import lombok.RequiredArgsConstructor;

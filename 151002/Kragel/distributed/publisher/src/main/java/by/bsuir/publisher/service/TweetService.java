@@ -2,8 +2,8 @@ package by.bsuir.publisher.service;
 
 import by.bsuir.publisher.dto.request.TweetRequestDto;
 import by.bsuir.publisher.dto.response.TweetResponseDto;
-import by.bsuir.publisher.model.Tweet;
 import by.bsuir.publisher.exception.ResourceNotFoundException;
+import by.bsuir.publisher.model.Tweet;
 import by.bsuir.publisher.repository.TweetRepository;
 import by.bsuir.publisher.service.mapper.TweetMapper;
 import lombok.RequiredArgsConstructor;
