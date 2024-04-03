@@ -1,6 +1,5 @@
 package by.bsuir.newsapi.controller;
 
-import by.bsuir.newsapi.dao.impl.CommentRepository;
 import by.bsuir.newsapi.model.request.CommentRequestTo;
 import by.bsuir.newsapi.model.request.EditorRequestTo;
 import by.bsuir.newsapi.model.response.CommentResponseTo;
