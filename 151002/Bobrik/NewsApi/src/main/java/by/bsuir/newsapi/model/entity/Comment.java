@@ -1,16 +1,23 @@
 package by.bsuir.newsapi.model.entity;
 
-import by.bsuir.newsapi.model.AbstractEntity;
-import lombok.Builder;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@SuperBuilder
-public class Comment extends AbstractEntity {
-    private Long newsId;
-    
+@Entity
+@Table(name = "tbl_comment")
+public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "content", length = 2048)
     private String content;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "news_id")
+    private News news;
 }

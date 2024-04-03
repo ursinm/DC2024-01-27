@@ -11,5 +11,5 @@ public interface RestService<Q, A> {
     
     A update(Q editorTo);
     
-    boolean removeById(Long id);
+    void removeById(Long id);
 }

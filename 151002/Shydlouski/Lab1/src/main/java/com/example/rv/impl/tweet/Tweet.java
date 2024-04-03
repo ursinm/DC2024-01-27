@@ -1,17 +1,39 @@
 package com.example.rv.impl.tweet;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.example.rv.impl.editor.Editor;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
-@Getter
-@Setter
-@Builder
+import java.math.BigInteger;
+import java.util.Date;
+
+@Entity
+@Table(name = "tbl_tweet")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Tweet {
-    Long id;
-    Long editorId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    BigInteger id;
+
+    @JoinColumn(name = "editor")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Editor editor;
+
+    @Column(name = "title", unique = true)
+    @Length(min = 2, max = 64)
     String title;
+
+    @Column(name = "content", nullable = false)
     String content;
-    String created;
-    String modified;
+
+    @Column(name = "modified")
+    private Date modified;
+
+    @Column(name = "created")
+    private Date created;
 }
