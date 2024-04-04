@@ -8,7 +8,7 @@ import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.cassandra.api.mappers.NoteMapper;
 import by.bsuir.poit.dc.cassandra.dao.NoteByNewsRepository;
 import by.bsuir.poit.dc.cassandra.dao.NoteRepository;
-import by.bsuir.poit.dc.cassandra.model.Note;
+import by.bsuir.poit.dc.cassandra.model.NoteById;
 import by.bsuir.poit.dc.cassandra.model.NoteByNews;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
 import by.bsuir.poit.dc.context.CatchLevel;
@@ -44,7 +44,7 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteModifyingException",
 	args = "noteId")
     public PresenceDto delete(long noteId) {
-	Optional<Note> noteOptional = noteRepository.findById(noteId);
+	Optional<NoteById> noteOptional = noteRepository.findById(noteId);
 	if (noteOptional.isPresent()) {
 	    var note = noteOptional.get();
 	    noteRepository.deleteById(noteId);
@@ -59,9 +59,9 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteAlreadyPresentException")
     public NoteDto save(UpdateNoteDto dto) {
 	long id = nextNoteId.getAndIncrement();
-	Note entity = noteMapper.toEntity(id, dto);
-	NoteByNews noteByNews = noteMapper.toNewsEntity(entity);
-	Note saved = noteRepository.save(entity);
+	NoteById entity = noteMapper.toEntityById(id, dto);
+	NoteByNews noteByNews = noteMapper.toEntityByNews(id, dto);
+	NoteById saved = noteRepository.save(entity);
 	NoteByNews _ = noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
     }
@@ -78,24 +78,24 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteModifyingException",
 	args = "noteId")
     public NoteDto update(long noteId, UpdateNoteDto dto) {
-	Note entity = noteRepository
-			  .findById(noteId)
-			  .orElseThrow(() -> newNoteNotFountException(noteId));
+	NoteById entity = noteRepository
+			      .findById(noteId)
+			      .orElseThrow(() -> newNoteNotFountException(noteId));
 	NoteByNews noteByNews = noteByNewsRepository
 				    .findByIdAndNewsId(noteId, entity.getNewsId())
 				    .orElseThrow(() -> newNoteNotFountException(noteId));
-	Note _ = noteMapper.partialUpdate(entity, dto);
+	NoteById _ = noteMapper.partialUpdate(entity, dto);
 	NoteByNews _ = noteMapper.partialUpdate(noteByNews, dto);
-	Note saved = noteRepository.save(entity);
+	NoteById saved = noteRepository.save(entity);
 	noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
     }
 
     @Override
     public NoteDto getById(long noteId) {
-	Note entity = noteRepository
-			  .findById(noteId)
-			  .orElseThrow(() -> newNoteNotFountException(noteId));
+	NoteById entity = noteRepository
+			      .findById(noteId)
+			      .orElseThrow(() -> newNoteNotFountException(noteId));
 	return noteMapper.toDto(entity);
     }
 

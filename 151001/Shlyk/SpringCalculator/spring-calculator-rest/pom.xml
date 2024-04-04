@@ -68,6 +68,12 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
+        <dependency>
+            <groupId>by.bsuir.poit.dc</groupId>
+            <artifactId>spring-calculator-kafka</artifactId>
+            <version>0.0.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

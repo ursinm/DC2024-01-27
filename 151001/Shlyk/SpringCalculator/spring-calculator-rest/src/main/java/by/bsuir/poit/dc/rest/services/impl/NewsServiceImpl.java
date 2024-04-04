@@ -28,6 +28,7 @@ import by.bsuir.poit.dc.rest.services.NewsService;
 import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openjdk.jmh.annotations.Threads;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -101,6 +102,15 @@ public class NewsServiceImpl implements NewsService {
 	return newsRepository.findAll().stream()
 		   .map(newsMapper::toDto)
 		   .toList();
+    }
+
+    @Override
+    @CatchThrows(
+	call = "newNewsNotFoundException",
+	args = "newsId"
+    )
+    public PresenceDto existsById(long newsId) {
+	return PresenceDto.wrap(newsRepository.existsById(newsId));
     }
 
     @Override

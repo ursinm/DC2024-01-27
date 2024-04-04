@@ -27,8 +27,11 @@ public interface NewsService {
     @Deprecated
     List<NewsDto> getAll();
 
+    PresenceDto existsById(long newsId);
+
     PresenceDto delete(long newsId);
 
+    @Deprecated(forRemoval = true)
     NoteDto createNote(long newsId, @Valid UpdateNoteDto dto);
 
     void attachLabelById(long newsId, @Valid UpdateNewsLabelDto dto);

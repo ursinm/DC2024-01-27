@@ -1,4 +1,4 @@
-package by.bsuir.poit.dc.rest.api.dto.request;
+package by.bsuir.poit.dc.kafka.dto;
 
 import by.bsuir.poit.dc.dto.groups.Create;
 import by.bsuir.poit.dc.dto.groups.Update;
@@ -7,25 +7,22 @@ import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
-import java.io.Serializable;
+import java.util.List;
 
 /**
- * DTO for {@link by.bsuir.poit.dc.rest.model.News}
+ * @author Paval Shlyk
+ * @since 04/04/2024
  */
 @Builder
-public record UpdateNewsDto(
+public record UpdateNewsNoteDto(
     @Null(groups = Create.class)
     @NotNull(groups = Update.class)
     Long id,
-    @Size(min = 2, max = 64)
     @NotNull(groups = Create.class)
-    String title,
-
-    @Size(min = 4, max = 2048)
-    @NotNull(groups = Create.class)
-    String content,
-    @NotNull(groups = Create.class)
-    Long userId
-
-) implements Serializable {
+    Long newsId,
+    @Size(min = 1)
+    //languages should be parsed in order of popularity and interest
+    List<String> countries,
+    String  content
+) {
 }
