@@ -13,11 +13,11 @@ spring:
     properties:
       hibernate.globally_quoted_identifiers: true
   application:
-    name: 'Publicator'
+    name: 'Publisher'
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 server:
-  port: 24110 #or another port
+  port: 24110
 springdoc:
   api-docs:
     enabled: true

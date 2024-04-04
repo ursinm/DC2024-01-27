@@ -1,10 +1,9 @@
-use distcomp;
-CREATE TABLE IF NOT EXISTS news_note
+CREATE TABLE IF NOT EXISTS notes_by_country_and_news
 (
     note_id BIGINT,
     news_id BIGINT,
     country varchar,
     content text,
-    PRIMARY KEY ( (note_id), news_id, country )
-    )
-WITH CLUSTERING ORDER BY (country ASC, news_id ASC)
+    PRIMARY KEY ( (country), news_id, note_id)
+)
+WITH CLUSTERING ORDER BY (news_id ASC, note_id ASC);

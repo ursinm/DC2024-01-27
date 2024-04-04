@@ -25,6 +25,7 @@
         <module>spring-calculator-rest</module>
         <module>spring-calculator-cassandra</module>
         <module>spring-calculator-utils</module>
+        <module>spring-calculator-kafka</module>
     </modules>
     <properties>
         <java.version>21</java.version>

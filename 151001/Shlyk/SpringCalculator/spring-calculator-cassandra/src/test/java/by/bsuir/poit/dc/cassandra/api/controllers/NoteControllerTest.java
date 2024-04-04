@@ -3,23 +3,24 @@ package by.bsuir.poit.dc.cassandra.api.controllers;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import io.restassured.http.ContentType;
-import jakarta.annotation.PostConstruct;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Arrays;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -49,10 +50,21 @@ class NoteControllerTest {
 				    .withExposedPorts(9042);
 
     @BeforeAll
+    public static void beforeAll() {
+	cassandra.start();
+    }
+
+    @AfterAll
+    public static void afterAll() {
+	cassandra.stop();
+    }
+
+    @BeforeAll
     static void setupCassandraConnectionProperties() {
 	System.setProperty("CASSANDRA_KEYSPACE_NAME", KEYSPACE_NAME);
-	System.setProperty("CASSANDRA_CONTACT_POINTS", cassandra.getContainerIpAddress());
+	System.setProperty("CASSANDRA_CONTACT_POINTS", cassandra.getHost());
 	System.setProperty("CASSANDRA_PORT", String.valueOf(cassandra.getMappedPort(9042)));
+	System.setProperty("CASSANDRA_DATACENTER", cassandra.getLocalDatacenter());
 	createKeyspace(cassandra.getCluster());
     }
 
@@ -63,13 +75,13 @@ class NoteControllerTest {
     }
 
     @Test
-    @Order(0)
+    @Order(1)
     void checkContainerIsRunning() {
 	assertTrue(cassandra.isRunning());
     }
 
     @Test
-    @Order(1)
+    @Order(2)
     void saveNote() throws Exception {
 	mockMvc.perform(
 	    post("/api/v1.0/notes")
@@ -95,7 +107,7 @@ class NoteControllerTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void checkUpdateTest() {
 	given()
 	    .mockMvc(mockMvc)

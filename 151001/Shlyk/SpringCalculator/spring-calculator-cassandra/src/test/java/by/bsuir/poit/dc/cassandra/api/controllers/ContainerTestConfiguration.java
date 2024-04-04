@@ -1,6 +1,9 @@
 package by.bsuir.poit.dc.cassandra.api.controllers;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.test.context.TestConfiguration;
+
+import java.util.Arrays;
 
 /**
  * @author Paval Shlyk
@@ -8,4 +11,7 @@ import org.springframework.boot.test.context.TestConfiguration;
  */
 @TestConfiguration
 public class ContainerTestConfiguration {
+    @PostConstruct
+    void doStuff() {
+    }
 }
