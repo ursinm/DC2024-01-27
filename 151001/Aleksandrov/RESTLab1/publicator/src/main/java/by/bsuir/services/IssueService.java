@@ -14,6 +14,8 @@ import by.bsuir.repository.IssueRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +37,7 @@ public class IssueService {
     IssueListMapper issueListMapper;
     @Autowired
     EditorRepository editorRepository;
-
+    @Cacheable(value = "issues", key = "#id")
     public IssueResponseTo getIssueById(@Min(0) Long id) throws NotFoundException {
         Optional<Issue> issue = issueDao.findById(id);
         return issue.map(value -> issueMapper.issueToIssueResponse(value)).orElseThrow(() -> new NotFoundException("Issue not found!", 40004L));
@@ -51,7 +53,7 @@ public class IssueService {
         Page<Issue> issues = issueDao.findAll(pageable);
         return issueListMapper.toIssueResponseList(issues.toList());
     }
-
+    @CacheEvict(value = "issues", key = "#issue.id")
     public IssueResponseTo saveIssue(@Valid IssueRequestTo issue) throws DuplicationException {
         Issue issueToSave = issueMapper.issueRequestToIssue(issue);
         if (issueDao.existsByTitle(issueToSave.getTitle())) {
@@ -62,7 +64,7 @@ public class IssueService {
         }
         return issueMapper.issueToIssueResponse(issueDao.save(issueToSave));
     }
-
+    @CacheEvict(value = "issues", allEntries = true)
     public void deleteIssue(@Min(0) Long id) throws DeleteException {
         if (!issueDao.existsById(id)) {
             throw new DeleteException("Issue not found!", 40004L);
@@ -70,7 +72,7 @@ public class IssueService {
             issueDao.deleteById(id);
         }
     }
-
+    @CacheEvict(value = "issues", key = "#issue.id")
     public IssueResponseTo updateIssue(@Valid IssueRequestTo issue) throws UpdateException {
         Issue issueToUpdate = issueMapper.issueRequestToIssue(issue);
         if (!issueDao.existsById(issue.getId())) {

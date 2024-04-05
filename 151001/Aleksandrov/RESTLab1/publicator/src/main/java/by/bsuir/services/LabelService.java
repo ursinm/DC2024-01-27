@@ -12,6 +12,7 @@ import by.bsuir.repository.LabelRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public class LabelService {
     LabelRepository labelDao;
     @Autowired
     LabelListMapper labelListMapper;
-
+    @CacheEvict(value = "labels", key = "#id")
     public LabelResponseTo getLabelById(@Min(0) Long id) throws NotFoundException {
         Optional<Label> label = labelDao.findById(id);
         return label.map(value -> labelMapper.labelToLabelResponse(value)).orElseThrow(() -> new NotFoundException("Label not found!", 40004L));
@@ -47,12 +48,12 @@ public class LabelService {
         Page<Label> labels = labelDao.findAll(pageable);
         return labelListMapper.toLabelResponseList(labels.toList());
     }
-
+    @CacheEvict(value = "labels", key = "#label.id")
     public LabelResponseTo saveLabel(@Valid LabelRequestTo label) {
         Label labelToSave = labelMapper.labelRequestToLabel(label);
         return labelMapper.labelToLabelResponse(labelDao.save(labelToSave));
     }
-
+    @CacheEvict(value = "labels", allEntries = true)
     public void deleteLabel(@Min(0) Long id) throws DeleteException {
         if (!labelDao.existsById(id)) {
             throw new DeleteException("Label not found!", 40004L);
@@ -60,7 +61,7 @@ public class LabelService {
             labelDao.deleteById(id);
         }
     }
-
+    @CacheEvict(value = "labels", key = "#label.id")
     public LabelResponseTo updateLabel(@Valid LabelRequestTo label) throws UpdateException {
         Label labelToUpdate = labelMapper.labelRequestToLabel(label);
         if (!labelDao.existsById(labelToUpdate.getId())) {
