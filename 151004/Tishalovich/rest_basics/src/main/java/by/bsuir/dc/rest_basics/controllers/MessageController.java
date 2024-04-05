@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1.0/messages")
-public class MessageController
-        extends AbstractController<MessageRequestTo, MessageResponseTo> {
+public class MessageController extends AbstractController<MessageRequestTo, MessageResponseTo> {
 
     public MessageController(AbstractService<MessageRequestTo,
             MessageResponseTo> service) {

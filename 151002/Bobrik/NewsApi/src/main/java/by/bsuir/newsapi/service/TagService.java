@@ -1,6 +1,8 @@
 package by.bsuir.newsapi.service;
 
-import by.bsuir.newsapi.dao.impl.TagRepository;
+import by.bsuir.newsapi.dao.TagRepository;
+import by.bsuir.newsapi.model.entity.News;
+import by.bsuir.newsapi.model.entity.Tag;
 import by.bsuir.newsapi.model.request.TagRequestTo;
 import by.bsuir.newsapi.model.response.TagResponseTo;
 import by.bsuir.newsapi.service.exceptions.ResourceNotFoundException;
@@ -23,41 +25,35 @@ public class TagService implements RestService <TagRequestTo, TagResponseTo> {
 
     @Override
     public List<TagResponseTo> findAll() {
-        return tagMapper.getListResponseTo(tagRepository.getAll());
+        return tagMapper.getListResponseTo(tagRepository.findAll());
     }
 
     @Override
     public TagResponseTo findById(Long id) {
         return tagMapper.getResponseTo(tagRepository
-                .getBy(id)
+                .findById(id)
                 .orElseThrow(() -> tagNotFoundException(id)));
     }
 
     @Override
     public TagResponseTo create(TagRequestTo tagTo) {
-        return tagRepository
-                .save(tagMapper.getTag(tagTo))
-                .map(tagMapper::getResponseTo)
-                .orElseThrow(TagService::tagStateException);
+        return tagMapper.getResponseTo(tagRepository.save(tagMapper.getTag(tagTo)));
     }
 
     @Override
     public TagResponseTo update(TagRequestTo tagTo) {
         tagRepository
-                .getBy(tagMapper.getTag(tagTo).getId())
+                .findById(tagMapper.getTag(tagTo).getId())
                 .orElseThrow(() -> tagNotFoundException(tagMapper.getTag(tagTo).getId()));
-        return tagRepository
-                .update(tagMapper.getTag(tagTo))
-                .map(tagMapper::getResponseTo)
-                .orElseThrow(TagService::tagStateException);
+        return tagMapper.getResponseTo(tagRepository.save(tagMapper.getTag(tagTo)));
     }
 
     @Override
-    public boolean removeById(Long id) {
-        if (!tagRepository.removeById(id)) {
-            throw tagNotFoundException(id);
-        }
-        return true;
+    public void removeById(Long id) {
+        Tag tag = tagRepository
+                .findById(id)
+                .orElseThrow(() -> tagNotFoundException(id));
+        tagRepository.delete(tag);
     }
 
     private static ResourceNotFoundException tagNotFoundException(Long id) {

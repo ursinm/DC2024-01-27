@@ -15,13 +15,31 @@ namespace DC.Middleware
 			}
 			catch (Exception ex)
 			{
-				context.Response.StatusCode = ex switch
+				string errorCode;
+				switch (ex)
 				{
-					NotFoundException => StatusCodes.Status404NotFound,
-					ValidationException => StatusCodes.Status400BadRequest,
-					_ => StatusCodes.Status500InternalServerError
-				};
-				await context.Response.WriteAsJsonAsync(new { ErrorMessage =  ex.Message });
+					case NotFoundException:
+						context.Response.StatusCode = StatusCodes.Status404NotFound;
+						errorCode = "01";
+						break;
+					case ValidationException:
+						context.Response.StatusCode = StatusCodes.Status400BadRequest;
+						errorCode = "02";
+						break;
+					case AlreadyExistsException:
+						context.Response.StatusCode = StatusCodes.Status403Forbidden;
+						errorCode = "03";
+						break;
+					default:
+						context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+						errorCode = "00";
+						break;
+				}
+				await context.Response.WriteAsJsonAsync(new
+				{
+					ErrorMessage = ex.Message,
+					ErrorCode = context.Response.StatusCode.ToString() + errorCode,
+				});
 			}
 		}
 	}

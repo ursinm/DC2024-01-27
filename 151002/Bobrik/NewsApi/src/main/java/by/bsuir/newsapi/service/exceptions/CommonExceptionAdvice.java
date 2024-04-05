@@ -1,6 +1,8 @@
 package by.bsuir.newsapi.service.exceptions;
 
 import by.bsuir.newsapi.model.response.ErrorResponseTo;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -32,6 +34,15 @@ public class CommonExceptionAdvice {
     @ExceptionHandler({Throwable.class})
     public ResponseEntity<ErrorResponseTo> catchThrowable(Throwable t) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorOf(t));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseTo> catchDataIntegrityViolationException(DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponseTo(
+                40387,
+                "Invalid request data",
+                null
+        ));
     }
 
     private ErrorResponseTo errorOf(MethodArgumentNotValidException e) {

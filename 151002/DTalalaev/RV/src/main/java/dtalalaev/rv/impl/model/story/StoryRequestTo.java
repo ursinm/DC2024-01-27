@@ -1,8 +1,6 @@
 package dtalalaev.rv.impl.model.story;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Size;
 import java.math.BigInteger;
@@ -11,6 +9,8 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoryRequestTo {
     private BigInteger id;
     BigInteger creatorId;

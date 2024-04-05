@@ -1,5 +1,6 @@
 package dtalalaev.rv.impl.model.post;
 
+import dtalalaev.rv.impl.model.story.StoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,9 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private StoryRepository storyRepository;
+
     public PostResponseTo findOne(BigInteger id) throws ResponseStatusException {
         if (!postRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post Not Found");
@@ -32,6 +36,9 @@ public class PostService {
     }
 
     public PostResponseTo create(PostRequestTo dto) {
+        if(!storyRepository.existsById(dto.getStoryId())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story not found");
+        }
         Post post = new Post();
         post.setContent(dto.getContent());
         post.setStoryId(dto.getStoryId());
