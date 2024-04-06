@@ -145,8 +145,12 @@ public class CatchThrowsBeanPostProcessor implements BeanPostProcessor {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 	    var params = methodsMap.get(method.getName());
-	    if (params == null) {
-		return method.invoke(bean, args);
+	    try {
+		if (params == null) {
+		    return method.invoke(bean, args);
+		}
+	    } catch (InvocationTargetException e) {
+		throw e.getCause();
 	    }
 	    Object result;
 	    try {

@@ -28,7 +28,6 @@ public abstract class NewsMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "modified", ignore = true)
-    @Mapping(target = "notes", ignore = true)
     public abstract News toEntity(UpdateNewsDto dto);
 
     @Mapping(target = "userId", source = "user.id")
@@ -39,7 +38,6 @@ public abstract class NewsMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "created", ignore = true)
     @Mapping(target = "modified", ignore = true)
-    @Mapping(target = "notes", ignore = true)
     @Mapping(target = "user",
 	source = "userId",
 	qualifiedByName = "getUserRef")//author cannot be changed

@@ -1,6 +1,5 @@
 package by.bsuir.poit.dc.cassandra.model;
 
-import com.google.j2objc.annotations.ObjectiveCName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

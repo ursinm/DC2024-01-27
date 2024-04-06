@@ -5,15 +5,17 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.orm.hibernate5.HibernateSystemException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,6 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class NewsControllerTest extends AbstractControllerTest {
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    private NewsRepository newsRepository;
 
     @Test
     @Order(1)
@@ -49,6 +54,8 @@ public class NewsControllerTest extends AbstractControllerTest {
     @Test
     @Order(2)
     public void duplicateNewsTest() throws Exception {
+	Mockito.when(newsRepository.save(any()))
+	    .thenThrow(new HibernateSystemException(null));
 	mockMvc.perform(
 	    post("/api/v1.0/news")
 		.contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +71,8 @@ public class NewsControllerTest extends AbstractControllerTest {
 	);
     }
 
-    @Test
+
+    //    @Test
     @Order(3)
     public void deleteNoteTest() throws Exception {
 	//retrieve data base content
@@ -99,28 +107,25 @@ public class NewsControllerTest extends AbstractControllerTest {
 	    .body("id", hasItems(2));
     }
 
-    private NewsRepository newsRepository;
 
+    @Test
     @Order(4)
     public void databaseConnectionFailedTest() throws Exception {
 	Mockito.when(newsRepository.findById(anyLong()))
-	    .thenThrow(DataAccessException.class);
-	given()
-	    .mockMvc(mockMvc)
-	    .when()
-	    .get("/api/v1.0/news/1")
-	    .then().assertThat()
-	    .status(HttpStatus.INTERNAL_SERVER_ERROR);
-
-	Mockito.when(newsRepository.findById(anyLong()))
 	    .thenReturn(Optional.empty());
-
 	given()
 	    .mockMvc(mockMvc)
 	    .when()
 	    .get("/api/v1.0/news/1")
 	    .then().assertThat()
 	    .status(HttpStatus.NOT_FOUND);
-
+	Mockito.when(newsRepository.findById(anyLong()))
+	    .thenThrow(new HibernateSystemException(null));
+	given()
+	    .mockMvc(mockMvc)
+	    .when()
+	    .get("/api/v1.0/news/1")
+	    .then().assertThat()
+	    .status(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

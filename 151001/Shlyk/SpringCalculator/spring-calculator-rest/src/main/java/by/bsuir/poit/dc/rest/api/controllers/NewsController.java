@@ -9,6 +9,7 @@ import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.services.NewsService;
+import by.bsuir.poit.dc.rest.services.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ import java.util.List;
 @RequestMapping("/api/v1.0/news")
 public class NewsController {
     private final NewsService newsService;
-
+    private final NoteService noteService;
     @PostMapping
     public ResponseEntity<NewsDto> publishNews(
 	@RequestBody @Validated(Create.class) UpdateNewsDto dto
@@ -84,7 +85,7 @@ public class NewsController {
     public List<NoteDto> getNewsNotes(
 	@PathVariable long newsId
     ) {
-	return newsService.getNotesByNewsId(newsId);
+	return noteService.getAllByNewsId(newsId);
     }
 
     @PostMapping("/{newsId}/labels")

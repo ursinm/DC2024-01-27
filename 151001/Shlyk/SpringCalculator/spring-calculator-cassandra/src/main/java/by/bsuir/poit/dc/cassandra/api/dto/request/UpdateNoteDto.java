@@ -17,6 +17,7 @@ public record UpdateNoteDto(
     @NotNull(groups = Update.class)
     Long id,
     Long newsId,
+    @Size(min = 2, max = 2048)
     String content
 ) {
 

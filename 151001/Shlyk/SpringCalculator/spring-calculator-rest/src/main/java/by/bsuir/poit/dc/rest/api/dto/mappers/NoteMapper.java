@@ -6,7 +6,6 @@ import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.dao.NewsRepository;
 import by.bsuir.poit.dc.rest.model.News;
-import by.bsuir.poit.dc.rest.model.Note;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
