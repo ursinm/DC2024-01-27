@@ -5,14 +5,15 @@ import by.bsuir.poit.dc.cassandra.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.cassandra.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
-import by.bsuir.poit.dc.cassandra.api.mappers.NoteMapper;
+import by.bsuir.poit.dc.cassandra.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.cassandra.dao.NoteByNewsRepository;
-import by.bsuir.poit.dc.cassandra.dao.NoteRepository;
+import by.bsuir.poit.dc.cassandra.dao.NoteByIdRepository;
 import by.bsuir.poit.dc.cassandra.model.NoteById;
 import by.bsuir.poit.dc.cassandra.model.NoteByNews;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
 import by.bsuir.poit.dc.context.CatchLevel;
 import by.bsuir.poit.dc.context.CatchThrows;
+import by.bsuir.poit.dc.context.IdGenerator;
 import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Paval Shlyk
@@ -33,10 +33,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 @CatchLevel(DataAccessException.class)
 public class NoteServiceImpl implements NoteService {
-    private final NoteRepository noteRepository;
+    private final NoteByIdRepository noteByIdRepository;
     private final NoteByNewsRepository noteByNewsRepository;
     private final NoteMapper noteMapper;
-    private final AtomicLong nextNoteId = new AtomicLong(1L);
+    private final IdGenerator idGenerator;
 
     @Override
     @Transactional
@@ -44,24 +44,25 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteModifyingException",
 	args = "noteId")
     public PresenceDto delete(long noteId) {
-	Optional<NoteById> noteOptional = noteRepository.findById(noteId);
+	Optional<NoteById> noteOptional = noteByIdRepository.findById(noteId);
 	if (noteOptional.isPresent()) {
 	    var note = noteOptional.get();
-	    noteRepository.deleteById(noteId);
 	    noteByNewsRepository.deleteByIdAndNewsId(noteId, note.getNewsId());
+	    noteByIdRepository.deleteById(noteId);
 	}
 	return PresenceDto.wrap(noteOptional.isPresent());
     }
+
 
     @Override
     @Transactional
     @CatchThrows(
 	call = "newNoteAlreadyPresentException")
     public NoteDto save(UpdateNoteDto dto) {
-	long id = nextNoteId.getAndIncrement();
+	long id = idGenerator.nextLong();
 	NoteById entity = noteMapper.toEntityById(id, dto);
 	NoteByNews noteByNews = noteMapper.toEntityByNews(id, dto);
-	NoteById saved = noteRepository.save(entity);
+	NoteById saved = noteByIdRepository.save(entity);
 	NoteByNews _ = noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
     }
@@ -78,26 +79,27 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteModifyingException",
 	args = "noteId")
     public NoteDto update(long noteId, UpdateNoteDto dto) {
-	NoteById entity = noteRepository
-			      .findById(noteId)
-			      .orElseThrow(() -> newNoteNotFountException(noteId));
+	NoteById noteById = noteByIdRepository
+				.findById(noteId)
+				.orElseThrow(() -> newNoteNotFountException(noteId));
 	NoteByNews noteByNews = noteByNewsRepository
-				    .findByIdAndNewsId(noteId, entity.getNewsId())
+				    .findByIdAndNewsId(noteId, noteById.getNewsId())
 				    .orElseThrow(() -> newNoteNotFountException(noteId));
-	NoteById _ = noteMapper.partialUpdate(entity, dto);
+	NoteById _ = noteMapper.partialUpdate(noteById, dto);
 	NoteByNews _ = noteMapper.partialUpdate(noteByNews, dto);
-	NoteById saved = noteRepository.save(entity);
-	noteByNewsRepository.save(noteByNews);
+	NoteById saved = noteByIdRepository.save(noteById);
+	NoteByNews _ = noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
     }
 
     @Override
     public NoteDto getById(long noteId) {
-	NoteById entity = noteRepository
+	NoteById entity = noteByIdRepository
 			      .findById(noteId)
 			      .orElseThrow(() -> newNoteNotFountException(noteId));
 	return noteMapper.toDto(entity);
     }
+
 
     @Keep
     private static ResourceNotFoundException newNoteNotFountException(long noteId) {

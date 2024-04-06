@@ -17,8 +17,6 @@ public record UpdateNoteDto(
     @NotNull(groups = Update.class)
     Long id,
     Long newsId,
-    @Size(min = 3, max = 3)
-    String country,
     String content
 ) {
 

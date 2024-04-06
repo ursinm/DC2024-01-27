@@ -1,4 +1,4 @@
-package by.bsuir.poit.dc.cassandra.api.mappers.config;
+package by.bsuir.poit.dc.cassandra.api.dto.mappers.config;
 
 import org.mapstruct.MapperConfig;
 

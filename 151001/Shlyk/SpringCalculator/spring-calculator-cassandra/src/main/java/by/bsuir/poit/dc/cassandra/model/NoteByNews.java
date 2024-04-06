@@ -1,5 +1,6 @@
 package by.bsuir.poit.dc.cassandra.model;
 
+import com.google.j2objc.annotations.ObjectiveCName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,8 @@ public class NoteByNews {
 	type = PrimaryKeyType.CLUSTERED,
 	ordinal = 1)
     private Long id;
-    @Column
+    @Column("content")
     private String content;
+//    @Column
+//    private long status;
 }

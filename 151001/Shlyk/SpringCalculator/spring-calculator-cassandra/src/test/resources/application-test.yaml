@@ -19,4 +19,3 @@ spring:
 logging:
   level:
     by.bsuir.poit.dc.cassandra: trace
-    com.datastax.oss.driver: trace

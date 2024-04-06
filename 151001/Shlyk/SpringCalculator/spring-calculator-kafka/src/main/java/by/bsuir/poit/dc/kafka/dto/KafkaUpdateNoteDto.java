@@ -14,7 +14,7 @@ import java.util.List;
  * @since 04/04/2024
  */
 @Builder
-public record UpdateNewsNoteDto(
+public record KafkaUpdateNoteDto(
     @Null(groups = Create.class)
     @NotNull(groups = Update.class)
     Long id,

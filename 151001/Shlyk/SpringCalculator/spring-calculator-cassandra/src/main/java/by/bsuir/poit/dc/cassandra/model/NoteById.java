@@ -2,6 +2,7 @@ package by.bsuir.poit.dc.cassandra.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.Column;
@@ -21,9 +22,12 @@ public class NoteById {
 	name = "note_id",
 	type = PrimaryKeyType.PARTITIONED,
 	ordinal = 0)
-    private Long id;
+    private long id;
     @Column("news_id")
-    private Long newsId;
+    private long newsId;
     @Column("content")
+    @NonNull
     private String content;
+//    @Column("status")
+//    private long status;
 }

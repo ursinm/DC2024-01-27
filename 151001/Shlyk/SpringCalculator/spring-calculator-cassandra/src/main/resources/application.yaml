@@ -1,8 +1,23 @@
 server:
   port: 24130
+discussion:
+  topics:
+    target: 'OutTopic'
+    source: 'InTopic'
 spring:
   application:
     name: 'Discussion'
+  kafka:
+    consumer:
+      group-id: 'first'
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      client-id: 'first'
+      key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   cassandra:
     keyspace-name: distcomp
     contact-points: localhost

@@ -49,15 +49,6 @@ class NoteControllerTest {
 	(CassandraContainer<?>) new CassandraContainer("cassandra:3.11.3")
 				    .withExposedPorts(9042);
 
-    @BeforeAll
-    public static void beforeAll() {
-	cassandra.start();
-    }
-
-    @AfterAll
-    public static void afterAll() {
-	cassandra.stop();
-    }
 
     @BeforeAll
     static void setupCassandraConnectionProperties() {
@@ -89,7 +80,6 @@ class NoteControllerTest {
 		.content("""
 		    		{
 		    			"newsId": 1,
-		    			"country": "bel",
 		    			"content": "The very long text"
 		    		}
 		    """)
@@ -98,7 +88,6 @@ class NoteControllerTest {
 	    content().json("""
 					{
 					"id": 1,
-					"country": "bel",
 					"newsId": 1,
 					"content": "The very long text"
 					} 

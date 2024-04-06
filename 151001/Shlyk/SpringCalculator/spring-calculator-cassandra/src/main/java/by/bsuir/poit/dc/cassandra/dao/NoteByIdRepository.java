@@ -7,5 +7,5 @@ import org.springframework.data.cassandra.repository.CassandraRepository;
  * @author Paval Shlyk
  * @since 06/03/2024
  */
-public interface NoteRepository extends CassandraRepository<NoteById, Long> {
+public interface NoteByIdRepository extends CassandraRepository<NoteById, Long> {
 }

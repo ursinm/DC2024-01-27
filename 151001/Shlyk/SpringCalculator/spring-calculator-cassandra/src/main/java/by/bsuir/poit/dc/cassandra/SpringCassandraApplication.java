@@ -1,10 +1,9 @@
 package by.bsuir.poit.dc.cassandra;
 
 import by.bsuir.poit.dc.context.CatchThrowsBeanPostProcessor;
-import com.ing.data.cassandra.jdbc.CassandraDataSource;
+import by.bsuir.poit.dc.context.IdGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -24,6 +23,10 @@ public class SpringCassandraApplication {
 	return new CatchThrowsBeanPostProcessor();
     }
 
+    @Bean
+    public IdGenerator idGenerator() {
+	return new IdGenerator();
+    }
 
     public static void main(String[] args) {
 	SpringApplication.run(SpringCassandraApplication.class, args);

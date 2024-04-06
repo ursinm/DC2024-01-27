@@ -2,14 +2,13 @@ package by.bsuir.poit.dc.rest.services.impl;
 
 import by.bsuir.poit.dc.LanguageQualityParser;
 import by.bsuir.poit.dc.context.CatchLevel;
-import by.bsuir.poit.dc.kafka.dto.NewsNoteDto;
-import by.bsuir.poit.dc.kafka.dto.UpdateNewsNoteDto;
+import by.bsuir.poit.dc.kafka.dto.KafkaNoteDto;
+import by.bsuir.poit.dc.kafka.dto.KafkaUpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
-import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.services.NewsService;
 import by.bsuir.poit.dc.rest.services.NoteService;
@@ -76,8 +75,8 @@ public class NoteServiceImpl implements NoteService {
 	final List<String> countries = Optional.ofNullable(language)
 					   .flatMap(lang -> parser.parse(lang, OrderType.PREFERABLE))
 					   .orElseGet(this::defaultCountries);
-	UpdateNewsNoteDto kafkaDto = noteMapper.buildRequest(dto, countries);
-	ResponseEntity<NewsNoteDto> response = cassandraTemplate.postForEntity("notes", kafkaDto, NewsNoteDto.class);
+	KafkaUpdateNoteDto kafkaDto = noteMapper.buildRequest(dto, countries);
+	ResponseEntity<KafkaNoteDto> response = cassandraTemplate.postForEntity("notes", kafkaDto, KafkaNoteDto.class);
 	if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
 	    return noteMapper.unwrapResponse(response.getBody());
 	}
@@ -107,7 +106,7 @@ public class NoteServiceImpl implements NoteService {
 
     }
 
-    private static ResourceBusyException newNoteCreationException(long newsId, UpdateNewsNoteDto dto) {
+    private static ResourceBusyException newNoteCreationException(long newsId, KafkaUpdateNoteDto dto) {
 	final String msg = STR."Failed to create note for news by id = \{newsId} for dto = \{dto}";
 	log.warn(msg);
 	return new ResourceBusyException(msg, 143);

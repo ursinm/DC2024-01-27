@@ -6,7 +6,6 @@ package by.bsuir.poit.dc.cassandra.api.dto.response;
  */
 public record NoteDto(
     long id,
-    String country,
     long newsId,
     String content) {
 }
