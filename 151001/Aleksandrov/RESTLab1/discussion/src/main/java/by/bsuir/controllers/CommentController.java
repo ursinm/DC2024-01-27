@@ -4,15 +4,46 @@ import by.bsuir.dto.CommentRequestTo;
 import by.bsuir.dto.CommentResponseTo;
 import by.bsuir.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1.0/comments")
 public class CommentController {
     @Autowired
-    CommentService commentService;
+    private CommentService commentService;
+    @Autowired
+    private KafkaSender kafkaSender;
+    private String topic = "OutTopic";
+
+    @KafkaListener(topics = "InTopic", groupId = "inGroup",
+            containerFactory = "commentRequestToConcurrentKafkaListenerContainerFactory")
+    void listenerWithMessageConverter(@Payload CommentRequestTo commentRequestTo) {
+        if (Objects.equals(commentRequestTo.getMethod(), "GET")) {
+            if (commentRequestTo.getId() != null) {
+                kafkaSender.sendCustomMessage(getComment(commentRequestTo.getId()), topic);
+            } else {
+               // kafkaSender.sendCustomMessage(getComments());
+            }
+        } else {
+            if (Objects.equals(commentRequestTo.getMethod(), "DELETE")) {
+                kafkaSender.sendCustomMessage(deleteComment(commentRequestTo.getId()), topic);
+            } else {
+                if (Objects.equals(commentRequestTo.getMethod(), "POST")) {
+                    kafkaSender.sendCustomMessage(saveComment(commentRequestTo.getCountry(), commentRequestTo), topic);
+                } else {
+                    if (Objects.equals(commentRequestTo.getMethod(), "PUT")) {
+                        kafkaSender.sendCustomMessage(updateComment(commentRequestTo.getCountry(), commentRequestTo), topic);
+                    }
+                }
+            }
+        }
+    }
 
     @GetMapping
     public List<CommentResponseTo> getComments() {
@@ -25,8 +56,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteComment(@PathVariable Long id) {
+    public CommentResponseTo deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
+        return new CommentResponseTo();
     }
 
     @PostMapping
