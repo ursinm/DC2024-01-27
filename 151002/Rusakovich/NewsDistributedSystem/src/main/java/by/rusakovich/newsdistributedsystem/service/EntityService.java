@@ -8,6 +8,8 @@ import by.rusakovich.newsdistributedsystem.service.exception.NotFound;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @AllArgsConstructor
 public abstract class EntityService<Id, RequestTO, ResponseTO, Entity extends IEntity<Id>> implements IEntityService<Id, RequestTO, ResponseTO> {
@@ -23,8 +25,9 @@ public abstract class EntityService<Id, RequestTO, ResponseTO, Entity extends IE
 
     @Override
     public List<ResponseTO> readAll() {
-        var entities = rep.readAll();
-        return mapper.mapToResponseList(entities);
+        return StreamSupport.stream(rep.readAll().spliterator(), false)
+                .map(mapper::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -43,6 +46,6 @@ public abstract class EntityService<Id, RequestTO, ResponseTO, Entity extends IE
 
     @Override
     public void deleteById(Id id) {
-        if(!rep.deleteById(id)) throw new NotFound(id);
+        rep.removeById(id);
     }
 }

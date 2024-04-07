@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: NewsDistributedSystem
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dc
+    username: root
+    password: root#12
+  liquibase:
+    change-log: classpath:db/changelog/master.xml
+
+server:
+  port: 24110
+
+api:
+  url: /api/v1.0

@@ -1,14 +1,19 @@
 package by.rusakovich.newsdistributedsystem.model.entity.impl;
 
 import by.rusakovich.newsdistributedsystem.model.entity.IEntity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class Label<Id> implements IEntity<Id> {
+@MappedSuperclass
+public class Label<Id extends Serializable> implements IEntity<Id> {
 
-    private String name;
+    @jakarta.persistence.Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Id id;
     @Override
     public Id getId(){return id;}
@@ -17,4 +22,7 @@ public class Label<Id> implements IEntity<Id> {
     public void setId(Id newId) {
         id = newId;
     }
+
+    @Column(length = 32)
+    private String name;
 }

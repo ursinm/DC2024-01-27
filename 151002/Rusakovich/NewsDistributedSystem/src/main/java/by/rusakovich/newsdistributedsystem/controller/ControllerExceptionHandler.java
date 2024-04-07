@@ -5,6 +5,8 @@ import by.rusakovich.newsdistributedsystem.error.response.ErrorResponseTO;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.ConversionError;
 import by.rusakovich.newsdistributedsystem.service.exception.CantCreate;
 import by.rusakovich.newsdistributedsystem.service.exception.NotFound;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +20,17 @@ public class ControllerExceptionHandler {
     public ResponseEntity<ErrorResponseTO> handleNotFound(NotFound e) {
         return makeErrorResponseFromException(HttpStatus.NOT_FOUND, e);
     }
+
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ErrorResponseTO> handleDataAccessException(DataAccessException e) {
+        return makeErrorResponseFromException(HttpStatus.FORBIDDEN, e);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseTO> handleDataIntegrity(DataIntegrityViolationException e) {
+        return makeErrorResponseFromException(HttpStatus.FORBIDDEN, e);
+    }
+
 
     @ExceptionHandler(CantCreate.class)
     public ResponseEntity<ErrorResponseTO> handleCantCreate(CantCreate e) {

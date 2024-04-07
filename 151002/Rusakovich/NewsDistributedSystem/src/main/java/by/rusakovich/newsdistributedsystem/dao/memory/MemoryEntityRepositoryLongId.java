@@ -2,7 +2,6 @@ package by.rusakovich.newsdistributedsystem.dao.memory;
 
 import by.rusakovich.newsdistributedsystem.model.entity.IEntity;
 
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MemoryEntityRepositoryLongId<Entity extends IEntity<Long>> extends MemoryEntityRepository<Long, Entity> {

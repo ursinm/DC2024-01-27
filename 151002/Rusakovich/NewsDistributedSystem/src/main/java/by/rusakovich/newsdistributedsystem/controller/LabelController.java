@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1.0/labels")
+@RequestMapping("${api.url}/labels")
 public class LabelController extends Controller<Long, LabelRequestTO, LabelResponseTO, LabelService> {
 
     public LabelController(LabelService service) {

@@ -5,16 +5,19 @@ import by.rusakovich.newsdistributedsystem.model.dto.author.AuthorResponseTO;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.ConversionError;
 import by.rusakovich.newsdistributedsystem.model.dto.mapper.EntityMapper;
 import by.rusakovich.newsdistributedsystem.model.entity.impl.Author;
+import by.rusakovich.newsdistributedsystem.model.entity.impl.jpa.JpaAuthor;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface AuthorMapper extends EntityMapper<Long, Author<Long>, AuthorRequestTO, AuthorResponseTO> {
+public interface AuthorMapper extends EntityMapper<Long, JpaAuthor, AuthorRequestTO, AuthorResponseTO> {
     @Override
-    Author<Long> mapToEntity(AuthorRequestTO request) throws ConversionError;
+    JpaAuthor mapToEntity(AuthorRequestTO request) throws ConversionError;
     @Override
-    List<AuthorResponseTO> mapToResponseList(Iterable<Author<Long>> entities) throws ConversionError;
-    @Override
-    AuthorResponseTO mapToResponse(Author<Long> entity) throws ConversionError;
+    AuthorResponseTO mapToResponse(JpaAuthor entity) throws ConversionError;
+
+    @Mapping(target = "password", expression = "java(null)")
+    JpaAuthor toEntity(AuthorResponseTO response) throws ConversionError;
 }

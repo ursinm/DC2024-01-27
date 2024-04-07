@@ -2,6 +2,8 @@ package by.rusakovich.newsdistributedsystem.dao.memory;
 
 import by.rusakovich.newsdistributedsystem.dao.IEntityRepository;
 import by.rusakovich.newsdistributedsystem.model.entity.IEntity;
+import by.rusakovich.newsdistributedsystem.service.exception.NotFound;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +31,11 @@ public abstract class MemoryEntityRepository<Id, Entity extends IEntity<Id>> imp
     }
 
     @Override
-    public boolean deleteById(Id id) {
+    public void removeById(Id id) {
         rwLock.writeLock().lock();
         try {
-            var result = rep.remove(id);
-            return result != null;
+            if (null == rep.remove(id))
+                throw new NotFound(id);
         } finally {
             rwLock.writeLock().unlock();
         }
