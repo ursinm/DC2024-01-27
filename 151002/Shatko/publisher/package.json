@@ -20,6 +20,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "axios": "^1.6.8",
     "drizzle-orm": "^0.30.7",
     "nestjs-zod": "^3.0.0",
     "pg": "^8.11.5",
