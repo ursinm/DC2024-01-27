@@ -2,8 +2,8 @@ package by.bsuir.poit.dc.rest.services.impl;
 
 import by.bsuir.poit.dc.LanguageQualityParser;
 import by.bsuir.poit.dc.context.CatchLevel;
-import by.bsuir.poit.dc.kafka.dto.KafkaNoteDto;
-import by.bsuir.poit.dc.kafka.dto.KafkaUpdateNoteDto;
+import by.bsuir.poit.dc.kafka.dto.*;
+import by.bsuir.poit.dc.kafka.service.AbstractReactiveKafkaService;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
@@ -15,15 +15,24 @@ import by.bsuir.poit.dc.rest.services.NoteService;
 import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.translate.UnicodeUnescaper;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static by.bsuir.poit.dc.LanguageQualityParser.*;
 
@@ -35,18 +44,36 @@ import static by.bsuir.poit.dc.LanguageQualityParser.*;
 @Service
 @CatchLevel(DataAccessException.class)
 @RequiredArgsConstructor
-public class NoteServiceImpl implements NoteService {
+public class NoteServiceImpl extends AbstractReactiveKafkaService<NoteResponse> implements NoteService {
     private final NewsService newsService;
     private final LanguageQualityParser parser;
-    private final RestTemplate cassandraTemplate;
     private final NoteMapper noteMapper;
     @Value("${location.default}")
+    @Setter
     private String defaultCountry;
+    @Value("${publisher.topics.target}")
+    @Setter
+    private String targetTopic;
+    private final KafkaTemplate<UUID, NoteRequest> kafkaTemplate;
+
+    @KafkaListener(topics = "${publisher.topics.source}")
+    public void processIncoming(ConsumerRecord<UUID, NoteResponse> record) {
+
+    }
+
+    private void send(UUID key, NoteRequest request) {
+	kafkaTemplate.send(targetTopic, key, request);
+    }
 
     @PostConstruct
     public void init() {
 	if (defaultCountry == null) {
 	    final String msg = "The default country is not provided";
+	    log.error(msg);
+	    throw new IllegalStateException(msg);
+	}
+	if (targetTopic == null) {
+	    final String msg = "The target topic is not specified";
 	    log.error(msg);
 	    throw new IllegalStateException(msg);
 	}
@@ -76,16 +103,16 @@ public class NoteServiceImpl implements NoteService {
 					   .flatMap(lang -> parser.parse(lang, OrderType.PREFERABLE))
 					   .orElseGet(this::defaultCountries);
 	KafkaUpdateNoteDto kafkaDto = noteMapper.buildRequest(dto, countries);
-	ResponseEntity<KafkaNoteDto> response = cassandraTemplate.postForEntity("notes", kafkaDto, KafkaNoteDto.class);
-	if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
-	    return noteMapper.unwrapResponse(response.getBody());
-	}
-	if (!response.hasBody()) {
-	    final String msg = "Kafka body is null and bad status expected";
-	    log.error(msg);
-	    throw new IllegalStateException(msg);//there is no message for front; the server is broken
-	}
-	throw newNoteCreationException(newsId, kafkaDto);
+	var id = nextSessionId();
+	var request = NoteRequest.builder()
+			  .event(RequestEvent.CREATE)
+			  .id(null).dto(kafkaDto)
+			  .build();
+	var mono = nextMonoResponse(id);
+	send(id, request);
+	return mono.map(response -> noteMapper.unwrapResponse(response.list().getFirst()))
+		   .block(Duration.ofSeconds(1));
+//	throw newNoteCreationException(newsId, kafkaDto);
     }
 
     @Override
@@ -115,5 +142,20 @@ public class NoteServiceImpl implements NoteService {
 
     private List<String> defaultCountries() {
 	return List.of(defaultCountry);
+    }
+
+    @Override
+    protected Throwable newServerBusyException(UUID sessionId) {
+	return null;
+    }
+
+    @Override
+    protected Throwable newEntityNotFoundException(UUID sessionId) {
+	return null;
+    }
+
+    @Override
+    protected Throwable newBadRequestException(UUID sessionId) {
+	return null;
     }
 }

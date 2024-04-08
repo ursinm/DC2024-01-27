@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1.0/notes")
-public class NoteController {
+public class WebNoteController {
     private final NoteService noteService;
 
     @PostMapping

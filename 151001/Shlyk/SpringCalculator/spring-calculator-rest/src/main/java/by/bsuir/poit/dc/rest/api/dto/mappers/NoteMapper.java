@@ -1,7 +1,6 @@
 package by.bsuir.poit.dc.rest.api.dto.mappers;
 
-import by.bsuir.poit.dc.kafka.dto.KafkaNoteDto;
-import by.bsuir.poit.dc.kafka.dto.KafkaUpdateNoteDto;
+import by.bsuir.poit.dc.kafka.dto.*;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.dao.NewsRepository;

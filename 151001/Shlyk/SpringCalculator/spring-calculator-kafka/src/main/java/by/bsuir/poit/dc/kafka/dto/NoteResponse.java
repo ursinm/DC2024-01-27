@@ -12,7 +12,8 @@ import java.util.List;
 public record NoteResponse(
     ResponseEvent status,
     List<KafkaNoteDto> list
-) {
+) implements StatusResponse {
+
     public static NoteResponse withStatus(ResponseEvent event) {
 	return new NoteResponse(event, null);
     }

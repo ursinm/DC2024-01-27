@@ -9,4 +9,5 @@ public enum ResponseEvent {
     NOT_FOUND,
     INVALID_FORMAT,
     BUSY
+//    ,LAST
 }

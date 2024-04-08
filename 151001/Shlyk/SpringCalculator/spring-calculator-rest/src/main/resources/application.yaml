@@ -1,4 +1,19 @@
+publisher:
+  topics:
+    target: 'InTopic'
+    source: 'OutTopic'
 spring:
+  kafka:
+    consumer:
+      group-id: 'publisher-consumer'
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      client-id: 'publisher-producer'
+      key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
