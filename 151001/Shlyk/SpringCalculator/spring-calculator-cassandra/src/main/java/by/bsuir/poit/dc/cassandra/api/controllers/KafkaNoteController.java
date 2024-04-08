@@ -3,6 +3,7 @@ package by.bsuir.poit.dc.cassandra.api.controllers;
 import by.bsuir.poit.dc.cassandra.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.cassandra.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.cassandra.api.dto.response.NoteDto;
+import by.bsuir.poit.dc.cassandra.api.exceptions.ContentNotValidException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
@@ -139,7 +140,8 @@ public class KafkaNoteController {
 	    log.error(STR."Exception is caught = \{t.getMessage()}");
 	    ResponseEvent status = switch (t.getCause()) {
 		case MethodArgumentNotValidException _,
-			 ResourceModifyingException _ -> ResponseEvent.INVALID_FORMAT;
+			 ResourceModifyingException _,
+			 ContentNotValidException _ -> ResponseEvent.INVALID_FORMAT;
 		case ResourceNotFoundException _ -> ResponseEvent.NOT_FOUND;
 		default -> ResponseEvent.BUSY;
 	    };

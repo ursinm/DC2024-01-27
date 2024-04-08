@@ -14,5 +14,11 @@ public record NoteRequest(
     Long id,
     @Nullable KafkaUpdateNoteDto dto
 ) {
+    public static NoteRequest withId(@NonNull RequestEvent event, long id) {
+	return new NoteRequest(event, id, null);
+    }
 
+    public static NoteRequest empty(@NonNull RequestEvent event) {
+	return new NoteRequest(event, null, null);
+    }
 }

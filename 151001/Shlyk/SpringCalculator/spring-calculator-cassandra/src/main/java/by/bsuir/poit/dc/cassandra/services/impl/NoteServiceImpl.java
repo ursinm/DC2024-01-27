@@ -8,8 +8,11 @@ import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.cassandra.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.cassandra.dao.NoteByNewsRepository;
 import by.bsuir.poit.dc.cassandra.dao.NoteByIdRepository;
+import by.bsuir.poit.dc.cassandra.model.NoteBuilder;
 import by.bsuir.poit.dc.cassandra.model.NoteById;
 import by.bsuir.poit.dc.cassandra.model.NoteByNews;
+import by.bsuir.poit.dc.cassandra.services.ModerationResult;
+import by.bsuir.poit.dc.cassandra.services.ModerationService;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
 import by.bsuir.poit.dc.context.CatchLevel;
 import by.bsuir.poit.dc.context.CatchThrows;
@@ -24,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static by.bsuir.poit.dc.cassandra.model.NoteBuilder.*;
+
 /**
  * @author Paval Shlyk
  * @since 06/03/2024
@@ -37,6 +42,7 @@ public class NoteServiceImpl implements NoteService {
     private final NoteByNewsRepository noteByNewsRepository;
     private final NoteMapper noteMapper;
     private final IdGenerator idGenerator;
+    private final ModerationService moderationService;
 
     @Override
     @Transactional
@@ -59,9 +65,16 @@ public class NoteServiceImpl implements NoteService {
     @CatchThrows(
 	call = "newNoteAlreadyPresentException")
     public NoteDto save(UpdateNoteDto dto) {
+	assert dto.content() != null : "The initial content should be non null";
+	var status = switch (moderationService.verify(dto.content())) {
+	    case ModerationResult.Error(String _) -> Status.DECLINED;
+	    case ModerationResult.Ok _ -> Status.APPROVED;
+	};
 	long id = idGenerator.nextLong();
 	NoteById entity = noteMapper.toEntityById(id, dto);
+	entity.setStatus(status.id());
 	NoteByNews noteByNews = noteMapper.toEntityByNews(id, dto);
+	noteByNews.setStatus(status.id());
 	NoteById saved = noteByIdRepository.save(entity);
 	NoteByNews _ = noteByNewsRepository.save(noteByNews);
 	return noteMapper.toDto(saved);
@@ -79,12 +92,25 @@ public class NoteServiceImpl implements NoteService {
 	call = "newNoteModifyingException",
 	args = "noteId")
     public NoteDto update(long noteId, UpdateNoteDto dto) {
+	final Status status;
+	if (dto.content() != null) {
+	    status = switch (moderationService.verify(dto.content())) {
+		case ModerationResult.Error(String _) -> Status.DECLINED;
+		case ModerationResult.Ok _ -> Status.APPROVED;
+	    };
+	} else {
+	    status = null;
+	}
 	NoteById noteById = noteByIdRepository
 				.findById(noteId)
 				.orElseThrow(() -> newNoteNotFountException(noteId));
 	NoteByNews noteByNews = noteByNewsRepository
 				    .findByIdAndNewsId(noteId, noteById.getNewsId())
 				    .orElseThrow(() -> newNoteNotFountException(noteId));
+	if (status != null) {
+	    noteById.setStatus(status.id());
+	    noteByNews.setStatus(status.id());
+	}
 	NoteById _ = noteMapper.partialUpdate(noteById, dto);
 	NoteByNews _ = noteMapper.partialUpdate(noteByNews, dto);
 	NoteById saved = noteByIdRepository.save(noteById);

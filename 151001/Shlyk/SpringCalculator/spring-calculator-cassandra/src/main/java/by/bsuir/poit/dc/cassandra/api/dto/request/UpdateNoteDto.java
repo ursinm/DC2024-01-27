@@ -2,6 +2,7 @@ package by.bsuir.poit.dc.cassandra.api.dto.request;
 
 import by.bsuir.poit.dc.dto.groups.Create;
 import by.bsuir.poit.dc.dto.groups.Update;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
@@ -18,7 +19,10 @@ public record UpdateNoteDto(
     Long id,
     Long newsId,
     @Size(min = 2, max = 2048)
-    String content
+    @NotNull(groups = Create.class)
+    String content,
+    @Null
+    Short status
 ) {
 
 }

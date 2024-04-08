@@ -27,6 +27,8 @@ public abstract class NoteMapper {
 
     public abstract NoteDto unwrapResponse(KafkaNoteDto dto);
 
+    public abstract List<NoteDto> unwrapResponseList(List<KafkaNoteDto> list);
+
     @Named("getNewsRef")
     protected News getNewsRef(long newsId) {
 	return newsRepository.getReferenceById(newsId);

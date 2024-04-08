@@ -34,6 +34,7 @@ public abstract class NoteMapper implements KafkaNoteMapper<UpdateNoteDto, NoteD
     @Mapping(target = "id", source = "id")
     public abstract NoteByNews toEntityByNews(long id, UpdateNoteDto dto);
 
+
     public abstract NoteById partialUpdate(
 	@MappingTarget NoteById note,
 	UpdateNoteDto dto);

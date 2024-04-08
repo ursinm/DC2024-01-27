@@ -2,11 +2,13 @@ package by.bsuir.poit.dc.kafka.service;
 
 import by.bsuir.poit.dc.kafka.dto.ResponseEvent;
 import by.bsuir.poit.dc.kafka.dto.StatusResponse;
+import com.google.errorprone.annotations.Keep;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.management.DescriptorKey;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -78,6 +80,7 @@ public abstract class AbstractReactiveKafkaService<T extends StatusResponse> {
 	return Optional.ofNullable(e);
     }
 
+    @Keep
     @SuppressWarnings("unchecked")
     protected <S extends T> Flux<S> nextFluxResponse(UUID sessionId) {
 	return Flux.create(sink -> {

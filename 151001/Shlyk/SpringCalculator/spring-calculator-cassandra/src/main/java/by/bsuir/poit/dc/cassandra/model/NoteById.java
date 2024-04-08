@@ -1,5 +1,6 @@
 package by.bsuir.poit.dc.cassandra.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -26,8 +27,10 @@ public class NoteById {
     @Column("news_id")
     private long newsId;
     @Column("content")
-    @NonNull
+    @NotNull
     private String content;
+    @Column("status")
+    private Short status;
 //    @Column("status")
 //    private long status;
 }
