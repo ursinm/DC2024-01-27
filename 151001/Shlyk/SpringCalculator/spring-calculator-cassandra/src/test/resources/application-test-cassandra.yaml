@@ -1,6 +1,4 @@
 spring:
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}
   cassandra:
     local-datacenter: ${CASSANDRA_DATACENTER}
     keyspace-name: ${CASSANDRA_KEYSPACE_NAME}

@@ -4,10 +4,7 @@ import by.bsuir.poit.dc.cassandra.api.dto.response.NoteDto;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,11 +25,11 @@ import static org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
  * @author Paval Shlyk
  * @since 08/03/2024
  */
-@SpringBootTest(classes = ContainerTestConfiguration.class)
+@SpringBootTest(classes = WebTestConfiguration.class)
 @AutoConfigureMockMvc
 @Testcontainers
 @TestMethodOrder(OrderAnnotation.class)
-@ActiveProfiles({"test"})
+@ActiveProfiles({"test-cassandra"})
 class NoteControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -50,6 +47,12 @@ class NoteControllerTest {
 	System.setProperty("CASSANDRA_PORT", String.valueOf(cassandra.getMappedPort(9042)));
 	System.setProperty("CASSANDRA_DATACENTER", cassandra.getLocalDatacenter());
 	createKeyspace(cassandra.getCluster());
+	cassandra.start();
+    }
+
+    @AfterAll
+    static void finish() {
+	cassandra.stop();
     }
 
     static void createKeyspace(Cluster cluster) {
