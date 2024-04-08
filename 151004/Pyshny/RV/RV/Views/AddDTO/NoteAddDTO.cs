@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RV.Views.DTO
 {
+    [Serializable]
     public class NoteAddDTO
     {
         [Required]

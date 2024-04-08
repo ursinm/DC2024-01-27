@@ -1,14 +1,29 @@
 package by.bsuir.newsapi.model.entity;
 
-import by.bsuir.newsapi.model.AbstractEntity;
-import lombok.Builder;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
-@SuperBuilder
-public class Tag extends AbstractEntity {
+@Entity
+@Table(name = "tbl_tag")
+public class Tag {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "name", nullable = false, unique = true, length = 32)
     private String name;
+
+    @ManyToMany
+    @JoinTable(name = "tbl_newstag",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "news_id"))
+    private List<News> news = new ArrayList<>();
+
 }

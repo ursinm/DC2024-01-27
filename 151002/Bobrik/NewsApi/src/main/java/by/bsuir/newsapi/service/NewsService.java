@@ -1,6 +1,7 @@
 package by.bsuir.newsapi.service;
 
-import by.bsuir.newsapi.dao.impl.NewsRepository;
+import by.bsuir.newsapi.dao.NewsRepository;
+import by.bsuir.newsapi.model.entity.Comment;
 import by.bsuir.newsapi.model.entity.News;
 import by.bsuir.newsapi.model.request.NewsRequestTo;
 import by.bsuir.newsapi.model.response.NewsResponseTo;
@@ -12,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,13 +26,13 @@ public class NewsService implements RestService<NewsRequestTo, NewsResponseTo> {
 
     @Override
     public List<NewsResponseTo> findAll() {
-        return newsMapper.getListResponseTo(newsRepository.getAll());
+        return newsMapper.getListResponseTo(newsRepository.findAll());
     }
 
     @Override
     public NewsResponseTo findById(Long id) {
         return newsMapper.getResponseTo(newsRepository
-                .getBy(id)
+                .findById(id)
                 .orElseThrow(() -> newsNotFoundException(id)));
     }
 
@@ -41,29 +41,23 @@ public class NewsService implements RestService<NewsRequestTo, NewsResponseTo> {
         News news = newsMapper.getNews(newsTo);
         news.setCreated(LocalDateTime.now());
         news.setModified(news.getCreated());
-        return newsRepository
-                .save(news)
-                .map(newsMapper::getResponseTo)
-                .orElseThrow(NewsService::newsStateException);
+        return newsMapper.getResponseTo(newsRepository.save(news));
     }
 
     @Override
     public NewsResponseTo update(NewsRequestTo newsTo) {
         newsRepository
-                .getBy(newsMapper.getNews(newsTo).getId())
+                .findById(newsMapper.getNews(newsTo).getId())
                 .orElseThrow(() -> newsNotFoundException(newsMapper.getNews(newsTo).getId()));
-        return newsRepository
-                .update(newsMapper.getNews(newsTo))
-                .map(newsMapper::getResponseTo)
-                .orElseThrow(NewsService::newsStateException);
+        return newsMapper.getResponseTo(newsRepository.save(newsMapper.getNews(newsTo)));
     }
 
     @Override
-    public boolean removeById(Long id) {
-        if (!newsRepository.removeById(id)) {
-            throw newsNotFoundException(id);
-        }
-        return true;
+    public void removeById(Long id) {
+        News news = newsRepository
+                .findById(id)
+                .orElseThrow(() -> newsNotFoundException(id));
+        newsRepository.delete(news);
     }
 
     private static ResourceNotFoundException newsNotFoundException(Long id) {

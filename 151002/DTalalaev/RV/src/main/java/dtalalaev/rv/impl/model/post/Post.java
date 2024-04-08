@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,7 +17,6 @@ import java.math.BigInteger;
 @Getter
 @Entity
 @Setter
-
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,26 +1,37 @@
 package by.bsuir.newsapi.model.entity;
 
-import by.bsuir.newsapi.model.AbstractEntity;
-import lombok.Builder;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@SuperBuilder
-public class News extends AbstractEntity {
-    private Long editorId;
-    
+@Entity
+@Table(name = "tbl_news")
+public class News {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "title", nullable = false, unique = true, length = 64)
     private String title;
-    
+
+    @Column(name = "content", length = 2048)
     private String content;
-    
+
+    @Column(name = "created")
     private LocalDateTime created;
-    
+
+    @Column(name = "modified")
     private LocalDateTime modified;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "editor_id")
+    private Editor editor;
 }
