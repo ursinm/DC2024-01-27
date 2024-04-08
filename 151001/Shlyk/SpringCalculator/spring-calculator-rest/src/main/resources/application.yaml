@@ -4,6 +4,8 @@ publisher:
     source: 'OutTopic'
 spring:
   kafka:
+    properties:
+      spring.json.trusted.packages: by.bsuir.poit.dc.kafka.*
     consumer:
       group-id: 'publisher-consumer'
       enable-auto-commit: false
@@ -41,3 +43,6 @@ springdoc:
     path: /api/v1.0/ui-docs.html
 location:
   default: 'by'
+logging:
+  level:
+   by.bsuir.poit.dc.rest: warn

@@ -26,6 +26,7 @@
         <module>spring-calculator-cassandra</module>
         <module>spring-calculator-utils</module>
         <module>spring-calculator-kafka</module>
+        <module>spring-calculator-eureka</module>
     </modules>
     <properties>
         <java.version>21</java.version>
@@ -160,6 +161,11 @@
             <dependency>
                 <groupId>by.bsuir.poit.dc</groupId>
                 <artifactId>spring-calculator-utils</artifactId>
+                <version>0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>by.bsuir.poit.dc</groupId>
+                <artifactId>spring-calculator-kafka</artifactId>
                 <version>0.0.1</version>
             </dependency>
             <dependency>

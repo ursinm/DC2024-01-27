@@ -119,5 +119,20 @@ class NoteControllerTest {
 	    .put("/api/v1.0/notes")
 	    .then().assertThat()
 	    .status(HttpStatus.BAD_REQUEST);
+	given()
+	    .mockMvc(mockMvc)
+	    .get(STR."/api/v1.0/notes/\{dto.id()}")
+	    .then().assertThat()
+	    .status(HttpStatus.OK);
+	given()
+	    .mockMvc(mockMvc)
+	    .delete(STR."/api/v1.0/notes/\{dto.id()}")
+	    .then().assertThat()
+	    .status(HttpStatus.NO_CONTENT);
+	given()
+	    .mockMvc(mockMvc)
+	    .delete(STR."/api/v1.0/notes/\{dto.id()}")
+	    .then().assertThat()
+	    .status(HttpStatus.NOT_FOUND);
     }
 }

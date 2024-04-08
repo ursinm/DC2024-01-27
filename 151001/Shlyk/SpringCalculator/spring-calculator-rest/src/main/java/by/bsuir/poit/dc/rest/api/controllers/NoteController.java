@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 /**
  * @author Paval Shlyk
@@ -24,10 +26,16 @@ import org.springframework.web.bind.annotation.*;
 public class NoteController {
     private final NoteService noteService;
 
+    @GetMapping
+    @Deprecated
+    public ResponseEntity<List<NoteDto>> getAllNotes() {
+	return ResponseEntity.ok(noteService.getAll());
+    }
+
     @PostMapping
     public ResponseEntity<NoteDto> createNewsNote(
 	@RequestBody @Validated(Create.class) UpdateNoteDto dto,
-	@RequestHeader(HttpHeaders.ACCEPT_LANGUAGE) @Nullable String language) {
+	@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) @Nullable String language) {
 	long newsId = dto.newsId();
 	NoteDto response = noteService.save(dto, newsId, language);
 	return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -42,7 +50,7 @@ public class NoteController {
     @PutMapping
     public NoteDto updateNoteById(
 	@RequestBody @Validated(Update.class) UpdateNoteDto dto,
-	@RequestHeader(HttpHeaders.ACCEPT_LANGUAGE) String language) {
+	@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String language) {
 	long noteId = dto.id();
 	return noteService.update(noteId, dto, language);
     }

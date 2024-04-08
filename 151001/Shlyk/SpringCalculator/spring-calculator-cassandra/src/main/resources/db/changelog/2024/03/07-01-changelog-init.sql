@@ -20,6 +20,5 @@ CREATE TABLE IF NOT EXISTS note_by_id
     note_id BIGINT,
     news_id BIGINT,
     content text,
-    PRIMARY KEY ( (note_id), news_id )
-)
-WITH CLUSTERING ORDER BY (news_id ASC);
+    PRIMARY KEY ( (note_id) )
+);

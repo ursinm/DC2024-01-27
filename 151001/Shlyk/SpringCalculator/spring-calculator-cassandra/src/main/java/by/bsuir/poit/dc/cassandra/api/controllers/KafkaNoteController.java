@@ -6,6 +6,7 @@ import by.bsuir.poit.dc.cassandra.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ContentNotValidException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
+import by.bsuir.poit.dc.cassandra.services.ModerationService;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
 import by.bsuir.poit.dc.dto.groups.Create;
 import by.bsuir.poit.dc.dto.groups.Update;
@@ -47,9 +48,22 @@ public class KafkaNoteController {
 	RequestEvent.UPDATE, this::updateNoteById,
 	RequestEvent.DELETE_BY_ID, this::deleteNoteById,
 	RequestEvent.FIND_BY_ID, this::getNoteById,
-	RequestEvent.FIND_BY_NEWS_ID, this::getNoteByNewsId
+	RequestEvent.FIND_BY_NEWS_ID, this::getNoteByNewsId,
+	RequestEvent.FIND_ALL, this::getAllNotes
     );
 
+    @Deprecated
+    public NoteResponse getAllNotes(
+	NoteRequest request,
+	@Null UpdateNoteDto dto
+    ) {
+	List<NoteDto> list = noteService.getAll();
+	List<KafkaNoteDto> kafkaList = noteMapper.buildRequestList(list);
+	return NoteResponse.builder()
+		   .status(ResponseEvent.OK)
+		   .list(kafkaList)
+		   .build();
+    }
 
     public NoteResponse createNewsNote(
 	NoteRequest request,
@@ -138,7 +152,8 @@ public class KafkaNoteController {
 	    response = function.apply(request, dto);
 	} catch (Throwable t) {
 	    log.error(STR."Exception is caught = \{t.getMessage()}");
-	    ResponseEvent status = switch (t.getCause()) {
+	    Throwable cause = t.getCause() != null ? t.getCause() : t;
+	    ResponseEvent status = switch (cause) {
 		case MethodArgumentNotValidException _,
 			 ResourceModifyingException _,
 			 ContentNotValidException _ -> ResponseEvent.INVALID_FORMAT;

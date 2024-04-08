@@ -22,6 +22,7 @@ import java.util.List;
     config = CentralMapperConfig.class
 )
 public abstract class NoteMapper implements KafkaNoteMapper<UpdateNoteDto, NoteDto> {
+    @Mapping(target = "status", ignore = true)
     public abstract UpdateNoteDto unwrapRequest(KafkaUpdateNoteDto dto);
 
     public abstract KafkaNoteDto buildResponse(NoteDto dto);

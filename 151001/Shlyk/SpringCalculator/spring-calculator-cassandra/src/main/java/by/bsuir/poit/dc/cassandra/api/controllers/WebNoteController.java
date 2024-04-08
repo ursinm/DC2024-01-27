@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 /**
  * @author Paval Shlyk
@@ -27,6 +29,12 @@ public class WebNoteController {
 	@RequestBody @Validated(Create.class) UpdateNoteDto dto) {
 	NoteDto response = noteService.save(dto);
 	return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<NoteDto>> getNotes() {
+	List<NoteDto> list = noteService.getAll();
+	return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{noteId}")

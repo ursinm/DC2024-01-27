@@ -1,33 +1,35 @@
-package by.bsuir.poit.dc.rest;
+package by.bsuir.poit.dc.cassandra;
 
-import by.bsuir.poit.dc.LanguageQualityParser;
 import by.bsuir.poit.dc.context.CatchThrowsBeanPostProcessor;
+import by.bsuir.poit.dc.context.IdGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-
-import java.util.List;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 /**
  * @author Paval Shlyk
- * @since 31/01/2024
+ * @since 24/02/2024
  */
 @SpringBootApplication
-public class SpringCalculatorRestApplication {
+@EnableCassandraRepositories
+public class CassandraApplication {
+
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public CatchThrowsBeanPostProcessor catchThrowsBeanPostProcessor() {
+    public CatchThrowsBeanPostProcessor catchThrowBeanPostProcessor() {
 	return new CatchThrowsBeanPostProcessor();
     }
 
     @Bean
-    public LanguageQualityParser languageQualityParser() {
-	return LanguageQualityParser.withDefaults();
+    public IdGenerator idGenerator() {
+	return new IdGenerator();
     }
 
     public static void main(String[] args) {
-	SpringApplication.run(SpringCalculatorRestApplication.class, args);
+	SpringApplication.run(CassandraApplication.class, args);
     }
 }

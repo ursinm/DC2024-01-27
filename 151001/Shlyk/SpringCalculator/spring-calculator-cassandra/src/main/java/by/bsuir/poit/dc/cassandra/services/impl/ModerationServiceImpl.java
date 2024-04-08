@@ -1,6 +1,7 @@
 package by.bsuir.poit.dc.cassandra.services.impl;
 
-import by.bsuir.poit.dc.cassandra.api.exceptions.ContentNotValidException;
+import by.bsuir.poit.dc.cassandra.api.dto.request.UpdateNoteDto;
+import by.bsuir.poit.dc.cassandra.model.NoteBuilder;
 import by.bsuir.poit.dc.cassandra.services.ModerationResult;
 import by.bsuir.poit.dc.cassandra.services.ModerationService;
 import lombok.NonNull;
@@ -24,5 +25,34 @@ public class ModerationServiceImpl implements ModerationService {
 	    return ModerationResult.withReason("The provided content holds bookies");
 	}
 	return ModerationResult.ok();
+    }
+
+    @Override
+    public UpdateNoteDto prepareUpdate(@NonNull UpdateNoteDto dto) {
+	final UpdateNoteDto output;
+	if (dto.content() != null) {
+	    var status = switch (verify(dto.content())) {
+		case ModerationResult.Error(String _) -> NoteBuilder.Status.DECLINED;
+		case ModerationResult.Ok _ -> NoteBuilder.Status.APPROVED;
+	    };
+	    output = dto.toBuilder()
+			 .status(status.id())
+			 .build();
+	} else {
+	    output = dto;
+	}
+	return output;
+    }
+
+    @Override
+    public UpdateNoteDto prepareSave(@NonNull UpdateNoteDto dto) {
+	assert dto.content() != null : "The initial content should be non null";
+	var status = switch (verify(dto.content())) {
+	    case ModerationResult.Error(String _) -> NoteBuilder.Status.DECLINED;
+	    case ModerationResult.Ok _ -> NoteBuilder.Status.APPROVED;
+	};
+	return dto.toBuilder()
+		   .status(status.id())
+		   .build();
     }
 }

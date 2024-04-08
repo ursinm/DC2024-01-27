@@ -16,6 +16,8 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.UUIDDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: by.bsuir.poit.dc.kafka.*
     producer:
       client-id: 'publisher-producer'
       key-serializer: org.apache.kafka.common.serialization.UUIDSerializer
@@ -36,3 +38,6 @@ spring:
     url: 'jdbc:cassandra://localhost:9042/distcomp'
     username: cassandra
     password: cassandra
+logging:
+  level:
+    by.bsuir.poit.dc.cassandra: trace

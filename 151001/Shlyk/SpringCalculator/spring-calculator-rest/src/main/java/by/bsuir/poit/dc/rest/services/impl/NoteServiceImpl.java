@@ -127,9 +127,9 @@ public class NoteServiceImpl extends AbstractReactiveKafkaService<NoteResponse> 
 
     @Override
     public NoteDto save(UpdateNoteDto dto, long newsId, @Nullable String language) {
-	if (newsService.existsById(newsId).isPresent()) {
-	    throw newNewsNotFoundException(newsId);
-	}
+//	if (newsService.existsById(newsId).isPresent()) {
+//	    throw newNewsNotFoundException(newsId);
+//	}
 	final List<String> countries = fetchCountries(language);
 	KafkaUpdateNoteDto kafkaDto = noteMapper.buildRequest(dto, countries);
 	var request = NoteRequest.builder()
@@ -172,7 +172,7 @@ public class NoteServiceImpl extends AbstractReactiveKafkaService<NoteResponse> 
 		   .flatMap(lang -> parser.parse(lang, OrderType.PREFERABLE))
 		   .orElseGet(this::defaultCountries);
     }
-
+    @Keep
     private static ResourceNotFoundException newNewsNotFoundException(long newsId) {
 	final String msg = STR."Any interaction with note is forbidden because corresponding news is not present. News id = \{newsId}";
 	log.warn(msg);
@@ -180,6 +180,7 @@ public class NoteServiceImpl extends AbstractReactiveKafkaService<NoteResponse> 
 
     }
 
+    @Keep
     private static ResourceBusyException newNoteCreationException(long newsId, KafkaUpdateNoteDto dto) {
 	final String msg = STR."Failed to create note for news by id = \{newsId} for dto = \{dto}";
 	log.warn(msg);

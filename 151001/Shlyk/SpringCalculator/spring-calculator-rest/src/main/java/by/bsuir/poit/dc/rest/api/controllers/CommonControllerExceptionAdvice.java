@@ -5,10 +5,12 @@ import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +22,7 @@ import java.util.List;
  * @author Paval Shlyk
  * @since 01/02/2024
  */
+@Slf4j
 @RestControllerAdvice
 public class CommonControllerExceptionAdvice {
     @ExceptionHandler({ResourceNotFoundException.class})
@@ -30,6 +33,12 @@ public class CommonControllerExceptionAdvice {
     @ExceptionHandler({ResourceModifyingException.class})
     public ResponseEntity<ErrorDto> catchModifyingException(ResourceModifyingException e) {
 	return errorOf(HttpStatus.FORBIDDEN, e);
+    }
+
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
+    public ResponseEntity<ErrorDto> catchNotValidMethodException(HttpRequestMethodNotSupportedException e) {
+	log.trace("Request to not implemented method");
+	return errorOf(HttpStatus.METHOD_NOT_ALLOWED, e);
     }
 
     @ExceptionHandler({ResourceBusyException.class})

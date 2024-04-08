@@ -19,5 +19,7 @@ public interface NoteService {
 
     NoteDto getById(long noteId);
 
+    @Deprecated
+    List<NoteDto> getAll();
     List<NoteDto> getAllByNewsId(long newsId);
 }
