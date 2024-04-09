@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import services.tweetservice.domain.request.MessageRequestTo;
 import services.tweetservice.domain.response.MessageResponseTo;
+import services.tweetservice.exceptions.ServiceException;
 import services.tweetservice.serivces.MessageServicePublisher;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponseTo> createMessage(@RequestBody MessageRequestTo messageRequestTo) {
+    public ResponseEntity<MessageResponseTo> createMessage(@RequestBody MessageRequestTo messageRequestTo) throws ServiceException {
         return ResponseEntity.status(HttpStatus.CREATED).body(messageServicePublisher.create(messageRequestTo));
     }
 
@@ -44,12 +45,12 @@ public class MessageController {
     }
 
     @PutMapping
-    public ResponseEntity<MessageResponseTo> updateMessage(@RequestBody MessageRequestTo messageRequestTo) {
+    public ResponseEntity<MessageResponseTo> updateMessage(@RequestBody MessageRequestTo messageRequestTo) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(messageServicePublisher.update(messageRequestTo));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteMessageById(@PathVariable Long id) {
+    public ResponseEntity<Long> deleteMessageById(@PathVariable Long id) throws ServiceException {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(messageServicePublisher.delete(id));
     }
 }

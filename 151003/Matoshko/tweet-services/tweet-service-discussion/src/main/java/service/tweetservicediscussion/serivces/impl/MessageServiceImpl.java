@@ -1,9 +1,13 @@
 package service.tweetservicediscussion.serivces.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import service.tweetservicediscussion.domain.entity.Message;
@@ -12,7 +16,11 @@ import service.tweetservicediscussion.domain.mapper.MessageListMapper;
 import service.tweetservicediscussion.domain.mapper.MessageMapper;
 import service.tweetservicediscussion.domain.request.MessageRequestTo;
 import service.tweetservicediscussion.domain.response.MessageResponseTo;
+import service.tweetservicediscussion.exceptions.ErrorResponseTo;
+import service.tweetservicediscussion.exceptions.ExceptionStatus;
 import service.tweetservicediscussion.exceptions.NoSuchMessageException;
+import service.tweetservicediscussion.kafkadto.MessageActionDto;
+import service.tweetservicediscussion.kafkadto.MessageActionTypeDto;
 import service.tweetservicediscussion.repositories.MessageRepository;
 import service.tweetservicediscussion.serivces.MessageService;
 
@@ -21,16 +29,89 @@ import java.util.List;
 @Service
 @Transactional
 @Validated
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
-    private final MessageRepository messageRepository;
+    @Lazy private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final MessageListMapper messageListMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    public MessageServiceImpl(@Lazy MessageRepository messageRepository, MessageMapper messageMapper, MessageListMapper messageListMapper) {
-        this.messageRepository = messageRepository;
-        this.messageMapper = messageMapper;
-        this.messageListMapper = messageListMapper;
+    @KafkaListener(topics = "${topic.inTopic}")
+    @SendTo
+    protected MessageActionDto receive(MessageActionDto messageActionDto) {
+        System.out.println("Received message: " + messageActionDto);
+        switch (messageActionDto.getAction()) {
+            case CREATE -> {
+
+                    MessageRequestTo messageRequest = objectMapper.convertValue(messageActionDto.getData(),
+                            MessageRequestTo.class);
+                    return MessageActionDto.builder().
+                            action(MessageActionTypeDto.CREATE).
+                            data(create(messageRequest)).
+                            build();
+
+              /*  catch (EntityExistsException e) {
+                    return MessageActionDto.builder().
+                            action(MessageActionTypeDto.CREATE).
+                            data(ErrorDto.builder().
+                                    code(HttpStatus.BAD_REQUEST.value() + "00").
+                                    message(Messages.EntityExistsException).
+                                    build()).
+                            build();
+                }
+
+               */
+            }
+            case READ -> {
+                Long id = Long.valueOf((String) messageActionDto.getData());
+                return MessageActionDto.builder().
+                        action(MessageActionTypeDto.READ).
+                        data(findMessageById(id)).
+                        build();
+            }
+            case READ_ALL -> {
+                return MessageActionDto.builder().
+                        action(MessageActionTypeDto.READ_ALL).
+                        data(read()).
+                        build();
+            }
+            case UPDATE -> {
+                try {
+                    MessageRequestTo messageRequest = objectMapper.convertValue(messageActionDto.getData(),
+                            MessageRequestTo.class);
+                    return MessageActionDto.builder().
+                            action(MessageActionTypeDto.UPDATE).
+                            data(update(messageRequest)).
+                            build();
+                } catch (NoSuchMessageException e) {
+                    return MessageActionDto.builder().
+                            action(MessageActionTypeDto.UPDATE).
+                            data(ErrorResponseTo.builder().
+                                    errorCode(HttpStatus.NOT_FOUND + ExceptionStatus.NO_SUCH_MESSAGE_EXCEPTION_STATUS.getValue()).
+                                    errorMessage(e.getMessage()).
+                                    build()).
+                            build();
+                }
+            }
+            case DELETE -> {
+                try {
+                    Long id = Long.valueOf((String) messageActionDto.getData());
+                    return MessageActionDto.builder().
+                            action(MessageActionTypeDto.DELETE).
+                            data(delete(id)).
+                            build();
+                } catch (NoSuchMessageException e) {
+                    return MessageActionDto.builder().
+                            action(MessageActionTypeDto.UPDATE).
+                            data(ErrorResponseTo.builder().
+                                    errorCode(HttpStatus.NOT_FOUND + ExceptionStatus.NO_SUCH_MESSAGE_EXCEPTION_STATUS.getValue()).
+                                    errorMessage(e.getMessage()).
+                                    build()).
+                            build();
+                }
+            }
+        }
+        return messageActionDto;
     }
 
     @Override
