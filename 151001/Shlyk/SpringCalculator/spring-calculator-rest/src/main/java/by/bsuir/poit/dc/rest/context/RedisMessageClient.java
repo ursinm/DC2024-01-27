@@ -3,7 +3,6 @@ package by.bsuir.poit.dc.rest.context;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Paval Shlyk

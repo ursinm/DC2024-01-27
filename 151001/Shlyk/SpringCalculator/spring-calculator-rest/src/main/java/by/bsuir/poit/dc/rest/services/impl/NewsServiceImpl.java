@@ -24,6 +24,9 @@ import by.bsuir.poit.dc.rest.services.NewsService;
 import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +42,7 @@ import java.util.List;
 @Slf4j
 @Service
 @CatchLevel(DataAccessException.class)
+@CacheConfig(cacheNames = "newsCache")
 @RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
     //    private final LabelRepository labelRepository;
@@ -64,6 +68,7 @@ public class NewsServiceImpl implements NewsService {
     @CatchThrows(
 	call = "newNewsModifyingException",
 	args = "newsId")
+    @CacheEvict(key = "#newsId")
     public NewsDto update(long newsId, UpdateNewsDto dto) {
 	News entity = newsRepository
 			  .findById(newsId)
@@ -74,6 +79,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable
     public NewsDto getById(long newsId) {
 	return newsRepository
 		   .findById(newsId)
@@ -133,6 +139,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+//    @CacheEvict(key = "#n")
     public PresenceDto detachLabelById(long newsId, long labelId) {
 	return PresenceDto
 		   .wrap(newsLabelRepository.existsByNewsIdAndLabelId(newsId, labelId))
@@ -141,6 +148,7 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
+    @Cacheable
     public List<NewsDto> getNewsByUserId(long userId) {
 	if (!userRepository.existsById(userId)) {
 	    throw newUserNotFoundException(userId);
@@ -151,6 +159,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable
     public List<NewsDto> getNewsByLabel(String label) {
 	List<NewsLabel> news = newsLabelRepository.findAllByLabelName(label);
 	return news.stream()
@@ -160,6 +169,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable(cacheNames = "labelCache", key = "#newsId")
     public List<LabelDto> getLabelsByNewsId(long newsId) {
 	News news = newsRepository
 			.findWithLabelsById(newsId)

@@ -31,6 +31,8 @@ public abstract class NewsMapper {
     public abstract News toEntity(UpdateNewsDto dto);
 
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "created", source = "created", qualifiedByName = "mapDate")
+    @Mapping(target = "modified", source = "modified", qualifiedByName = "mapDate")
     @Named("toDto")
     public abstract NewsDto toDto(News news);
 

@@ -1,17 +1,15 @@
 package by.bsuir.poit.dc.cassandra.services.impl;
 
+import by.bsuir.poit.dc.cassandra.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.cassandra.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.cassandra.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.cassandra.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.cassandra.api.exceptions.ResourceNotFoundException;
-import by.bsuir.poit.dc.cassandra.api.dto.mappers.NoteMapper;
-import by.bsuir.poit.dc.cassandra.dao.NoteByNewsRepository;
 import by.bsuir.poit.dc.cassandra.dao.NoteByIdRepository;
-import by.bsuir.poit.dc.cassandra.model.NoteBuilder;
+import by.bsuir.poit.dc.cassandra.dao.NoteByNewsRepository;
 import by.bsuir.poit.dc.cassandra.model.NoteById;
 import by.bsuir.poit.dc.cassandra.model.NoteByNews;
-import by.bsuir.poit.dc.cassandra.services.ModerationResult;
 import by.bsuir.poit.dc.cassandra.services.ModerationService;
 import by.bsuir.poit.dc.cassandra.services.NoteService;
 import by.bsuir.poit.dc.context.CatchLevel;
@@ -26,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-
-import static by.bsuir.poit.dc.cassandra.model.NoteBuilder.*;
 
 /**
  * @author Paval Shlyk

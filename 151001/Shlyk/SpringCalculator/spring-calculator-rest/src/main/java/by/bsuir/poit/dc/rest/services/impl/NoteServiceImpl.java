@@ -24,6 +24,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.util.Pair;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -45,6 +47,7 @@ import static by.bsuir.poit.dc.LanguageQualityParser.OrderType;
 @Slf4j
 @Service
 @CatchLevel(DataAccessException.class)
+@CacheConfig(cacheNames = "noteCache")
 @RequiredArgsConstructor
 public class NoteServiceImpl extends AbstractReactiveKafkaService<NoteResponse> implements NoteService {
     private final NewsService newsService;
@@ -172,6 +175,7 @@ public class NoteServiceImpl extends AbstractReactiveKafkaService<NoteResponse> 
 		   .flatMap(lang -> parser.parse(lang, OrderType.PREFERABLE))
 		   .orElseGet(this::defaultCountries);
     }
+
     @Keep
     private static ResourceNotFoundException newNewsNotFoundException(long newsId) {
 	final String msg = STR."Any interaction with note is forbidden because corresponding news is not present. News id = \{newsId}";

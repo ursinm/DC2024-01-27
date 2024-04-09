@@ -45,4 +45,4 @@ location:
   default: 'by'
 logging:
   level:
-   by.bsuir.poit.dc.rest: warn
+    by.bsuir.poit.dc.rest: warn
