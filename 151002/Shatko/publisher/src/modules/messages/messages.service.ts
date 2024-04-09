@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  OnModuleInit,
-} from "@nestjs/common";
-import axios from "axios";
+import { HttpException, Injectable, OnModuleInit } from "@nestjs/common";
 import { DELAY, KAFKA_KEYS, TOPICS } from "src/constants";
 import { Message } from "src/schemas";
 import { ConsumerService } from "../kafka/consumer.service";

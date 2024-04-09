@@ -15,4 +15,4 @@ export enum KAFKA_KEYS {
   DELETE = "delete",
 }
 
-export const DELAY = 100;
+export const DELAY = 250;
