@@ -68,7 +68,7 @@ public class NewsServiceImpl implements NewsService {
     @CatchThrows(
 	call = "newNewsModifyingException",
 	args = "newsId")
-    @CacheEvict(key = "#newsId")
+    @Cacheable(key = "#newsId")
     public NewsDto update(long newsId, UpdateNewsDto dto) {
 	News entity = newsRepository
 			  .findById(newsId)
@@ -139,7 +139,6 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-//    @CacheEvict(key = "#n")
     public PresenceDto detachLabelById(long newsId, long labelId) {
 	return PresenceDto
 		   .wrap(newsLabelRepository.existsByNewsIdAndLabelId(newsId, labelId))
@@ -148,7 +147,6 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    @Cacheable
     public List<NewsDto> getNewsByUserId(long userId) {
 	if (!userRepository.existsById(userId)) {
 	    throw newUserNotFoundException(userId);
@@ -169,7 +167,6 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @Cacheable(cacheNames = "labelCache", key = "#newsId")
     public List<LabelDto> getLabelsByNewsId(long newsId) {
 	News news = newsRepository
 			.findWithLabelsById(newsId)
