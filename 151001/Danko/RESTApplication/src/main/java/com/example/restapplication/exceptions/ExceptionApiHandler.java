@@ -35,4 +35,11 @@ public class ExceptionApiHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(exception.getStatus(), exception.getMessage()));
     }
+
+    @ExceptionHandler(DuplicationException.class)
+    public ResponseEntity<ErrorMessage> catchDuplicationException(DuplicationException exception) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorMessage(exception.getStatus(), exception.getMessage()));
+    }
 }

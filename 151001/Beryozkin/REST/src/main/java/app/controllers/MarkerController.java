@@ -17,8 +17,12 @@ public class MarkerController {
     MarkerService markerService;
 
     @GetMapping
-    public ResponseEntity<List<MarkerResponseTo>> getMarkers() {
-        return ResponseEntity.status(200).body(markerService.getMarkers());
+    public ResponseEntity<List<MarkerResponseTo>> getMarkers(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(markerService.getMarkers(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -43,8 +47,4 @@ public class MarkerController {
         return ResponseEntity.status(HttpStatus.OK).body(markerService.updateMarker(marker));
     }
 
-    @GetMapping("/byTweet/{id}")
-    public ResponseEntity<MarkerResponseTo> getMarkerByTweetId(@PathVariable Long id){
-        return ResponseEntity.status(200).body(markerService.getMarkerByTweetId(id));
-    }
 }

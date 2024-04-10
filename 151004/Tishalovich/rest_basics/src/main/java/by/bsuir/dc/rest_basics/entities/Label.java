@@ -1,18 +1,22 @@
 package by.bsuir.dc.rest_basics.entities;
 
-import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-public class Label extends AbstractEntity {
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "tblLabel")
+public class Label {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
     private String name;
-
-    public Label(Long id, String name) {
-        setId(id);
-        this.name = name;
-    }
 
 }

@@ -1,21 +1,27 @@
 package by.bsuir.dc.rest_basics.entities;
 
-import by.bsuir.dc.rest_basics.entities.common.AbstractEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
-@Getter
-@Setter
+@Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Story extends AbstractEntity {
+@Table(name = "tblStory")
+public class Story {
 
-    private Long authorId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
+
+    @Column(unique = true)
     private String title;
 
     private String content;
@@ -24,16 +30,6 @@ public class Story extends AbstractEntity {
 
     private Date modified;
 
-    public Story(Long id, Long authorId, String title, String content,
-                 Date created, Date modified) {
-
-        setId(id);
-        this.authorId = authorId;
-        this.title = title;
-        this.content = content;
-        this.created = created;
-        this.modified = modified;
-
-    }
-
+    @OneToMany(mappedBy = "story")
+    public List<Message> messages;
 }

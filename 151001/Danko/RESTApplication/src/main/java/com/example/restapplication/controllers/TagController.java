@@ -17,8 +17,13 @@ public class TagController {
     TagService tagService;
 
     @GetMapping
-    public ResponseEntity<List<TagResponseTo>> getAll() {
-        return ResponseEntity.status(200).body(tagService.getAll());
+    public ResponseEntity<List<TagResponseTo>> getAll(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder
+    ) {
+        return ResponseEntity.status(200).body(tagService.getAll(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -44,7 +49,7 @@ public class TagController {
     }
 
     @GetMapping("/story/{id}")
-    public ResponseEntity<TagResponseTo> getByStoryId(@PathVariable Long id){
+    public ResponseEntity<List<TagResponseTo>> getByStoryId(@PathVariable Long id){
         return ResponseEntity.status(200).body(tagService.getByStoryId(id));
     }
 }
