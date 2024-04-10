@@ -42,12 +42,6 @@ public class RedisConfig {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory, ObjectMapper mapper) {
-        /*
-        ObjectMapper objectMapper = mapper.copy().registerModule(new Hibernate6Module()
-                .enable(Hibernate6Module.Feature.FORCE_LAZY_LOADING)
-                .enable(Hibernate6Module.Feature.REPLACE_PERSISTENT_COLLECTIONS));
-
-         */
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
         RedisCacheConfiguration redisCacheConfiguration = config
                 .serializeKeysWith(
