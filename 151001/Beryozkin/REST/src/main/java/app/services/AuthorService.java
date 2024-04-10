@@ -1,17 +1,22 @@
 package app.services;
 
-import app.dao.AuthorDao;
 import app.dto.AuthorRequestTo;
 import app.dto.AuthorResponseTo;
 import app.entities.Author;
 import app.exceptions.DeleteException;
+import app.exceptions.DuplicationException;
 import app.exceptions.NotFoundException;
 import app.exceptions.UpdateException;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import app.mapper.AuthorListMapper;
 import app.mapper.AuthorMapper;
+import app.repository.AuthorRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,35 +29,53 @@ public class AuthorService {
     @Autowired
     AuthorMapper authorMapper;
     @Autowired
-    AuthorDao authorDao;
+    AuthorRepository authorDao;
     @Autowired
     AuthorListMapper authorListMapper;
 
     public AuthorResponseTo getAuthorById(@Min(0) Long id) throws NotFoundException {
         Optional<Author> author = authorDao.findById(id);
-        return author.map(value -> authorMapper.authorToAuthorResponse(value)).orElseThrow(() -> new NotFoundException("author not found!", 40004L));
+        return author.map(value -> authorMapper.authorToAuthorResponse(value)).orElseThrow(() -> new NotFoundException("Author not found!", 40004L));
     }
 
-    public List<AuthorResponseTo> getAuthors() {
-        return authorListMapper.toAuthorResponseList(authorDao.findAll());
+    public List<AuthorResponseTo> getAuthors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Pageable pageable;
+        if (sortOrder!=null && sortOrder.equals("asc")){
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        } else{
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+        }
+        Page<Author> authors = authorDao.findAll(pageable);
+        return authorListMapper.toAuthorResponseList(authors.toList());
     }
 
-    public AuthorResponseTo saveAuthor(@Valid AuthorRequestTo author) {
+    public AuthorResponseTo saveAuthor(@Valid AuthorRequestTo author) throws DuplicationException {
         Author authorToSave = authorMapper.authorRequestToAuthor(author);
+        if (authorDao.existsByLogin(authorToSave.getLogin())){
+            throw new DuplicationException("Login duplication", 40005L);
+        }
         return authorMapper.authorToAuthorResponse(authorDao.save(authorToSave));
     }
 
     public void deleteAuthor(@Min(0) Long id) throws DeleteException {
-        authorDao.delete(id);
+        if (!authorDao.existsById(id)) {
+            throw new DeleteException("Author not found!", 40004L);
+        } else {
+            authorDao.deleteById(id);
+        }
     }
 
     public AuthorResponseTo updateAuthor(@Valid AuthorRequestTo author) throws UpdateException {
         Author authorToUpdate = authorMapper.authorRequestToAuthor(author);
-        return authorMapper.authorToAuthorResponse(authorDao.update(authorToUpdate));
+        if (!authorDao.existsById(authorToUpdate.getId())){
+            throw new UpdateException("Author not found!", 40004L);
+        } else {
+            return authorMapper.authorToAuthorResponse(authorDao.save(authorToUpdate));
+        }
     }
 
     public AuthorResponseTo getAuthorByTweetId(@Min(0) Long tweetId) throws NotFoundException {
-        Optional<Author> author = authorDao.getAuthorByTweetId(tweetId);
-        return author.map(value -> authorMapper.authorToAuthorResponse(value)).orElseThrow(() -> new NotFoundException("author not found!", 40004L));
+        Author author = authorDao.findAuthorByTweetId(tweetId);
+        return authorMapper.authorToAuthorResponse(author);
     }
 }
