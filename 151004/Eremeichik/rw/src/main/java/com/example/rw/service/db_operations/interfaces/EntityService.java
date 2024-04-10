@@ -15,5 +15,5 @@ public interface EntityService<I, E extends EntityModel<I>> {
 
     void deleteById(I id) throws EntityNotFoundException;
 
-    void update(E entity);
+    E update(E entity);
 }

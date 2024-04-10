@@ -1,6 +1,5 @@
 package com.example.restapplication.services.impl;
 
-import com.example.restapplication.dao.TagDAO;
 import com.example.restapplication.dto.TagRequestTo;
 import com.example.restapplication.dto.TagResponseTo;
 import com.example.restapplication.entites.Tag;
@@ -9,9 +8,14 @@ import com.example.restapplication.exceptions.NotFoundException;
 import com.example.restapplication.exceptions.UpdateException;
 import com.example.restapplication.mappers.TagListMapper;
 import com.example.restapplication.mappers.TagMapper;
+import com.example.restapplication.repository.TagRepository;
 import com.example.restapplication.services.TagService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,7 +30,7 @@ public class ImplTagService implements TagService {
     TagMapper tagMapper;
 
     @Autowired
-    TagDAO tagDAO;
+    TagRepository tagDAO;
 
     @Autowired
     TagListMapper tagListMapper;
@@ -37,8 +41,15 @@ public class ImplTagService implements TagService {
     }
 
     @Override
-    public List<TagResponseTo> getAll() {
-        return tagListMapper.toTagResponseList(tagDAO.findAll());
+    public List<TagResponseTo> getAll(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Pageable pageable;
+        if (sortOrder != null && sortOrder.equals("asc")) {
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        } else {
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+        }
+        Page<Tag> tag = tagDAO.findAll(pageable);
+        return tagListMapper.toTagResponseList(tag.toList());
     }
 
     @Override
@@ -49,18 +60,26 @@ public class ImplTagService implements TagService {
 
     @Override
     public void delete(Long id) throws DeleteException {
-        tagDAO.delete(id);
+        if (!tagDAO.existsById(id)) {
+            throw new DeleteException("Tag not found!", 40004L);
+        } else {
+            tagDAO.deleteById(id);
+        }
     }
 
     @Override
     public TagResponseTo update(@Valid TagRequestTo requestTo) throws UpdateException {
         Tag tagToUpdate = tagMapper.toTag(requestTo);
-        return tagMapper.toTagResponse(tagDAO.update(tagToUpdate));
+        if(!tagDAO.existsById(tagToUpdate.getId())) {
+            throw new UpdateException("Tag not found!", 40004L);
+        } else {
+            return tagMapper.toTagResponse(tagDAO.save(tagToUpdate));
+        }
     }
 
     @Override
-    public TagResponseTo getByStoryId(Long storyId) throws NotFoundException {
-        Optional<Tag> label = tagDAO.getByStoryId(storyId);
-        return label.map(value -> tagMapper.toTagResponse(value)).orElseThrow(() -> new NotFoundException("Tag not found!", 40004L));
+    public List<TagResponseTo> getByStoryId(Long storyId) throws NotFoundException {
+        List<Tag> tags = tagDAO.findTagsByStoryId(storyId);
+        return tagListMapper.toTagResponseList(tags);
     }
 }
