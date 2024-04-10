@@ -1,17 +1,21 @@
 package app.services;
 
-import app.dao.MarkerDao;
 import app.dto.MarkerRequestTo;
 import app.dto.MarkerResponseTo;
 import app.entities.Marker;
 import app.exceptions.DeleteException;
 import app.exceptions.NotFoundException;
 import app.exceptions.UpdateException;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import app.mapper.MarkerListMapper;
 import app.mapper.MarkerMapper;
+import app.repository.MarkerRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -24,7 +28,7 @@ public class MarkerService {
     @Autowired
     MarkerMapper markerMapper;
     @Autowired
-    MarkerDao markerDao;
+    MarkerRepository markerDao;
     @Autowired
     MarkerListMapper markerListMapper;
 
@@ -33,8 +37,15 @@ public class MarkerService {
         return marker.map(value -> markerMapper.markerToMarkerResponse(value)).orElseThrow(() -> new NotFoundException("marker not found!", 40004L));
     }
 
-    public List<MarkerResponseTo> getMarkers() {
-        return markerListMapper.toMarkerResponseList(markerDao.findAll());
+    public List<MarkerResponseTo> getMarkers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Pageable pageable;
+        if (sortOrder != null && sortOrder.equals("asc")) {
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        } else {
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+        }
+        Page<Marker> markers = markerDao.findAll(pageable);
+        return markerListMapper.toMarkerResponseList(markers.toList());
     }
 
     public MarkerResponseTo saveMarker(@Valid MarkerRequestTo marker) {
@@ -43,16 +54,19 @@ public class MarkerService {
     }
 
     public void deleteMarker(@Min(0) Long id) throws DeleteException {
-        markerDao.delete(id);
+        if (!markerDao.existsById(id)) {
+            throw new DeleteException("Marker not found!", 40004L);
+        } else {
+            markerDao.deleteById(id);
+        }
     }
 
     public MarkerResponseTo updateMarker(@Valid MarkerRequestTo marker) throws UpdateException {
         Marker markerToUpdate = markerMapper.markerRequestToMarker(marker);
-        return markerMapper.markerToMarkerResponse(markerDao.update(markerToUpdate));
-    }
-
-    public MarkerResponseTo getMarkerByTweetId(@Min(0) Long tweetId) throws NotFoundException {
-        Optional<Marker> marker = markerDao.getMarkerByTweetId(tweetId);
-        return marker.map(value -> markerMapper.markerToMarkerResponse(value)).orElseThrow(() -> new NotFoundException("marker not found!", 40004L));
+        if (!markerDao.existsById(markerToUpdate.getId())) {
+            throw new UpdateException("Marker not found!", 40004L);
+        } else {
+            return markerMapper.markerToMarkerResponse(markerDao.save(markerToUpdate));
+        }
     }
 }

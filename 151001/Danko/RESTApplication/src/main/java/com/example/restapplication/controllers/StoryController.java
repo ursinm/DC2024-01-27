@@ -2,12 +2,13 @@ package com.example.restapplication.controllers;
 
 import com.example.restapplication.dto.StoryRequestTo;
 import com.example.restapplication.dto.StoryResponseTo;
-import com.example.restapplication.services.StoryService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.restapplication.services.StoryService;
 import java.util.List;
 
 @RestController
@@ -17,8 +18,13 @@ public class StoryController {
     StoryService storyService;
 
     @GetMapping
-    public ResponseEntity<List<StoryResponseTo>> getAll() {
-        return ResponseEntity.status(200).body(storyService.getAll());
+    public ResponseEntity<List<StoryResponseTo>> getAll(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder
+    ) {
+        return ResponseEntity.status(200).body(storyService.getAll(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -45,8 +51,8 @@ public class StoryController {
 
     @GetMapping("/info")
     public ResponseEntity<List<StoryResponseTo>> getByData(
-            @RequestParam(required = false) String tagName,
-            @RequestParam(required = false) Long tagId,
+            @RequestParam(required = false) List<String> tagName,
+            @RequestParam(required = false) List<Long> tagId,
             @RequestParam(required = false) String userLogin,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String content

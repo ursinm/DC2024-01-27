@@ -1,5 +1,7 @@
 package com.example.restapplication.dto;
 
+import com.example.restapplication.utils.StringParser;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ public class StoryRequestTo {
     private String title;
     @NotBlank
     @Size(min =  4, max = 2048)
+    @JsonDeserialize(using = StringParser.class)
     private String content;
     private Long userId;
     private Long tagId;

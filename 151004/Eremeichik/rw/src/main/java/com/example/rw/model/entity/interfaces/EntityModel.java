@@ -1,6 +1,8 @@
 package com.example.rw.model.entity.interfaces;
 
-public interface EntityModel<I> {
+import java.io.Serializable;
+
+public interface EntityModel<I> extends Serializable {
 
     I getId();
 
