@@ -6,6 +6,9 @@ import com.example.rw.model.entity.implementations.User;
 import com.example.rw.repository.interfaces.NewsRepository;
 import com.example.rw.service.db_operations.interfaces.NewsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +20,7 @@ public class CustomNewsService implements NewsService {
     private final NewsRepository newsRepository;
 
     @Override
+    @Cacheable(value = "news", key = "#id")
     public News findById(Long id) throws EntityNotFoundException {
         return newsRepository
                 .findById(id)
@@ -34,6 +38,7 @@ public class CustomNewsService implements NewsService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "news", key = "#id")
     public void deleteById(Long id) throws EntityNotFoundException {
         boolean wasDeleted = newsRepository.findById(id).isPresent();
         if(!wasDeleted){
@@ -44,12 +49,14 @@ public class CustomNewsService implements NewsService {
     }
 
     @Override
-    public void update(News entity) {
+    @CachePut(value = "news", key = "#entity.id")
+    public News update(News entity) {
         boolean wasUpdated = newsRepository.findById(entity.getId()).isPresent();
         if(!wasUpdated){
             throw new EntityNotFoundException();
         } else{
             newsRepository.save(entity);
         }
+        return entity;
     }
 }

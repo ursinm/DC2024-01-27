@@ -8,6 +8,9 @@ import com.example.rw.service.db_operations.interfaces.NewsService;
 import com.example.rw.service.dto_converter.interfaces.NewsToConverter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,7 +61,7 @@ public class NewsController {
     @PutMapping()
     public ResponseEntity<NewsResponseTo> updateNews(@RequestBody @Valid NewsRequestTo newsRequestTo) {
         News news = newsToConverter.convertToEntity(newsRequestTo);
-        newsService.save(news);
+        newsService.update(news);
         NewsResponseTo newsResponseTo = newsToConverter.convertToDto(news);
         return ResponseEntity.ok(newsResponseTo);
     }
