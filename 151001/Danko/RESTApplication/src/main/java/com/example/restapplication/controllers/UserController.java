@@ -17,8 +17,11 @@ public class UserController {
     UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserResponseTo>> getAll() {
-        return ResponseEntity.status(200).body(userService.getAll());
+    public ResponseEntity<List<UserResponseTo>> getAll(@RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+                                                       @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                       @RequestParam(required = false, defaultValue = "id") String sortBy,
+                                                       @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(userService.getAll(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")

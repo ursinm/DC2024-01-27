@@ -1,17 +1,23 @@
 package com.example.restapplication.services.impl;
 
-import com.example.restapplication.dao.StoryDAO;
 import com.example.restapplication.dto.StoryRequestTo;
 import com.example.restapplication.dto.StoryResponseTo;
 import com.example.restapplication.entites.Story;
 import com.example.restapplication.exceptions.DeleteException;
+import com.example.restapplication.exceptions.DuplicationException;
 import com.example.restapplication.exceptions.NotFoundException;
 import com.example.restapplication.exceptions.UpdateException;
 import com.example.restapplication.mappers.StoryListMapper;
 import com.example.restapplication.mappers.StoryMapper;
+import com.example.restapplication.repository.StoryRepository;
+import com.example.restapplication.repository.UserRepository;
 import com.example.restapplication.services.StoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,10 +32,13 @@ public class ImplStoryService implements StoryService {
     StoryMapper storyMapper;
 
     @Autowired
-    StoryDAO storyDAO;
+    StoryRepository storyDAO;
 
     @Autowired
     StoryListMapper storyListMapper;
+
+    @Autowired
+    UserRepository userDAO;
     @Override
     public StoryResponseTo getById(Long id) throws NotFoundException {
         Optional<Story> story = storyDAO.findById(id);
@@ -37,30 +46,56 @@ public class ImplStoryService implements StoryService {
     }
 
     @Override
-    public List<StoryResponseTo> getAll() {
-        return storyListMapper.toStoryResponseList(storyDAO.findAll());
+    public List<StoryResponseTo> getAll(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Pageable pageable;
+        if (sortOrder != null && sortOrder.equals("asc")) {
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        } else {
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).descending());
+        }
+        Page<Story> stories = storyDAO.findAll(pageable);
+        return storyListMapper.toStoryResponseList(stories.toList());
     }
+
 
     @Override
     public StoryResponseTo save(@Valid StoryRequestTo requestTo) {
+
         Story storyToSave = storyMapper.toStory(requestTo);
+        if (storyDAO.existsByTitle(storyToSave.getTitle())) {
+            throw new DuplicationException("Title duplication", 40005L);
+        }
+        if (requestTo.getUserId() != null) {
+            storyToSave.setUser(userDAO.findById(requestTo.getUserId()).orElseThrow(() -> new NotFoundException("User not found!", 40004L)));
+        }
         return storyMapper.toStoryResponse(storyDAO.save(storyToSave));
     }
 
     @Override
     public void delete(Long id) throws DeleteException {
-        storyDAO.delete(id);
+        if (!storyDAO.existsById(id)) {
+            throw new DeleteException("Story not found!", 40004L);
+        } else {
+            storyDAO.deleteById(id);
+        }
     }
 
     @Override
     public StoryResponseTo update(@Valid StoryRequestTo requestTo) throws UpdateException {
         Story storyToUpdate = storyMapper.toStory(requestTo);
-        return storyMapper.toStoryResponse(storyDAO.update(storyToUpdate));
+        if (!storyDAO.existsById(requestTo.getId())) {
+            throw new UpdateException("Story not found!", 40004L);
+        } else {
+            if (requestTo.getUserId() != null) {
+                storyToUpdate.setUser(userDAO.findById(requestTo.getUserId()).orElseThrow(() -> new NotFoundException("User not found!", 40004L)));
+            }
+            return storyMapper.toStoryResponse(storyDAO.save(storyToUpdate));
+        }
     }
 
 
     @Override
-    public List<StoryResponseTo> getByData(String tagName, Long tagId, String userLogin, String title, String content) {
-        return storyListMapper.toStoryResponseList(storyDAO.getByData(tagName, tagId, userLogin, title, content).orElseThrow(() -> new NotFoundException("Story not found", 40005L)));
+    public List<StoryResponseTo> getByData(List<String> tagName, List<Long> tagId, String userLogin, String title, String content) {
+        return storyListMapper.toStoryResponseList(storyDAO.findStoriesByParams(tagName, tagId, userLogin, title, content));
     }
 }

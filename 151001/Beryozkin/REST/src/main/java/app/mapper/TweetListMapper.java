@@ -11,5 +11,5 @@ import java.util.List;
 public interface TweetListMapper {
     List<Tweet> totweetList(List<TweetRequestTo> tweets);
 
-    List<TweetResponseTo> totweetResponseList(List<Tweet> tweets);
+    List<TweetResponseTo> toTweetResponseList(List<Tweet> tweets);
 }
