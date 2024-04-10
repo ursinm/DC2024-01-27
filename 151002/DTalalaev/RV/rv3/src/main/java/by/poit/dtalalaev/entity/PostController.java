@@ -1,7 +1,8 @@
-package dtalalaev.rv.impl.model.post;
+package by.poit.dtalalaev.entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -9,35 +10,42 @@ import javax.validation.Valid;
 import java.math.BigInteger;
 import java.util.List;
 
+@Controller
 @RestController
 @RequestMapping({"/posts"})
 public class PostController {
 
+
+    private final PostService service;
+
     @Autowired
-    private PostService service;
+    public PostController(PostService service) {
+        this.service = service;
+    }
+
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public List<Post> findAll(){
+    public List<Post> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PostResponseTo findOne(@PathVariable("id") BigInteger id)throws ResponseStatusException{
+    public PostResponseTo findOne(@PathVariable("id") BigInteger id) throws ResponseStatusException {
         return service.findOne(id);
 
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PostResponseTo create(@Valid @RequestBody PostRequestTo dto){
+    public PostResponseTo create(@Valid @RequestBody PostRequestTo dto) {
         return service.create(dto);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public PostResponseTo update(@Valid @RequestBody PostRequestTo dto)throws ResponseStatusException{
+    public PostResponseTo update(@Valid @RequestBody PostRequestTo dto) throws ResponseStatusException {
         return service.update(dto);
     }
 

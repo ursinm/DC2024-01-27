@@ -1,26 +1,26 @@
-package dtalalaev.rv.impl.model.post;
+package by.poit.dtalalaev.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.Table;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.constraints.Size;
 import java.math.BigInteger;
 
-
 @Getter
-@Entity
+@Data
+@Table("tbl_posts")
 @Setter
 public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @PrimaryKey
     private BigInteger id;
+
+    @Column("story_id")
     private BigInteger storyId;
     private String content;
 
