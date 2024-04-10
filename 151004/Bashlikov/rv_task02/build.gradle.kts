@@ -9,9 +9,9 @@ val h2_version: String by project
 val koin_version: String = "3.6.0-wasm-alpha2"
 
 plugins {
-    kotlin("jvm") version "1.9.22"
-    id("io.ktor.plugin") version "2.3.8"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
+    id("io.ktor.plugin") version "2.3.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 }
 
 group = "by.bashlikovvv"
