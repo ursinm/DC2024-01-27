@@ -1,6 +1,7 @@
 package by.bsuir.dc.rest_basics.controllers.common;
 
 import by.bsuir.dc.rest_basics.services.common.AbstractService;
+import by.bsuir.dc.rest_basics.services.exceptions.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,28 +14,28 @@ public class AbstractController<I, E> {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
-    public E createAuthor(@RequestBody I requestTo) {
+    public E createAuthor(@RequestBody I requestTo) throws ApiException {
         return service.create(requestTo);
     }
 
     @GetMapping("")
-    public List<E> getAuthors() {
+    public List<E> getAuthors() throws ApiException {
         return service.getAll();
     }
 
     @GetMapping("{id}")
-    public E getAuthor(@PathVariable Long id) {
+    public E getAuthor(@PathVariable Long id) throws ApiException {
         return service.get(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
-    public E deleteAuthor(@PathVariable(value = "id") Long id) {
-        return service.delete(id);
+    public void deleteAuthor(@PathVariable(value = "id") Long id) throws ApiException {
+        service.delete(id);
     }
 
     @PutMapping("")
-    public E updateAuthor(@RequestBody I author) {
+    public E updateAuthor(@RequestBody I author) throws ApiException {
         return service.update(author);
     }
 

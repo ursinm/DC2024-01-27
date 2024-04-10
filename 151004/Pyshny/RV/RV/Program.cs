@@ -6,6 +6,7 @@ using RV.Services.DataProviderServices.SQL;
 using RV.Services.Mappers;
 using RV.Repositories;
 using RV.Repositories.SQLRepositories;
+using RV.Services.DataProviderServices.Remote;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,8 @@ builder.Services.AddTransient<IRepository<Sticker>, SQLStickerRepository>();
 
 builder.Services.AddTransient<IUserDataProvider, SQLUserDataProvider>();
 builder.Services.AddTransient<INewsDataProvider, SQLNewsDataProvider>();
-builder.Services.AddTransient<INoteDataProvider, SQLNoteDataProvider>();
+//builder.Services.AddTransient<INoteDataProvider, SQLNoteDataProvider>();
+builder.Services.AddTransient<INoteDataProvider, NoteDataProvider>();
 builder.Services.AddTransient<IStickerDataProvider, SQLStickerDataProvider>();
 
 builder.Services.AddTransient<IDataProvider, DataProvider>();

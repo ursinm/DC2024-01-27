@@ -10,5 +10,6 @@ namespace RV.Views.DTO
         public int newsId { get; set; }
         [Required]
         public string content { get; set; }
+        public string country { get; set; }
     }
 }
