@@ -21,7 +21,8 @@ fun Application.module() {
 		modules(dataModule, appModule)
 	}
 	configureSerialization()
-	configureRouting()}
+	configureRouting()
+}
 
 fun Application.connectToPostgres(embedded: Boolean): Connection {
 	Class.forName("org.postgresql.Driver")
