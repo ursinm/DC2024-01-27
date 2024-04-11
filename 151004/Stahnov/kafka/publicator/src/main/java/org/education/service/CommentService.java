@@ -38,10 +38,8 @@ public class CommentService {
 
     private static final AtomicInteger index = new AtomicInteger(0);
     private static final AtomicInteger messageIndex = new AtomicInteger(0);
-    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final TweetService tweetService;
-    private final String commentResourceUrl = "http://localhost:24130/api/v1.0";
 
     @Autowired
     private KafkaTemplate<String, CommentMessageRequest> commentKafkaTemplate;
@@ -52,8 +50,7 @@ public class CommentService {
     @Value("${kafka.result-topic}")
     private String resultTopic;
 
-    public CommentService(RestTemplate restTemplate, ObjectMapper objectMapper, TweetService tweetService) {
-        this.restTemplate = restTemplate;
+    public CommentService(ObjectMapper objectMapper, TweetService tweetService) {
         this.objectMapper = objectMapper;
         this.tweetService = tweetService;
     }

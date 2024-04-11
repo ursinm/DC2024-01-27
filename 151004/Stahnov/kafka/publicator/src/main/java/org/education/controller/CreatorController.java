@@ -32,11 +32,7 @@ public class CreatorController {
 
     @GetMapping
     public ResponseEntity<List<CreatorResponseTo>> getAllCreators(){
-        List<CreatorResponseTo> res = new ArrayList<>();
-        for(Creator creator : creatorService.getAll()){
-            res.add(modelMapper.map(creator, CreatorResponseTo.class));
-        }
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return new ResponseEntity<>(creatorService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -45,8 +41,7 @@ public class CreatorController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Creator creator = creatorService.create(newCreator);
-        return new ResponseEntity<>(modelMapper.map(creator, CreatorResponseTo.class), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(creatorService.create(newCreator), HttpStatus.valueOf(201));
     }
 
 
@@ -55,8 +50,7 @@ public class CreatorController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Creator creator = creatorService.update(modelMapper.map(creatorRequestTo, Creator.class));
-        return new ResponseEntity<>(modelMapper.map(creator, CreatorResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(creatorService.update(modelMapper.map(creatorRequestTo, Creator.class)), HttpStatus.valueOf(200));
     }
 
 
@@ -69,7 +63,7 @@ public class CreatorController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CreatorResponseTo> getCreator(@PathVariable int id){
-        return new ResponseEntity<>(modelMapper.map(creatorService.getById(id), CreatorResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(creatorService.getById(id), HttpStatus.valueOf(200));
     }
 
 

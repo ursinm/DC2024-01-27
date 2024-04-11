@@ -36,11 +36,7 @@ public class MarkerController {
 
     @GetMapping
     public ResponseEntity<List<MarkerResponseTo>> getAllMarkers(){
-        List<MarkerResponseTo> response = new ArrayList<>();
-        for(Marker marker : markerService.getAll()){
-            response.add(modelMapper.map(marker, MarkerResponseTo.class));
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(markerService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -48,8 +44,7 @@ public class MarkerController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Marker marker = markerService.create(modelMapper.map(markerRequestTo, Marker.class));
-        return new ResponseEntity<>(modelMapper.map(marker, MarkerResponseTo.class), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(markerService.create(modelMapper.map(markerRequestTo, Marker.class)), HttpStatus.valueOf(201));
     }
 
     @PutMapping
@@ -57,8 +52,7 @@ public class MarkerController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Marker marker = markerService.update(modelMapper.map(markerRequestTo, Marker.class));
-        return new ResponseEntity<>(modelMapper.map(marker, MarkerResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(markerService.update(modelMapper.map(markerRequestTo, Marker.class)), HttpStatus.valueOf(200));
     }
 
     @DeleteMapping("/{id}")
@@ -69,7 +63,7 @@ public class MarkerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MarkerResponseTo> getMarker(@PathVariable int id){
-        return new ResponseEntity<>(modelMapper.map(markerService.getById(id), MarkerResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(markerService.getById(id), HttpStatus.valueOf(200));
     }
 
     @ExceptionHandler

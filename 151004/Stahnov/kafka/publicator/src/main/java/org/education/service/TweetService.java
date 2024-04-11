@@ -1,11 +1,15 @@
 package org.education.service;
 
+import org.education.bean.DTO.MarkerResponseTo;
+import org.education.bean.DTO.TweetResponseTo;
+import org.education.bean.Marker;
 import org.education.bean.Tweet;
 import org.education.exception.AlreadyExists;
 import org.education.exception.IncorrectValuesException;
 import org.education.exception.NoSuchTweet;
 import org.education.repository.CreatorRepository;
 import org.education.repository.TweetRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,6 +18,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,15 +27,18 @@ public class TweetService {
 
     final TweetRepository tweetRepository;
     final CreatorRepository creatorRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public TweetService(TweetRepository tweetRepository, CreatorRepository creatorRepository) {
+    public TweetService(TweetRepository tweetRepository, CreatorRepository creatorRepository, ModelMapper modelMapper) {
         this.tweetRepository = tweetRepository;
         this.creatorRepository = creatorRepository;
+        this.modelMapper = modelMapper;
     }
 
 
-    public Tweet create(Tweet tweet, int ownerId){
+    @CacheEvict(cacheNames = "tweets", allEntries = true)
+    public TweetResponseTo create(Tweet tweet, int ownerId){
         if(tweetRepository.existsTweetByTitle(tweet.getTitle())) throw new AlreadyExists("Tweet with this title already exists");
         if(!creatorRepository.existsById(ownerId)) throw new IncorrectValuesException("There is no creator with this id");
         tweet.setCreator(creatorRepository.getReferenceById(ownerId));
@@ -38,31 +46,40 @@ public class TweetService {
         tweet.setModified(LocalDateTime.now());
         tweetRepository.save(tweet);
 
-        return tweet;
+        return modelMapper.map(tweet, TweetResponseTo.class);
     }
 
-    public List<Tweet> getAll(){
-        return tweetRepository.findAll();
+    @Cacheable(cacheNames = "tweets")
+    public List<TweetResponseTo> getAll(){
+        List<TweetResponseTo> res = new ArrayList<>();
+        for(Tweet tweet : tweetRepository.findAll()){
+            res.add(modelMapper.map(tweet, TweetResponseTo.class));
+        }
+        return res;
     }
 
     public boolean existsWithId(int id){
         return tweetRepository.existsById(id);
     }
 
-    public Tweet getById(int id){
+    @Cacheable(cacheNames = "tweets", key = "#id", unless = "#result == null")
+    public TweetResponseTo getById(int id){
 
-        return tweetRepository.getReferenceById(id);
+        return modelMapper.map(tweetRepository.getReferenceById(id), TweetResponseTo.class);
     }
 
-    public Tweet update(Tweet tweet){
+    @CacheEvict(cacheNames = "tweets", allEntries = true)
+    public TweetResponseTo update(Tweet tweet){
         if(!tweetRepository.existsById(tweet.getId())) throw new NoSuchTweet("There is no such tweet with this id");
         Tweet prevTweet = tweetRepository.getReferenceById(tweet.getId());
         tweet.setCreated(prevTweet.getCreated());
         tweet.setModified(LocalDateTime.now());
         tweetRepository.save(tweet);
-        return tweet;
+        return modelMapper.map(tweet, TweetResponseTo.class);
     }
 
+    @Caching(evict = { @CacheEvict(cacheNames = "tweets", key = "#id"),
+            @CacheEvict(cacheNames = "tweets", allEntries = true) })
     public void delete(int id){
         if(!tweetRepository.existsById(id)) throw new NoSuchTweet("There is no such tweet with this id");
         tweetRepository.deleteById(id);

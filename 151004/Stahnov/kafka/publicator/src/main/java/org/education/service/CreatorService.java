@@ -1,16 +1,20 @@
 package org.education.service;
 
 import org.education.bean.Creator;
+import org.education.bean.DTO.CreatorResponseTo;
 import org.education.exception.AlreadyExists;
 import org.education.exception.NoSuchCreator;
 import org.education.repository.CreatorRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,32 +22,44 @@ import java.util.List;
 public class CreatorService {
 
     private final CreatorRepository creatorRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public CreatorService(CreatorRepository creatorRepository) {
+    public CreatorService(CreatorRepository creatorRepository, ModelMapper modelMapper) {
         this.creatorRepository = creatorRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public List<Creator> getAll(){
-        return creatorRepository.findAll();
+    @Cacheable(cacheNames = "creators")
+    public List<CreatorResponseTo> getAll(){
+        List<CreatorResponseTo> res = new ArrayList<>();
+        for(Creator creator : creatorRepository.findAll()){
+            res.add(modelMapper.map(creator, CreatorResponseTo.class));
+        }
+        return res;
     }
 
-    public Creator getById(int id){
-        return creatorRepository.getReferenceById(id);
+    @Cacheable(cacheNames = "creators", key = "#id", unless = "#result == null")
+    public CreatorResponseTo getById(int id){
+        return modelMapper.map(creatorRepository.getReferenceById(id), CreatorResponseTo.class);
     }
 
-    public Creator create(Creator creator){
+    @CacheEvict(cacheNames = "creators", allEntries = true)
+    public CreatorResponseTo create(Creator creator){
         if(creatorRepository.existsCreatorByLogin(creator.getLogin())) throw new AlreadyExists("Creator with this login already exists");
         creatorRepository.save(creator);
-        return creator;
+        return modelMapper.map(creator, CreatorResponseTo.class);
     }
 
-    public Creator update(Creator creator){
+    @CacheEvict(cacheNames = "creators", allEntries = true)
+    public CreatorResponseTo update(Creator creator){
         if(!creatorRepository.existsById(creator.getId())) throw new NoSuchCreator("There is no such creator with this id");
         creatorRepository.save(creator);
-        return creator;
+        return modelMapper.map(creator, CreatorResponseTo.class);
     }
 
+    @Caching(evict = { @CacheEvict(cacheNames = "creators", key = "#id"),
+            @CacheEvict(cacheNames = "creators", allEntries = true) })
     public void delete(int id){
         if(!creatorRepository.existsById(id)) throw new NoSuchCreator("There is no such creator with this id");
         creatorRepository.deleteById(id);

@@ -33,11 +33,7 @@ public class TweetController {
 
     @GetMapping
     public ResponseEntity<List<TweetResponseTo>> getAllTweets(){
-        List<TweetResponseTo> response = new ArrayList<>();
-        for(Tweet tweet : tweetService.getAll()){
-            response.add(modelMapper.map(tweet, TweetResponseTo.class));
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(tweetService.getAll(), HttpStatus.OK);
     }
 
 
@@ -46,8 +42,7 @@ public class TweetController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Tweet tweet = tweetService.create(modelMapper.map(tweetRequestTo, Tweet.class), tweetRequestTo.getCreatorId());
-        return new ResponseEntity<>(modelMapper.map(tweet, TweetResponseTo.class), HttpStatus.valueOf(201));
+        return new ResponseEntity<>(tweetService.create(modelMapper.map(tweetRequestTo, Tweet.class), tweetRequestTo.getCreatorId()), HttpStatus.valueOf(201));
     }
 
 
@@ -56,8 +51,7 @@ public class TweetController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Tweet tweet = tweetService.update(modelMapper.map(tweetRequestTo, Tweet.class));
-        return new ResponseEntity<>(modelMapper.map(tweet, TweetResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(tweetService.update(modelMapper.map(tweetRequestTo, Tweet.class)), HttpStatus.valueOf(200));
     }
 
 
@@ -70,7 +64,7 @@ public class TweetController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TweetResponseTo> getTweet(@PathVariable int id){
-        return new ResponseEntity<>(modelMapper.map(tweetService.getById(id), TweetResponseTo.class), HttpStatus.valueOf(200));
+        return new ResponseEntity<>(tweetService.getById(id), HttpStatus.valueOf(200));
     }
 
     @ExceptionHandler
