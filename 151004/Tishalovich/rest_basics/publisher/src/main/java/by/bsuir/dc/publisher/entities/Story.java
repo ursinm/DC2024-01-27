@@ -30,6 +30,4 @@ public class Story {
 
     private Date modified;
 
-    @OneToMany(mappedBy = "story")
-    public List<Message> messages;
 }
