@@ -54,6 +54,11 @@
             <artifactId>guava</artifactId>
             <version>33.0.0-jre</version>
         </dependency>
+        <dependency>
+            <groupId>com.peertopark.java</groupId>
+            <artifactId>restclient</artifactId>
+            <version>3.5.2</version>
+        </dependency>
     </dependencies>
 
     <build>

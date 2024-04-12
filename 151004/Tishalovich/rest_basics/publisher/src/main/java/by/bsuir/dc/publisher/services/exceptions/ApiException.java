@@ -3,8 +3,10 @@ package by.bsuir.dc.publisher.services.exceptions;
 import com.google.common.base.Objects;
 import lombok.Getter;
 
+import java.io.IOException;
+
 @Getter
-public class ApiException extends Exception {
+public class ApiException extends IOException {
 
     private final int statusCode;
 

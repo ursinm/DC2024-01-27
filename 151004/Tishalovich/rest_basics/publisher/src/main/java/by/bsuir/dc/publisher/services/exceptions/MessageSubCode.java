@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum MessageSubCode {
 
+    STUB(0, "Stub"),
+
     //422 - Unprocessable entity
     WRONG_CONTENT_LEN(1, "Label's name length must be from 2 to 32"),
     CONTENT_IS_NULL(2, "Content must be not null"),

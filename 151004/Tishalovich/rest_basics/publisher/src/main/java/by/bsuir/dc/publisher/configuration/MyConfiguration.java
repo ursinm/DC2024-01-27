@@ -13,6 +13,8 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.web.client.RestClient;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +52,16 @@ public class MyConfiguration {
         validators.put(StoryRequestTo.class, new StoryValidator());
 
         return validators;
+    }
+
+    @Bean
+    public String discussionUri() {
+        return "http://localhost:24130/api/v1.0/messages";
+    }
+
+    @Bean
+    public RestClient restClient() {
+        return RestClient.create();
     }
 
 }
