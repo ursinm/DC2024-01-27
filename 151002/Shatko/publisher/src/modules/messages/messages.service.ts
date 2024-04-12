@@ -1,18 +1,26 @@
-import { HttpException, Injectable, OnModuleInit } from "@nestjs/common";
-import { DELAY, KAFKA_KEYS, TOPICS } from "src/constants";
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  OnModuleInit,
+} from "@nestjs/common";
+import { DELAY, KAFKA_KEYS, REDIS_KEYS, TOPICS } from "src/constants";
 import { Message } from "src/schemas";
 import { ConsumerService } from "../kafka/consumer.service";
 import { ProducerService } from "../kafka/producer.service";
 import { StoriesService } from "../stories/stories.service";
 import { CreateMessageDto } from "./dto/create-Message.dto";
 import { UpdateMessageDto } from "./dto/update-Message.dto";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class MessagesService implements OnModuleInit {
   constructor(
     private storiesService: StoriesService,
     private producerService: ProducerService,
-    private consumerService: ConsumerService
+    private consumerService: ConsumerService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {}
 
   private result: any = undefined;
@@ -40,10 +48,19 @@ export class MessagesService implements OnModuleInit {
 
     await this.sleep();
 
+    await this.cacheManager.del(REDIS_KEYS.MESSAGES_GET_ALL);
+
     return createdEntity;
   }
 
   async findAll(): Promise<Message[]> {
+    const cache = await this.cacheManager.get<Message[]>(
+      REDIS_KEYS.MESSAGES_GET_ALL
+    );
+    if (cache) {
+      return cache;
+    }
+
     let result = [];
     await this.producerService.produce(
       this.createKafkaMessage(KAFKA_KEYS.GET_ALL, "")
@@ -53,6 +70,7 @@ export class MessagesService implements OnModuleInit {
 
     if (this.result) {
       result = this.result;
+      await this.cacheManager.set(REDIS_KEYS.MESSAGES_GET_ALL, result);
       this.result = undefined;
     }
 
@@ -60,6 +78,13 @@ export class MessagesService implements OnModuleInit {
   }
 
   async findOne(id: number): Promise<Message> {
+    const cache = await this.cacheManager.get<Message>(
+      this.getEntityCacheKey(id)
+    );
+    if (cache) {
+      return cache;
+    }
+
     let result;
 
     await this.producerService.produce(
@@ -73,9 +98,11 @@ export class MessagesService implements OnModuleInit {
       this.result = undefined;
     }
 
-    if ("error" in result) {
+    if (result && "error" in result) {
       throw new HttpException(result.error.message, result.error.code);
     }
+
+    await this.cacheManager.set(this.getEntityCacheKey(id), result);
 
     return result;
   }
@@ -97,6 +124,8 @@ export class MessagesService implements OnModuleInit {
 
     if (this.result) {
       result = this.result;
+      await this.cacheManager.del(REDIS_KEYS.MESSAGES_GET_ALL);
+      await this.cacheManager.del(this.getEntityCacheKey(updateMessageDto.id));
       this.result = undefined;
     }
 
@@ -112,6 +141,9 @@ export class MessagesService implements OnModuleInit {
     );
 
     await this.sleep();
+
+    await this.cacheManager.del(REDIS_KEYS.MESSAGES_GET_ALL);
+    await this.cacheManager.del(this.getEntityCacheKey(id));
   }
 
   private generateId = (): number => {
@@ -127,5 +159,9 @@ export class MessagesService implements OnModuleInit {
 
   private sleep() {
     return new Promise((resolve) => setTimeout(resolve, DELAY));
+  }
+
+  getEntityCacheKey(id: number) {
+    return `${REDIS_KEYS.MESSAGES_GET_ONE}.${id}`;
   }
 }

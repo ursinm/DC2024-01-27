@@ -46,9 +46,7 @@
         "tbl_editors_login_unique": {
           "name": "tbl_editors_login_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "login"
-          ]
+          "columns": ["login"]
         }
       }
     },
@@ -102,12 +100,8 @@
           "tableFrom": "tbl_stories",
           "tableTo": "tbl_editors",
           "schemaTo": "distcomp",
-          "columnsFrom": [
-            "editor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["editor_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -117,9 +111,7 @@
         "tbl_stories_title_unique": {
           "name": "tbl_stories_title_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "title"
-          ]
+          "columns": ["title"]
         }
       }
     },
@@ -153,12 +145,8 @@
           "tableFrom": "tbl_messages",
           "tableTo": "tbl_stories",
           "schemaTo": "distcomp",
-          "columnsFrom": [
-            "story_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["story_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

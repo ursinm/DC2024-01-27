@@ -1,5 +1,5 @@
-import { createZodDto } from 'nestjs-zod';
-import { z } from 'zod';
+import { createZodDto } from "nestjs-zod";
+import { z } from "zod";
 
 const Schema = z.object({
   login: z.string().min(2).max(64),
