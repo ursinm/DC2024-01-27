@@ -31,7 +31,7 @@ public class MessageService {
 
     public MessageResponseTo create(MessageRequestTo requestTo) throws ApiException {
         Message model = mapper.requestToModel(requestTo);
-        model.setId(random.nextLong());
+        model.setId(Math.abs(random.nextLong()));
         Message savingRes;
         try {
             savingRes = dao.save(model);
