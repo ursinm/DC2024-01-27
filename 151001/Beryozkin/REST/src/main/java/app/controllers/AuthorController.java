@@ -17,8 +17,12 @@ public class AuthorController {
     AuthorService authorService;
 
     @GetMapping
-    public ResponseEntity<List<AuthorResponseTo>> getAuthors() {
-        return ResponseEntity.status(200).body(authorService.getAuthors());
+    public ResponseEntity<List<AuthorResponseTo>> getAuthors(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(authorService.getAuthors(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -44,7 +48,7 @@ public class AuthorController {
     }
 
     @GetMapping("/byTweet/{id}")
-    public ResponseEntity<AuthorResponseTo> getAuthorByTweetId(@PathVariable Long id){
+    public ResponseEntity<AuthorResponseTo> getAuthorByTweetId(@PathVariable Long id) {
         return ResponseEntity.status(200).body(authorService.getAuthorByTweetId(id));
     }
 }

@@ -16,6 +16,7 @@ namespace RV.Models
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=distcomp;Username=postgres;Password=postgres");
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
@@ -34,7 +35,7 @@ namespace RV.Models
                 j =>
                 {
                     j.HasKey(t => t.id);
-                    j.ToTable("tbl_NewsSticker");
+                    j.ToTable("NewsSticker");
                 });
 
             modelBuilder.Entity<User>()

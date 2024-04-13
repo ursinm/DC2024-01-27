@@ -17,8 +17,12 @@ public class TweetController {
     TweetService tweetService;
 
     @GetMapping
-    public ResponseEntity<List<TweetResponseTo>> getTweets() {
-        return ResponseEntity.status(200).body(tweetService.getTweets());
+    public ResponseEntity<List<TweetResponseTo>> getTweets(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(tweetService.getTweets(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -44,11 +48,10 @@ public class TweetController {
     }
 
     @GetMapping("/byCriteria")
-    public ResponseEntity<TweetResponseTo> getTweetByCriteria(
-            @RequestParam(required = false) String markerName,
-            @RequestParam(required = false) Long markerId,
+    public ResponseEntity<List<TweetResponseTo>> getTweetByCriteria(
+            @RequestParam(required = false) String authorLogin,
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String content){
-        return ResponseEntity.status(HttpStatus.OK).body(tweetService.getTweetByCriteria(markerName, markerId, title, content));
+            @RequestParam(required = false) String content) {
+        return ResponseEntity.status(HttpStatus.OK).body(tweetService.getTweetByCriteria(authorLogin, title, content));
     }
 }
