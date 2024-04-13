@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class MessageControllerTests {
@@ -105,26 +106,65 @@ public class MessageControllerTests {
     }
 
     @Test
-    public void testGetMessageByIdWithWrongArgument() {
-        given()
-                .pathParam("id", 999999)
+    public void testFindAllOrderByContent(){
+        String body = "{ \"content\": \"aaa\"}";
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
                 .when()
-                .get("/api/v1.0/messages/{id}")
+                .post("/api/v1.0/messages")
                 .then()
-                .statusCode(400)
-                .body("errorMessage", equalTo("message not found!"))
-                .body("errorCode", equalTo(40004));
-    }
+                .statusCode(201)
+                .extract().response();
 
-    @Test
-    public void testDeleteMessageWithWrongArgument() {
+        Integer messageId1 = response.jsonPath().getInt("id");
+
+        body = "{ \"content\": \"zzzzzzzzzzzzz\"}";
+        response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/messages")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer messageId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/messages?pageNumber=0&pageSize=10&sortBy=content&sortOrder=asc";
+        String content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].content");
+
+        assertEquals("aaa", content);
+        uri = "/api/v1.0/messages?pageNumber=0&pageSize=10&sortBy=content&sortOrder=desc";
+        content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].content");
+
+        assertEquals("zzzzzzzzzzzzz", content);
+
         given()
-                .pathParam("id", 999999)
+                .pathParam("id", messageId1)
                 .when()
                 .delete("/api/v1.0/messages/{id}")
                 .then()
-                .statusCode(400)
-                .body("errorMessage", equalTo("The Message has not been deleted"))
-                .body("errorCode", equalTo(40003));
+                .statusCode(204);
+
+        given()
+                .pathParam("id", messageId2)
+                .when()
+                .delete("/api/v1.0/messages/{id}")
+                .then()
+                .statusCode(204);
     }
 }

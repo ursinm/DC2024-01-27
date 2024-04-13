@@ -17,8 +17,13 @@ public class MessageController {
     MessageService messageService;
 
     @GetMapping
-    public ResponseEntity<List<MessageResponseTo>> getMessages() {
-        return ResponseEntity.status(200).body(messageService.getmessages());
+    public ResponseEntity<List<MessageResponseTo>> getMessages(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder
+    ) {
+        return ResponseEntity.status(200).body(messageService.getMessages(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -34,8 +39,8 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<MessageResponseTo> saveMessage(@RequestBody MessageRequestTo message) {
-        MessageResponseTo savedmessage = messageService.savemessage(message);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedmessage);
+        MessageResponseTo savedMessage = messageService.saveMessage(message);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedMessage);
     }
 
     @PutMapping()
@@ -44,7 +49,7 @@ public class MessageController {
     }
 
     @GetMapping("/byTweet/{id}")
-    public ResponseEntity<MessageResponseTo> getMessageByTweetId(@PathVariable Long id){
+    public ResponseEntity<List<MessageResponseTo>> getMessageByTweetId(@PathVariable Long id) {
         return ResponseEntity.status(200).body(messageService.getMessageByTweetId(id));
     }
 }

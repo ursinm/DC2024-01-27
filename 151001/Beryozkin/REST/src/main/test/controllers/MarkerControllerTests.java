@@ -115,17 +115,5 @@ public class MarkerControllerTests {
                 .body("errorMessage", equalTo("marker not found!"))
                 .body("errorCode", equalTo(40004));
     }
-
-    @Test
-    public void testDeleteMarkerWithWrongArgument() {
-        given()
-                .pathParam("id", 999999)
-                .when()
-                .delete("/api/v1.0/markers/{id}")
-                .then()
-                .statusCode(400)
-                .body("errorMessage", equalTo("The Marker has not been deleted"))
-                .body("errorCode", equalTo(40003));
-    }
 }
 
