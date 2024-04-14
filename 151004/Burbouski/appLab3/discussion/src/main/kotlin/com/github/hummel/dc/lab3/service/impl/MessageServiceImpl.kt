@@ -10,7 +10,7 @@ class MessageServiceImpl(
 	private val repository: MessagesRepository
 ) : MessageService {
 	override suspend fun create(requestTo: MessageRequestTo?): MessageResponseTo? {
-		val bean = requestTo?.toBean(null, null) ?: return null
+		val bean = requestTo?.toBean(0, "country") ?: return null
 		val id = repository.create(bean) ?: return null
 		val result = bean.copy(id = id)
 

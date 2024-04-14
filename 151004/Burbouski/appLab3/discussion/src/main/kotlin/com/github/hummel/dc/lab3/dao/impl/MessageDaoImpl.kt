@@ -45,8 +45,8 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 			VALUES
 			(
 				'${item.country}',
-				'${item.issueId}', 
-				'${item.id}', 
+				${item.issueId}, 
+				${item.id}, 
 				'${item.content}'
 			);
 			""".trimIndent()
@@ -72,7 +72,7 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 				FROM ${Messages.TABLE_NAME}
 				WHERE ${Messages.COLUMN_ID} = $id
 					AND ${Messages.COLUMN_COUNTRY} = '${entity.country}'
-					AND ${Messages.COLUMN_ISSUE_ID} = '${entity.issueId}';
+					AND ${Messages.COLUMN_ISSUE_ID} = ${entity.issueId};
 				""".trimIndent()
 			)
 
@@ -117,9 +117,9 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 				"""
 				UPDATE ${Messages.TABLE_NAME}
 				SET ${Messages.COLUMN_CONTENT} = '${item.content}' 
-				WHERE ${Messages.COLUMN_ID} = '${item.id}'
+				WHERE ${Messages.COLUMN_ID} = ${item.id}
 					AND ${Messages.COLUMN_COUNTRY} = '${item.country}'
-					AND ${Messages.COLUMN_ISSUE_ID} = '${item.issueId}';
+					AND ${Messages.COLUMN_ISSUE_ID} = ${item.issueId};
 				""".trimMargin()
 			)
 
