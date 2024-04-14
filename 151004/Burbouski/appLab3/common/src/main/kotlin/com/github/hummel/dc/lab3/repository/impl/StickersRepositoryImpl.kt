@@ -11,7 +11,6 @@ class StickersRepositoryImpl(
 		return try {
 			dao.create(item)
 		} catch (e: Exception) {
-			e.printStackTrace()
 			null
 		}
 	}
@@ -24,7 +23,6 @@ class StickersRepositoryImpl(
 		return try {
 			dao.getById(id)
 		} catch (e: Exception) {
-			e.printStackTrace()
 			null
 		}
 	}

@@ -11,7 +11,6 @@ class AuthorsRepositoryImpl(
 		return try {
 			dao.create(item)
 		} catch (e: Exception) {
-			e.printStackTrace()
 			null
 		}
 	}
@@ -24,7 +23,6 @@ class AuthorsRepositoryImpl(
 		return try {
 			dao.getById(id)
 		} catch (e: Exception) {
-			e.printStackTrace()
 			null
 		}
 	}
