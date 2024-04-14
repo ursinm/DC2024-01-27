@@ -1,10 +1,10 @@
 package com.github.hummel.dc.lab3.controller.routing
 
-import com.github.hummel.dc.lab3.util.Response
 import com.github.hummel.dc.lab3.controller.respond
 import com.github.hummel.dc.lab3.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab3.dto.request.StickerRequestToId
 import com.github.hummel.dc.lab3.service.StickerService
+import com.github.hummel.dc.lab3.util.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*

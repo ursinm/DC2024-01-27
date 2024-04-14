@@ -11,6 +11,7 @@ class IssuesRepositoryImpl(
 		return try {
 			dao.create(item)
 		} catch (e: Exception) {
+			e.printStackTrace()
 			null
 		}
 	}
@@ -23,6 +24,7 @@ class IssuesRepositoryImpl(
 		return try {
 			dao.getById(id)
 		} catch (e: Exception) {
+			e.printStackTrace()
 			null
 		}
 	}

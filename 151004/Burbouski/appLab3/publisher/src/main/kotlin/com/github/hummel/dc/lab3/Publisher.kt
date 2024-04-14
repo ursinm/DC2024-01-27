@@ -13,7 +13,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 fun main() {
-	embeddedServer(Netty, port = 24110, host = "0.0.0.0", module = Application::publisher).start(wait = true)
+	embeddedServer(Netty, port = 24110, module = Application::publisher).start(wait = true)
 }
 
 fun Application.publisher() {

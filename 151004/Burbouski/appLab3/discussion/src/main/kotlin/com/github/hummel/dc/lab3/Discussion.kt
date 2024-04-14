@@ -15,7 +15,7 @@ import org.koin.ktor.plugin.Koin
 //CREATE KEYSPACE distcomp WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3};
 //CREATE TABLE distcomp.tbl_message_by_country (country text, issue_id bigint, id bigint, content text, PRIMARY KEY ((country), issue_id, id));
 fun main() {
-	embeddedServer(Netty, port = 24130, host = "0.0.0.0", module = Application::discussion).start(wait = true)
+	embeddedServer(Netty, port = 24130, module = Application::discussion).start(wait = true)
 }
 
 fun Application.discussion() {

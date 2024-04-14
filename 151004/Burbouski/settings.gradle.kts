@@ -21,5 +21,6 @@ plugins {
 
 include(":appLab1")
 include(":appLab2")
+include(":appLab3:common")
 include(":appLab3:discussion")
 include(":appLab3:publisher")
