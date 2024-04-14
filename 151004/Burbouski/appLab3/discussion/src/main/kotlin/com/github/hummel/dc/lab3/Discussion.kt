@@ -11,7 +11,7 @@ import io.ktor.server.plugins.doublereceive.*
 import org.koin.ktor.plugin.Koin
 
 fun main() {
-	embeddedServer(Netty, port = 24130, module = Application::discussion).start(wait = true)
+	embeddedServer(Netty, port = 24130, host = "0.0.0.0", module = Application::discussion).start(wait = true)
 }
 
 fun Application.discussion() {

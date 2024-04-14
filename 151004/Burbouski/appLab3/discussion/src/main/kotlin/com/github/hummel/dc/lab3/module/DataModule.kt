@@ -1,5 +1,6 @@
 package com.github.hummel.dc.lab3.module
 
+import com.datastax.driver.core.Cluster
 import com.github.hummel.dc.lab3.dao.MessageDao
 import com.github.hummel.dc.lab3.dao.impl.MessageDaoImpl
 import com.github.hummel.dc.lab3.repository.MessagesRepository
@@ -12,6 +13,10 @@ import java.sql.Connection
 val messagesRepositoryQualifier: StringQualifier = StringQualifier("messages_repository")
 
 val dataModule: Module = module {
+	single<Cluster> {
+		Cluster.builder().withoutMetrics().addContactPoints("127.0.0.1").build()
+	}
+
 	single<MessageDao> {
 		val dbConnection = get<Connection>()
 
