@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MessageRequestToId(
-	private val id: Long, private val issueId: Long, private val content: String
+	private val id: Long, private val country: String, private val issueId: Long, private val content: String
 ) {
 	fun toBean(): Message = Message(
-		id, issueId, content
+		id, country, issueId, content
 	)
 
 	init {

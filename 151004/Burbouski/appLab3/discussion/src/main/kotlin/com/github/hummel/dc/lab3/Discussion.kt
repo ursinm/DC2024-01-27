@@ -10,6 +10,10 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.doublereceive.*
 import org.koin.ktor.plugin.Koin
 
+//вводить (Ctrl + Shift + V) в Exec Docker'а на запущенном контейнере Cassandra с 9042:9042
+//cqlsh
+//CREATE KEYSPACE distcomp WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'datacenter1' : 3};
+//CREATE TABLE distcomp.tbl_message_by_country (country text, issue_id bigint, id bigint, content text, PRIMARY KEY ((country), issue_id, id));
 fun main() {
 	embeddedServer(Netty, port = 24130, host = "0.0.0.0", module = Application::discussion).start(wait = true)
 }
