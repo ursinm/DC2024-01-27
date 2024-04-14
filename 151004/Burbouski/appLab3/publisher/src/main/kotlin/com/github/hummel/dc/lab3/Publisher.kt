@@ -7,15 +7,17 @@ import com.github.hummel.dc.lab3.module.dataModule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.doublereceive.*
 import org.koin.ktor.plugin.Koin
 import java.sql.Connection
 import java.sql.DriverManager
 
 fun main() {
-	embeddedServer(Netty, port = 24110, module = Application::module).start(wait = true)
+	embeddedServer(Netty, port = 24110, module = Application::publisher).start(wait = true)
 }
 
-fun Application.module() {
+fun Application.publisher() {
+	install(DoubleReceive)
 	install(Koin) {
 		dataModule.single<Connection> { connectToPostgres(embedded = true) }
 		modules(dataModule, appModule)
