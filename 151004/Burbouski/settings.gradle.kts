@@ -21,3 +21,6 @@ plugins {
 
 include(":appLab1")
 include(":appLab2")
+include(":appLab3:publisher")
+include(":appLab3:discussion")
+include(":appLab3:core")
