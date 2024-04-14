@@ -5,7 +5,6 @@ import com.github.hummel.dc.lab3.dao.MessageDao
 import com.github.hummel.dc.lab3.database.Messages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.sql.ResultSet
 
 class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : MessageDao {
 	init {
@@ -13,26 +12,73 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 		session.execute("CREATE TABLE distcomp.tbl_message_by_country (country text, issue_id bigint, id bigint, content text, PRIMARY KEY ((country), issue_id, id))")
 	}
 
-	private fun ResultSet.getString(value: Messages): String = getString("$value")
-	private fun ResultSet.getLong(value: Messages): Long = getLong("$value")
-
 	override suspend fun create(item: Message): Long = withContext(Dispatchers.IO) {
-		0
+		session.execute(
+			"INSERT INTO distcomp.tbl_post_by_country (country, tweet_id, id, content) " + "VALUES ('${item.country}', ${item.issueId}, ${item.id}, '${item.content}');"
+		)
+
+		val rs = session.execute(Messages.SELECT_MESSAGES)
+		val generatedKeys = rs.all()
+		if (generatedKeys.isNotEmpty()) {
+			return@withContext generatedKeys.maxByOrNull {
+				it.getLong(Messages.COLUMN_ID.toString())
+			}?.getLong(Messages.COLUMN_ID.toString()) ?: 1
+		} else {
+			throw Exception("Unable to retrieve the id of the newly inserted post")
+		}
 	}
 
 	override suspend fun deleteById(id: Long): Int = withContext(Dispatchers.IO) {
-		0
+		return@withContext try {
+			val entity = getById(id)
+			session.execute(
+				"DELETE FROM ${Messages.TABLE_NAME} " + "WHERE ${Messages.COLUMN_ID} = $id AND ${Messages.COLUMN_COUNTRY} = '${entity.country}' AND ${Messages.COLUMN_ISSUE_ID} = ${entity.issueId};"
+			)
+
+			1
+		} catch (e: Exception) {
+			throw Exception("Can not delete post record")
+		}
 	}
 
 	override suspend fun getAll(): List<Message> = withContext(Dispatchers.IO) {
-		mutableListOf()
+		val result = mutableListOf<Message>()
+
+		val resultSet = session.execute(Messages.SELECT_MESSAGES)
+		for (row in resultSet.all()) {
+			val id = row.getLong(Messages.COLUMN_ID.toString())
+			val tweetId = row.getLong(Messages.COLUMN_ISSUE_ID.toString())
+			val content = row.getString(Messages.COLUMN_CONTENT.toString())
+			val country = row.getString(Messages.COLUMN_COUNTRY.toString())
+			result.add(
+				Message(
+					id = id, issueId = tweetId, content = content, country = country
+				)
+			)
+		}
+
+		result
 	}
 
 	override suspend fun getById(id: Long): Message = withContext(Dispatchers.IO) {
-		Message(0, "", 0, "")
+		val all = getAll()
+		if (all.isNotEmpty()) {
+
+			return@withContext all.last { it.id == id }
+		} else {
+			throw Exception("Post record not found")
+		}
 	}
 
 	override suspend fun update(item: Message): Int = withContext(Dispatchers.IO) {
-		0
+		return@withContext try {
+			session.execute(
+				"UPDATE ${Messages.TABLE_NAME} " + "SET " + "${Messages.COLUMN_CONTENT} = '${item.content}' " + "WHERE ${Messages.COLUMN_ID} = ${item.id} AND ${Messages.COLUMN_COUNTRY} = '${item.country}' AND ${Messages.COLUMN_ISSUE_ID} = ${item.issueId};"
+			)
+
+			1
+		} catch (e: Exception) {
+			throw Exception("Can not modify post record")
+		}
 	}
 }
