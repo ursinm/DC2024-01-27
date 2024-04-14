@@ -1,6 +1,7 @@
 package com.github.hummel.dc.lab3.controller.routing
 
 import com.github.hummel.dc.lab3.dto.request.MessageRequestTo
+import com.github.hummel.dc.lab3.dto.request.MessageRequestToId
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -51,16 +52,6 @@ private fun Route.createMessage(client: HttpClient) {
 	}
 }
 
-private fun Route.deleteMessage(client: HttpClient) {
-	delete("/{id?}") {
-		val id = call.parameters["id"]
-		val result = client.delete("http://localhost:24130/api/v1.0/messages/$id")
-		call.respond(
-			status = result.status, message = result.bodyAsText()
-		)
-	}
-}
-
 private fun Route.getMessage(client: HttpClient) {
 	get("/{id?}") {
 		val id = call.parameters["id"]
@@ -71,9 +62,19 @@ private fun Route.getMessage(client: HttpClient) {
 	}
 }
 
+private fun Route.deleteMessage(client: HttpClient) {
+	delete("/{id?}") {
+		val id = call.parameters["id"]
+		val result = client.delete("http://localhost:24130/api/v1.0/messages/$id")
+		call.respond(
+			status = result.status, message = result.bodyAsText()
+		)
+	}
+}
+
 private fun Route.updateMessage(client: HttpClient) {
-	put() {
-		val body = call.receive<MessageRequestTo>()
+	put {
+		val body = call.receive<MessageRequestToId>()
 		val result = client.put("http://localhost:24130/api/v1.0/messages") {
 			contentType(ContentType.Application.Json)
 			setBody(body)
