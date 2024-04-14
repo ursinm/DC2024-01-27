@@ -2,6 +2,7 @@ package com.github.hummel.dc.lab3.controller
 
 import com.github.hummel.dc.lab3.controller.routing.authorsRouting
 import com.github.hummel.dc.lab3.controller.routing.issuesRouting
+import com.github.hummel.dc.lab3.controller.routing.messagesRouting
 import com.github.hummel.dc.lab3.controller.routing.stickersRouting
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -15,6 +16,7 @@ fun Application.configureRouting() {
 		route("/api/v1.0") {
 			authorsRouting()
 			issuesRouting()
+			messagesRouting()
 			stickersRouting()
 		}
 	}
