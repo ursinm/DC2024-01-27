@@ -1,0 +1,19 @@
+version: "3"
+
+networks:
+  dist-comp-publisher:
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: dist-comp-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  redis:
+    image: redis
+    container_name: dist-comp-redis
+    ports:
+      - "6379:6379"

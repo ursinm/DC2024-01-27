@@ -9,13 +9,15 @@ import {
   HttpCode,
   Put,
   ParseIntPipe,
-} from '@nestjs/common';
-import { EditorsService } from './editors.service';
-import { CreateEditorDto } from './dto/create-editor.dto';
-import { UpdateEditorDto } from './dto/update-editor.dto';
-import { ZodValidationPipe } from 'nestjs-zod';
+} from "@nestjs/common";
+import { EditorsService } from "./editors.service";
+import { CreateEditorDto } from "./dto/create-editor.dto";
+import { UpdateEditorDto } from "./dto/update-editor.dto";
+import { ZodValidationPipe } from "nestjs-zod";
+import { CacheKey } from "@nestjs/cache-manager";
+import { REDIS_KEYS } from "src/constants";
 
-@Controller('editors')
+@Controller("editors")
 @UsePipes(ZodValidationPipe)
 export class EditorsController {
   constructor(private readonly editorsService: EditorsService) {}
@@ -30,8 +32,8 @@ export class EditorsController {
     return this.editorsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  @Get(":id")
+  findOne(@Param("id", ParseIntPipe) id: number) {
     return this.editorsService.findOne(id);
   }
 
@@ -40,9 +42,9 @@ export class EditorsController {
     return this.editorsService.update(updateEditorDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @HttpCode(204)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.editorsService.remove(id);
   }
 }

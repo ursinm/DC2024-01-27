@@ -10,14 +10,14 @@ import {
   HttpCode,
   ParseIntPipe,
   UsePipes,
-} from '@nestjs/common';
-import { StoriesService } from './stories.service';
-import { CreateStoryDto } from './dto/create-story.dto';
-import { UpdateStoryDto } from './dto/update-story.dto';
-import { ZodValidationPipe } from 'nestjs-zod';
+} from "@nestjs/common";
+import { StoriesService } from "./stories.service";
+import { CreateStoryDto } from "./dto/create-story.dto";
+import { UpdateStoryDto } from "./dto/update-story.dto";
+import { ZodValidationPipe } from "nestjs-zod";
 
 // required typo
-@Controller('storys')
+@Controller("storys")
 @UsePipes(ZodValidationPipe)
 export class StoriesController {
   constructor(private readonly storiesService: StoriesService) {}
@@ -32,8 +32,8 @@ export class StoriesController {
     return this.storiesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  @Get(":id")
+  findOne(@Param("id", ParseIntPipe) id: number) {
     return this.storiesService.findOne(id);
   }
 
@@ -42,9 +42,9 @@ export class StoriesController {
     return this.storiesService.update(updateStoryDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @HttpCode(204)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.storiesService.remove(id);
   }
 }
