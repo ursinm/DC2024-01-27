@@ -32,7 +32,7 @@ class MessageServiceImpl(
 	}
 
 	override suspend fun update(requestTo: MessageRequestToId?): MessageResponseTo? {
-		val bean = requestTo?.toBean() ?: return null
+		val bean = requestTo?.toBean("country") ?: return null
 
 		if (!repository.update(bean)) {
 			throw Exception("Exception during item updating!")
