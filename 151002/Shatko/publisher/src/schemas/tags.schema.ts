@@ -1,12 +1,12 @@
-import { relations } from 'drizzle-orm';
-import { pgSchema, serial, varchar } from 'drizzle-orm/pg-core';
-import { storiesToGroups } from './storiesToTags.schema';
+import { relations } from "drizzle-orm";
+import { pgSchema, serial, varchar } from "drizzle-orm/pg-core";
+import { storiesToGroups } from "./storiesToTags.schema";
 
-const schema = pgSchema('distcomp');
+const schema = pgSchema("distcomp");
 
-export const tags = schema.table('tbl_tags', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 32 }).notNull().unique(),
+export const tags = schema.table("tbl_tags", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 32 }).notNull().unique(),
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({
