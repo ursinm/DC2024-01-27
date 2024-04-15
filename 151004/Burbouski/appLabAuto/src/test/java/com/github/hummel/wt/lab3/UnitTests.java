@@ -1,6 +1,6 @@
-package com.github.hummel.wt.lab3;
+package com.github.hummel.dc.lab6;
 
-import com.github.hummel.wt.lab3.bean.*;
+import com.github.hummel.dc.lab6.bean.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
