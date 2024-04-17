@@ -59,7 +59,7 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 				it.getLong(Messages.COLUMN_ID.toString())
 			}?.getLong(Messages.COLUMN_ID.toString()) ?: 1
 		} else {
-			throw Exception("Unable to retrieve the id of the newly inserted message")
+			throw Exception("Unable to retrieve the id of the newly inserted item.")
 		}
 	}
 
@@ -78,7 +78,7 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 
 			1
 		} catch (e: Exception) {
-			throw Exception("Can not delete message record")
+			throw Exception("Can not delete item record.")
 		}
 	}
 
@@ -104,10 +104,9 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 	override suspend fun getById(id: Long): Message = withContext(Dispatchers.IO) {
 		val all = getAll()
 		if (all.isNotEmpty()) {
-
 			return@withContext all.last { it.id == id }
 		} else {
-			throw Exception("Post record not found")
+			throw Exception("Item record not found.")
 		}
 	}
 
@@ -125,7 +124,7 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 
 			1
 		} catch (e: Exception) {
-			throw Exception("Can not modify message record")
+			throw Exception("Can not modify item record.")
 		}
 	}
 }

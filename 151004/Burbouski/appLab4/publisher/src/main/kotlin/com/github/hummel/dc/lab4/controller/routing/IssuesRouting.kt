@@ -33,9 +33,13 @@ private fun Route.checkIssues(issuesService: IssueService) {
 		respond(isCorrect = {
 			issues.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issues)
+			call.respond(
+				status = HttpStatusCode.OK, issues
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 
 		sendViaKafka("From Publisher: Issues GET")
@@ -55,7 +59,9 @@ private fun Route.createIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.Forbidden, Response(HttpStatusCode.Forbidden.value)
@@ -77,7 +83,9 @@ private fun Route.getIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -125,7 +133,9 @@ private fun Route.updateIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)

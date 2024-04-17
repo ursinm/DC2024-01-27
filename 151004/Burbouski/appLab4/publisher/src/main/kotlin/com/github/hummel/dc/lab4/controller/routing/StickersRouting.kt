@@ -33,9 +33,13 @@ private fun Route.checkStickers(stickersService: StickerService) {
 		respond(isCorrect = {
 			stickers.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, stickers)
+			call.respond(
+				status = HttpStatusCode.OK, stickers
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 
 		sendViaKafka("From Publisher: Issues GET")
@@ -55,7 +59,9 @@ private fun Route.createSticker(stickersService: StickerService) {
 		respond(isCorrect = {
 			sticker != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, sticker ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, sticker ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -77,7 +83,9 @@ private fun Route.getSticker(stickersService: StickerService) {
 		respond(isCorrect = {
 			sticker != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, sticker ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, sticker ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -125,7 +133,9 @@ private fun Route.updateSticker(stickersService: StickerService) {
 		respond(isCorrect = {
 			sticker != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, sticker ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, sticker ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)

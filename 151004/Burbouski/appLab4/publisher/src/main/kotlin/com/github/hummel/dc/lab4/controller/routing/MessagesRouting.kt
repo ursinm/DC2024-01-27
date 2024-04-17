@@ -16,7 +16,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 internal fun Route.messagesRouting() {
-	val client = getHttpClient()
+	val client = HttpClient(CIO) {
+		install(ContentNegotiation) {
+			json()
+		}
+	}
 
 	route("/messages") {
 		checkMessages(client)
@@ -28,15 +32,11 @@ internal fun Route.messagesRouting() {
 	}
 }
 
-private fun getHttpClient() = HttpClient(CIO) {
-	install(ContentNegotiation) {
-		json()
-	}
-}
-
 private fun Route.checkMessages(client: HttpClient) {
 	get {
-		call.respond(client.get("http://0.0.0.0:24130/api/v1.0/messages").bodyAsText())
+		call.respond(
+			client.get("http://0.0.0.0:24130/api/v1.0/messages").bodyAsText()
+		)
 
 		sendViaKafka("From Publisher: Messages GET [redirect]")
 	}

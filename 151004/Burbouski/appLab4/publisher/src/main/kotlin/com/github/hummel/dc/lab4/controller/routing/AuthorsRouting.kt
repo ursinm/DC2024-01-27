@@ -33,9 +33,13 @@ private fun Route.checkAuthors(authorsService: AuthorService) {
 		respond(isCorrect = {
 			authors.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, authors)
+			call.respond(
+				status = HttpStatusCode.OK, authors
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 
 		sendViaKafka("From Publisher: Authors GET")
@@ -55,7 +59,9 @@ private fun Route.createAuthor(authorsService: AuthorService) {
 		respond(isCorrect = {
 			author != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, author ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, author ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.Forbidden, Response(HttpStatusCode.Forbidden.value)
@@ -77,7 +83,9 @@ private fun Route.getAuthor(authorsService: AuthorService) {
 		respond(isCorrect = {
 			author != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, author ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, author ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -125,7 +133,9 @@ private fun Route.updateAuthor(authorsService: AuthorService) {
 		respond(isCorrect = {
 			author != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, author ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, author ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)

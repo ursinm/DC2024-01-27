@@ -1,12 +1,13 @@
 package com.github.hummel.dc.lab4
 
 import com.github.hummel.dc.lab4.controller.configureRouting
-import com.github.hummel.dc.lab4.controller.configureSerialization
 import com.github.hummel.dc.lab4.module.appModule
 import com.github.hummel.dc.lab4.module.dataModule
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.doublereceive.*
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
@@ -26,12 +27,20 @@ fun main() {
 fun Application.publisher() {
 	install(DoubleReceive)
 	install(Koin) {
-		dataModule.single<Connection> { connectToPostgres(embedded = true) }
+		dataModule.single<Connection> {
+			Class.forName("org.postgresql.Driver")
+			DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+		}
 		modules(dataModule, appModule)
 	}
-	configureSerialization()
+	install(ContentNegotiation) {
+		json()
+	}
 	configureRouting()
+	configureKafka()
+}
 
+fun configureKafka() {
 	val bootstrapServers = "localhost:9092"
 
 	val producerProps = Properties()
@@ -48,18 +57,4 @@ fun sendViaKafka(message: String) {
 	val topic = "app"
 	val record = ProducerRecord<String, String>(topic, message)
 	producer.send(record)
-}
-
-fun Application.connectToPostgres(embedded: Boolean): Connection {
-	Class.forName("org.postgresql.Driver")
-
-	if (embedded) {
-		return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
-	}
-
-	val url = environment.config.property("postgres.url").getString()
-	val user = environment.config.property("postgres.user").getString()
-	val password = environment.config.property("postgres.password").getString()
-
-	return DriverManager.getConnection(url, user, password)
 }
