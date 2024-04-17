@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = CreatorMapper.class)
 public interface CreatorListMapper {
-    List<Creator> toCreatorList(List<CreatorRequestTo> Creators);
-    List<CreatorResponseTo> toCreatorResponseList(List<Creator> Creators);
+    List<Creator> toCreatorList(List<CreatorRequestTo> creators);
+    List<CreatorResponseTo> toCreatorResponseList(List<Creator> creators);
 }

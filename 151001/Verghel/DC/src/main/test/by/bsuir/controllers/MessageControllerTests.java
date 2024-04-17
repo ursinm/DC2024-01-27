@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class LabelControllerTests {
+public class MessageControllerTests {
     @Before
     public void setUp() {
         RestAssured.baseURI = "http://localhost";
@@ -20,146 +20,159 @@ public class LabelControllerTests {
     }
 
     @Test
-    public void testGetLabels() {
+    public void testGetMessages() {
         given()
                 .when()
-                .get("/api/v1.0/labels")
+                .get("/api/v1.0/messages")
                 .then()
                 .statusCode(200);
     }
 
     @Test
-    public void testGetLabelById() {
+    public void testGetMessageById() {
+        String body = "{ \"content\": \"Test content\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"name\": \"name4845\" }")
+                .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        long labelId = response.jsonPath().getLong("id");
+        long messageId = response.jsonPath().getLong("id");
         given()
-                .pathParam("id", labelId)
+                .pathParam("id", messageId)
                 .when()
-                .get("/api/v1.0/labels/{id}")
+                .get("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(200);
 
         given()
-                .pathParam("id", labelId)
+                .pathParam("id", messageId)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
     }
 
     @Test
-    public void testDeleteLabel() {
+    public void testDeleteMessage() {
+        String body = "{ \"content\": \"Test content\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"name\": \"name4845\" }")
+                .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        long labelId = response.jsonPath().getLong("id");
+        long messageId = response.jsonPath().getLong("id");
 
         given()
-                .pathParam("id", labelId)
+                .pathParam("id", messageId)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
     }
 
     @Test
-    public void testUpdateLabel() {
+    public void testUpdateMessage() {
+        String body = "{ \"content\": \"Test content\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{\"name\": \"name4845\" }")
+                .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        long labelId = response.jsonPath().getLong("id");
+        long messageId = response.jsonPath().getLong("id");
 
-        String body = "{ \"id\": " + labelId + ", \"issueId\": 8, \"name\": \"updatedname45295\" }";
+        body = "{ \"id\": " + messageId + ", \"content\": \"Updated message\" }";
 
         given()
                 .contentType(ContentType.JSON)
                 .body(body)
                 .when()
-                .put("/api/v1.0/labels")
+                .put("/api/v1.0/messages")
                 .then()
                 .statusCode(200)
-                .body("name", equalTo("updatedname45295"));
+                .body("content", equalTo("Updated message"));
 
         given()
-                .pathParam("id", labelId)
+                .pathParam("id", messageId)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
     }
 
     @Test
-    public void testGetLabelByIdWithWrongArgument() {
+    public void testGetMessageByIdWithWrongArgument() {
         given()
                 .pathParam("id", 999999)
                 .when()
-                .get("/api/v1.0/labels/{id}")
+                .get("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(400)
-                .body("errorMessage", equalTo("Label not found!"))
+                .body("errorMessage", equalTo("Message not found!"))
                 .body("errorCode", equalTo(40004));
     }
 
     @Test
-    public void testDeleteLabelWithWrongArgument() {
+    public void testDeleteMessageWithWrongArgument() {
         given()
                 .pathParam("id", 999999)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(400)
-                .body("errorMessage", equalTo("Label not found!"))
+                .body("errorMessage", equalTo("Message not found!"))
                 .body("errorCode", equalTo(40004));
     }
 
-
+    @Test
+    public void testGetMessageByIssueIdWithWrongArgument() {
+        given()
+                .pathParam("id", 999999)
+                .when()
+                .get("/api/v1.0/messages/byIssue/{id}")
+                .then()
+                .statusCode(400)
+                .body("errorMessage", equalTo("Message not found!"))
+                .body("errorCode", equalTo(40004));
+    }
 
     @Test
     public void testFindAllOrderById(){
-        String body = "{ \"name\": \"aaa\"}";
+        String body = "{ \"content\": \"aaa\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
                 .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        Integer labelId1 = response.jsonPath().getInt("id");
+        Integer messageId1 = response.jsonPath().getInt("id");
 
-        body = "{ \"name\": \"bbb\"}";
+        body = "{ \"content\": \"bbb\"}";
         response = given()
                 .contentType(ContentType.JSON)
                 .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        Integer labelId2 = response.jsonPath().getInt("id");
-        String uri = "/api/v1.0/labels?pageNumber=0&pageSize=10&sortBy=id&sortOrder=asc";
+        Integer messageId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/messages?pageNumber=0&pageSize=10&sortBy=id&sortOrder=asc";
         Integer id = given()
                 .contentType(ContentType.JSON)
                 .when()
@@ -169,7 +182,7 @@ public class LabelControllerTests {
                 .extract()
                 .path("[0].id");
 
-        uri = "/api/v1.0/labels?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
+        uri = "/api/v1.0/messages?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
         id = given()
                 .contentType(ContentType.JSON)
                 .when()
@@ -179,49 +192,49 @@ public class LabelControllerTests {
                 .extract()
                 .path("[0].id");
 
-        assertEquals(labelId2, id);
+        assertEquals(messageId2, id);
 
         given()
-                .pathParam("id", labelId1)
+                .pathParam("id", messageId1)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
 
         given()
-                .pathParam("id", labelId2)
+                .pathParam("id", messageId2)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
     }
 
     @Test
     public void testFindAllOrderByContent(){
-        String body = "{ \"name\": \"aaa\"}";
+        String body = "{ \"content\": \"aaa\"}";
         Response response = given()
                 .contentType(ContentType.JSON)
                 .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        Integer labelId1 = response.jsonPath().getInt("id");
+        Integer messageId1 = response.jsonPath().getInt("id");
 
-        body = "{ \"name\": \"bbb\"}";
+        body = "{ \"content\": \"zzzzzzzzzzzzz\"}";
         response = given()
                 .contentType(ContentType.JSON)
                 .body(body)
                 .when()
-                .post("/api/v1.0/labels")
+                .post("/api/v1.0/messages")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        Integer labelId2 = response.jsonPath().getInt("id");
-        String uri = "/api/v1.0/labels?pageNumber=0&pageSize=10&sortBy=name&sortOrder=asc";
+        Integer messageId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/messages?pageNumber=0&pageSize=10&sortBy=content&sortOrder=asc";
         String content = given()
                 .contentType(ContentType.JSON)
                 .when()
@@ -229,10 +242,10 @@ public class LabelControllerTests {
                 .then()
                 .statusCode(200)
                 .extract()
-                .path("[0].name");
+                .path("[0].content");
 
         assertEquals("aaa", content);
-        uri = "/api/v1.0/labels?pageNumber=0&pageSize=10&sortBy=name&sortOrder=desc";
+        uri = "/api/v1.0/messages?pageNumber=0&pageSize=10&sortBy=content&sortOrder=desc";
         content = given()
                 .contentType(ContentType.JSON)
                 .when()
@@ -240,23 +253,22 @@ public class LabelControllerTests {
                 .then()
                 .statusCode(200)
                 .extract()
-                .path("[0].name");
+                .path("[0].content");
 
-        assertEquals("name4845", content);
+        assertEquals("zzzzzzzzzzzzz", content);
 
         given()
-                .pathParam("id", labelId1)
+                .pathParam("id", messageId1)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
 
         given()
-                .pathParam("id", labelId2)
+                .pathParam("id", messageId2)
                 .when()
-                .delete("/api/v1.0/labels/{id}")
+                .delete("/api/v1.0/messages/{id}")
                 .then()
                 .statusCode(204);
     }
 }
-
