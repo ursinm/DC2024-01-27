@@ -13,10 +13,7 @@ import by.bsuir.repository.EditorRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +26,7 @@ import java.util.Optional;
 
 @Service
 @Validated
-@CacheConfig(cacheNames = "editors")
+@CacheConfig(cacheNames = "editorsCache")
 public class EditorService {
     @Autowired
     EditorMapper editorMapper;
@@ -38,13 +35,13 @@ public class EditorService {
     @Autowired
     EditorListMapper editorListMapper;
 
-    @Cacheable(key = "#id")
+    @Cacheable(cacheNames = "editors", key = "#id", unless = "#result == null")
     public EditorResponseTo getEditorById(@Min(0) Long id) throws NotFoundException {
         Optional<Editor> editor = editorDao.findById(id);
         return editor.map(value -> editorMapper.editorToEditorResponse(value)).orElseThrow(() -> new NotFoundException("Editor not found!", 40004L));
     }
 
-    @Cacheable
+    @Cacheable(cacheNames = "editors")
     public List<EditorResponseTo> getEditors(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
         if (sortOrder != null && sortOrder.equals("asc")) {
@@ -55,7 +52,7 @@ public class EditorService {
         Page<Editor> editors = editorDao.findAll(pageable);
         return editorListMapper.toEditorResponseList(editors.toList());
     }
-    @CachePut(key = "#editor.id")
+    @CacheEvict(cacheNames = "editors", allEntries = true)
     public EditorResponseTo saveEditor(@Valid EditorRequestTo editor) throws DuplicationException {
         Editor editorToSave = editorMapper.editorRequestToEditor(editor);
         if (editorDao.existsByLogin(editorToSave.getLogin())) {
@@ -63,7 +60,8 @@ public class EditorService {
         }
         return editorMapper.editorToEditorResponse(editorDao.save(editorToSave));
     }
-    @CacheEvict(key = "#id")
+    @Caching(evict = { @CacheEvict(cacheNames = "editors", key = "#id"),
+            @CacheEvict(cacheNames = "editors", allEntries = true) })
     public void deleteEditor(@Min(0) Long id) throws DeleteException {
         if (!editorDao.existsById(id)) {
             throw new DeleteException("Editor not found!", 40004L);
@@ -71,7 +69,7 @@ public class EditorService {
             editorDao.deleteById(id);
         }
     }
-    @CachePut(key = "#editor.id")
+    @CacheEvict(cacheNames = "editors", allEntries = true)
     public EditorResponseTo updateEditor(@Valid EditorRequestTo editor) throws UpdateException {
         Editor editorToUpdate = editorMapper.editorRequestToEditor(editor);
         if (!editorDao.existsById(editorToUpdate.getId())) {
