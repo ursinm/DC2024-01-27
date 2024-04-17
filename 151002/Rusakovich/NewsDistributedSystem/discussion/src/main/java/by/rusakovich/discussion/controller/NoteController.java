@@ -20,7 +20,7 @@ public class NoteController{
 
     @PostMapping("")
     public ResponseEntity<NoteResponseTO> create(@RequestBody @Valid NoteRequestTO to){
-        NoteResponseTO result = service.create(to);
+        NoteResponseTO result = service.create(to, "ru");
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

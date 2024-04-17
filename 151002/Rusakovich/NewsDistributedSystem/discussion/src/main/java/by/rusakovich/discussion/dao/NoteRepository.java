@@ -1,35 +1,19 @@
 package by.rusakovich.discussion.dao;
 
 import by.rusakovich.discussion.model.Note;
+import by.rusakovich.discussion.model.NoteKey;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.cassandra.repository.AllowFiltering;
+import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
+
+@Primary
 @Repository
-public class NoteRepository implements INoteRepository {
-    @Override
-    public Optional<Note> readById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void removeById(Long id) {
-
-    }
-
-    @Override
-    public Optional<Note> create(Note entity) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Note> update(Note entity) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Iterable<Note> readAll() {
-        return List.of();
-    }
+public interface NoteRepository extends CassandraRepository<Note, NoteKey> {
+    @AllowFiltering
+    List<Note> findById(Long id);
+    void deleteByCountryAndNewsIdAndId(String country, Long newsId, Long id);
 }

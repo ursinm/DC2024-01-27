@@ -4,5 +4,10 @@
       "name": "api.url",
       "type": "java.lang.String",
       "description": "URL for application with api version"
-  }
-] }
+    },
+    {
+      "name": "api.notes-url",
+      "type": "java.lang.String",
+      "description": "URL for notes service"
+    }
+  ] }

@@ -1,13 +1,15 @@
 package by.rusakovich.discussion.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.io.Serializable;
 
 @Getter
 @Setter
-public class NoteId implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class NoteKey{
     private String country;
     private Long newsId;
     private Long id;
