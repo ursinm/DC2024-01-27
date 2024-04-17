@@ -3,6 +3,7 @@ package com.github.hummel.dc.lab4.controller.routing
 import com.github.hummel.dc.lab4.controller.respond
 import com.github.hummel.dc.lab4.dto.request.AuthorRequestTo
 import com.github.hummel.dc.lab4.dto.request.AuthorRequestToId
+import com.github.hummel.dc.lab4.sendViaKafka
 import com.github.hummel.dc.lab4.service.AuthorService
 import com.github.hummel.dc.lab4.util.Response
 import io.ktor.http.*
@@ -36,6 +37,8 @@ private fun Route.checkAuthors(authorsService: AuthorService) {
 		}, onIncorrect = {
 			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
 		})
+
+		sendViaKafka("From Publisher: Authors GET")
 	}
 }
 
@@ -58,6 +61,8 @@ private fun Route.createAuthor(authorsService: AuthorService) {
 				status = HttpStatusCode.Forbidden, Response(HttpStatusCode.Forbidden.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Authors POST")
 	}
 }
 
@@ -78,6 +83,8 @@ private fun Route.getAuthor(authorsService: AuthorService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Authors GET ID")
 	}
 }
 
@@ -100,6 +107,8 @@ private fun Route.deleteAuthor(authorsService: AuthorService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Authors DELETE ID")
 	}
 }
 
@@ -122,5 +131,7 @@ private fun Route.updateAuthor(authorsService: AuthorService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Authors PUT")
 	}
 }

@@ -1,10 +1,11 @@
 package com.github.hummel.dc.lab4.controller.routing
 
-import com.github.hummel.dc.lab4.util.Response
 import com.github.hummel.dc.lab4.controller.respond
 import com.github.hummel.dc.lab4.dto.request.IssueRequestTo
 import com.github.hummel.dc.lab4.dto.request.IssueRequestToId
+import com.github.hummel.dc.lab4.sendViaKafka
 import com.github.hummel.dc.lab4.service.IssueService
+import com.github.hummel.dc.lab4.util.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -36,6 +37,8 @@ private fun Route.checkIssues(issuesService: IssueService) {
 		}, onIncorrect = {
 			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
 		})
+
+		sendViaKafka("From Publisher: Issues GET")
 	}
 }
 
@@ -58,6 +61,8 @@ private fun Route.createIssue(issuesService: IssueService) {
 				status = HttpStatusCode.Forbidden, Response(HttpStatusCode.Forbidden.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues POST")
 	}
 }
 
@@ -78,6 +83,8 @@ private fun Route.getIssue(issuesService: IssueService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues GET ID")
 	}
 }
 
@@ -100,6 +107,8 @@ private fun Route.deleteIssue(issuesService: IssueService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues DELETE ID")
 	}
 }
 
@@ -122,5 +131,7 @@ private fun Route.updateIssue(issuesService: IssueService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues PUT")
 	}
 }

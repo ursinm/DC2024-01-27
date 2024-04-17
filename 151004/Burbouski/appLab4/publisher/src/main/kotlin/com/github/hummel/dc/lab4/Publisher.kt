@@ -8,9 +8,16 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.doublereceive.*
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.serialization.StringSerializer
 import org.koin.ktor.plugin.Koin
 import java.sql.Connection
 import java.sql.DriverManager
+import java.util.*
+
+private lateinit var producer: KafkaProducer<String, String>
 
 fun main() {
 	embeddedServer(Netty, port = 24110, module = Application::publisher).start(wait = true)
@@ -24,6 +31,23 @@ fun Application.publisher() {
 	}
 	configureSerialization()
 	configureRouting()
+
+	val bootstrapServers = "localhost:9092"
+
+	val producerProps = Properties()
+	producerProps[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
+	producerProps[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java.name
+	producerProps[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java.name
+
+	producer = KafkaProducer<String, String>(producerProps)
+
+	sendViaKafka("From Publisher: Connection established!")
+}
+
+fun sendViaKafka(message: String) {
+	val topic = "app"
+	val record = ProducerRecord<String, String>(topic, message)
+	producer.send(record)
 }
 
 fun Application.connectToPostgres(embedded: Boolean): Connection {

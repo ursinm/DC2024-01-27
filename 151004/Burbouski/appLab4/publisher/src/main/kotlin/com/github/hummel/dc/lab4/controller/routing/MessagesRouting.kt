@@ -2,6 +2,7 @@ package com.github.hummel.dc.lab4.controller.routing
 
 import com.github.hummel.dc.lab4.dto.request.MessageRequestTo
 import com.github.hummel.dc.lab4.dto.request.MessageRequestToId
+import com.github.hummel.dc.lab4.sendViaKafka
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -36,6 +37,8 @@ private fun getHttpClient() = HttpClient(CIO) {
 private fun Route.checkMessages(client: HttpClient) {
 	get {
 		call.respond(client.get("http://0.0.0.0:24130/api/v1.0/messages").bodyAsText())
+
+		sendViaKafka("From Publisher: Messages GET [redirect]")
 	}
 }
 
@@ -49,6 +52,8 @@ private fun Route.createMessage(client: HttpClient) {
 		call.respond(
 			status = result.status, message = result.bodyAsText()
 		)
+
+		sendViaKafka("From Publisher: Messages POST [redirect]")
 	}
 }
 
@@ -59,6 +64,8 @@ private fun Route.getMessage(client: HttpClient) {
 		call.respond(
 			status = result.status, message = result.bodyAsText()
 		)
+
+		sendViaKafka("From Publisher: Messages GET ID [redirect]")
 	}
 }
 
@@ -69,6 +76,8 @@ private fun Route.deleteMessage(client: HttpClient) {
 		call.respond(
 			status = result.status, message = result.bodyAsText()
 		)
+
+		sendViaKafka("From Publisher: Messages DELETE ID [redirect]")
 	}
 }
 
@@ -82,5 +91,7 @@ private fun Route.updateMessage(client: HttpClient) {
 		call.respond(
 			status = result.status, message = result.bodyAsText()
 		)
+
+		sendViaKafka("From Publisher: Messages PUT [redirect]")
 	}
 }

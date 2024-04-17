@@ -3,6 +3,7 @@ package com.github.hummel.dc.lab4.controller.routing
 import com.github.hummel.dc.lab4.controller.respond
 import com.github.hummel.dc.lab4.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab4.dto.request.StickerRequestToId
+import com.github.hummel.dc.lab4.sendViaKafka
 import com.github.hummel.dc.lab4.service.StickerService
 import com.github.hummel.dc.lab4.util.Response
 import io.ktor.http.*
@@ -36,6 +37,8 @@ private fun Route.checkStickers(stickersService: StickerService) {
 		}, onIncorrect = {
 			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
 		})
+
+		sendViaKafka("From Publisher: Issues GET")
 	}
 }
 
@@ -58,6 +61,8 @@ private fun Route.createSticker(stickersService: StickerService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues POST")
 	}
 }
 
@@ -78,6 +83,8 @@ private fun Route.getSticker(stickersService: StickerService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues GET ID")
 	}
 }
 
@@ -100,6 +107,8 @@ private fun Route.deleteSticker(stickersService: StickerService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues DELETE ID")
 	}
 }
 
@@ -122,5 +131,7 @@ private fun Route.updateSticker(stickersService: StickerService) {
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
+
+		sendViaKafka("From Publisher: Issues PUT")
 	}
 }

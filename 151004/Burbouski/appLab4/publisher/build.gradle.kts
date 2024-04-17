@@ -31,6 +31,8 @@ dependencies {
 	implementation("io.ktor:ktor-client-cio:2.3.8")
 	implementation("io.ktor:ktor-client-logging:2.3.8")
 	implementation("io.ktor:ktor-client-content-negotiation:2.3.8")
+
+	implementation("org.apache.kafka:kafka-clients:3.7.0")
 }
 
 java {
