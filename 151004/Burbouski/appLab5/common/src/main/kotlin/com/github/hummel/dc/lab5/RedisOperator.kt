@@ -16,7 +16,10 @@ fun configureRedis() {
 }
 
 fun testViaRedis(key: String, value: String) {
-	operator.set(key, value)
-	val test = operator.get(key)
-	println("Key: $key, Value: $test")
+	try {
+		operator.set(key, value)
+		val test = operator.get(key)
+		println("Key: $key, Value: $test")
+	} catch (_: Exception) {
+	}
 }
