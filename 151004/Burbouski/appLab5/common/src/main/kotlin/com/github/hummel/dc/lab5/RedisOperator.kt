@@ -7,6 +7,13 @@ var id: Int = 0
 
 private lateinit var operator: RedisCommands<String, String>
 
+fun main() {
+	configureRedis()
+	for (i in 0..9) {
+		println("Key: $i, Value: ${operator.get("$i")}")
+	}
+}
+
 fun configureRedis() {
 	val redisClient = RedisClient.create("redis://localhost")
 	val connection = redisClient.connect()
