@@ -3,7 +3,9 @@ package com.github.hummel.dc.lab5
 import io.lettuce.core.RedisClient
 import io.lettuce.core.api.sync.RedisCommands
 
-lateinit var operator: RedisCommands<String, String>
+var id: Int = 0
+
+private lateinit var operator: RedisCommands<String, String>
 
 fun configureRedis() {
 	val redisClient = RedisClient.create("redis://localhost")
