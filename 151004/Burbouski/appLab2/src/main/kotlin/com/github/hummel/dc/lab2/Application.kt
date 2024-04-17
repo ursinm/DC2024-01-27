@@ -17,6 +17,7 @@ fun main() {
 }
 
 fun Application.module() {
+	install(DoubleReceive)
 	install(Koin) {
 		dataModule.single<Connection> {
 			Class.forName("org.postgresql.Driver")

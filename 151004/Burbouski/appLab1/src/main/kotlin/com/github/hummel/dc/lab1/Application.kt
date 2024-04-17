@@ -15,6 +15,7 @@ fun main() {
 }
 
 fun Application.module() {
+	install(DoubleReceive)
 	install(Koin) {
 		modules(dataModule, appModule)
 	}
