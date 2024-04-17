@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: Publisher
+  datasource:
+    url: jdbc:postgresql://localhost:5432/distcomp
+    username: postgres
+    password: postgres
+  liquibase:
+    change-log: classpath:db/changelog/publisher-master.xml
+
+server:
+  port: 24110
+
+api:
+  url: /api/v1.0
