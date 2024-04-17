@@ -12,15 +12,12 @@ import org.koin.dsl.module
 val messagesRepositoryQualifier: StringQualifier = StringQualifier("messages_repository")
 
 val dataModule: Module = module {
-	single<Cluster> {
-		Cluster.builder().withoutMetrics().addContactPoints("127.0.0.1").build()
-	}
-
 	single<MessageDao> {
 		val cluster: Cluster = get()
 
 		MessageDaoImpl(cluster.connect("distcomp"))
 	}
+
 	single<MessagesRepository>(messagesRepositoryQualifier) {
 		val dao = get<MessageDao>()
 
