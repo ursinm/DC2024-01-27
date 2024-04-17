@@ -32,9 +32,13 @@ private fun Route.checkIssues(issuesService: IssueService) {
 		respond(isCorrect = {
 			issues.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issues)
+			call.respond(
+				status = HttpStatusCode.OK, issues
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 	}
 }
@@ -52,11 +56,12 @@ private fun Route.createIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
@@ -65,8 +70,7 @@ private fun Route.createIssue(issuesService: IssueService) {
 private fun Route.getIssue(issuesService: IssueService) {
 	get("/{id?}") {
 		val id = call.parameters["id"] ?: return@get call.respond(
-			status = HttpStatusCode.BadRequest,
-			message = Response(HttpStatusCode.BadRequest.value)
+			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
 
 		val issue = issuesService.getById(id.toLong())
@@ -74,11 +78,12 @@ private fun Route.getIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
@@ -87,8 +92,7 @@ private fun Route.getIssue(issuesService: IssueService) {
 private fun Route.deleteIssue(issuesService: IssueService) {
 	delete("/{id?}") {
 		val id = call.parameters["id"] ?: return@delete call.respond(
-			status = HttpStatusCode.BadRequest,
-			message = Response(HttpStatusCode.BadRequest.value)
+			status = HttpStatusCode.BadRequest, message = Response(HttpStatusCode.BadRequest.value)
 		)
 
 		val issue = issuesService.deleteById(id.toLong())
@@ -97,13 +101,11 @@ private fun Route.deleteIssue(issuesService: IssueService) {
 			issue
 		}, onCorrect = {
 			call.respond(
-				status = HttpStatusCode.NoContent,
-				Response(HttpStatusCode.NoContent.value)
+				status = HttpStatusCode.NoContent, Response(HttpStatusCode.NoContent.value)
 			)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}
@@ -122,11 +124,12 @@ private fun Route.updateIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
-				status = HttpStatusCode.BadRequest,
-				Response(HttpStatusCode.BadRequest.value)
+				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
 			)
 		})
 	}

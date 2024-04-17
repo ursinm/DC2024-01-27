@@ -1,12 +1,13 @@
 package com.github.hummel.dc.lab1
 
 import com.github.hummel.dc.lab1.controller.configureRouting
-import com.github.hummel.dc.lab1.controller.configureSerialization
 import com.github.hummel.dc.lab1.module.appModule
 import com.github.hummel.dc.lab1.module.dataModule
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
 import org.koin.ktor.plugin.Koin
 
 fun main() {
@@ -17,6 +18,8 @@ fun Application.module() {
 	install(Koin) {
 		modules(dataModule, appModule)
 	}
-	configureSerialization()
+	install(ContentNegotiation) {
+		json()
+	}
 	configureRouting()
 }
