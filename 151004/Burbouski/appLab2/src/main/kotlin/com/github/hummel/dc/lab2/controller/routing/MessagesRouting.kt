@@ -1,10 +1,10 @@
 package com.github.hummel.dc.lab2.controller.routing
 
-import com.github.hummel.dc.lab2.util.Response
 import com.github.hummel.dc.lab2.controller.respond
 import com.github.hummel.dc.lab2.dto.request.MessageRequestTo
 import com.github.hummel.dc.lab2.dto.request.MessageRequestToId
 import com.github.hummel.dc.lab2.service.MessageService
+import com.github.hummel.dc.lab2.util.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
