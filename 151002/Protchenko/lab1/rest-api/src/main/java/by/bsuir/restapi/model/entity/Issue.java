@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +12,7 @@ import java.util.Date;
 public class Issue implements Entity<Long> {
 
     private Long id;
+    private Long authorId;
     private String title;
     private String content;
     private Instant created;

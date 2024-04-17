@@ -1,15 +1,19 @@
 package by.bsuir.restapi.model.mapper;
 
-import by.bsuir.restapi.model.dto.request.MarkerRequestTo;
-import by.bsuir.restapi.model.dto.response.MarkerResponseTo;
+import by.bsuir.restapi.model.dto.request.MarkerRequestDto;
+import by.bsuir.restapi.model.dto.response.MarkerResponseDto;
 import by.bsuir.restapi.model.entity.Marker;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
+import java.util.List;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MarkerMapper {
 
-    MarkerResponseTo toDto(Marker Marker);
+    MarkerResponseDto toDto(Marker Marker);
 
-    Marker toEntity(MarkerRequestTo MarkerRequestTo);
+    Marker toEntity(MarkerRequestDto MarkerRequestDto);
+
+    List<MarkerResponseDto> toDto(List<Marker> Markers);
 }

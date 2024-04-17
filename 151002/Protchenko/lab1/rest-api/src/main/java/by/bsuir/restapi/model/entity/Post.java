@@ -11,6 +11,6 @@ public class Post implements Entity<Long> {
 
     private Long id;
     private Long issueId;
-    private String text;
+    private String content;
 
 }

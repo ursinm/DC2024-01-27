@@ -1,6 +1,6 @@
 package by.bsuir.restapi.model.dto.response;
 
-public record PostResponseTo(
+public record PostResponseDto(
         Long id,
         Long issueId,
         String content

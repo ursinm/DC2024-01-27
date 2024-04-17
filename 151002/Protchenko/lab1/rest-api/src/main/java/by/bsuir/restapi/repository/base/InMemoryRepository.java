@@ -9,12 +9,12 @@ public abstract class InMemoryRepository<T extends Entity<Long>> implements Crud
 
     private final static AtomicLong counter = new AtomicLong();
 
-    private final Map<Long, T> map = new HashMap<>();
+    protected final Map<Long, T> map = new HashMap<>();
 
     @Override
     public <S extends T> S save(S entity) {
         Long id = entity.getId();
-        if (map.get(id) != null) {
+        if (map.get(id) == null) {
             id = counter.incrementAndGet();
             entity.setId(id);
         }

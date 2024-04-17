@@ -3,7 +3,7 @@ package by.bsuir.restapi.model.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record AuthorRequestTo(
+public record AuthorRequestDto(
         Long id,
 
         @NotBlank

@@ -1,15 +1,19 @@
 package by.bsuir.restapi.model.mapper;
 
-import by.bsuir.restapi.model.dto.request.PostRequestTo;
-import by.bsuir.restapi.model.dto.response.PostResponseTo;
+import by.bsuir.restapi.model.dto.request.PostRequestDto;
+import by.bsuir.restapi.model.dto.response.PostResponseDto;
 import by.bsuir.restapi.model.entity.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
+import java.util.List;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostMapper {
 
-    PostResponseTo toDto(Post Post);
+    PostResponseDto toDto(Post Post);
 
-    Post toEntity(PostRequestTo PostRequestTo);
+    Post toEntity(PostRequestDto PostRequestDto);
+
+    List<PostResponseDto> toDto(List<Post> Posts);
 }

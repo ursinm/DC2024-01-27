@@ -1,6 +1,6 @@
 package by.bsuir.restapi.model.dto.response;
 
-public record AuthorResponseTo(
+public record AuthorResponseDto(
         Long id,
         String login,
         String password,
