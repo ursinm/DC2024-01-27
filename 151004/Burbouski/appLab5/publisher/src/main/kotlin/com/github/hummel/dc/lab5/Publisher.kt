@@ -43,6 +43,7 @@ fun Application.publisher() {
 	}
 	configureRouting()
 	configureKafka()
+	configureRedis()
 }
 
 fun configureKafka() {

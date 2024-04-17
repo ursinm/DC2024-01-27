@@ -33,6 +33,8 @@ dependencies {
 	implementation("com.datastax.cassandra:cassandra-driver-core:3.0.8")
 	implementation("com.datastax.oss:java-driver-core:4.0.1")
 	implementation("com.ing.data:cassandra-jdbc-wrapper:4.11.1")
+
+	implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
 }
 
 java {

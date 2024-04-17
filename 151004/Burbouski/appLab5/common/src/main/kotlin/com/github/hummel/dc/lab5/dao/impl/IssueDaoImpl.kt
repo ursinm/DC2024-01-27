@@ -3,6 +3,7 @@ package com.github.hummel.dc.lab5.dao.impl
 import com.github.hummel.dc.lab5.bean.Issue
 import com.github.hummel.dc.lab5.dao.IssueDao
 import com.github.hummel.dc.lab5.database.Issues
+import com.github.hummel.dc.lab5.testViaRedis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
@@ -21,6 +22,8 @@ class IssueDaoImpl(private val connection: Connection) : IssueDao {
 	private fun ResultSet.getTimestamp(value: Issues): Timestamp = getTimestamp("$value")
 
 	override suspend fun create(item: Issue): Long = withContext(Dispatchers.IO) {
+		testViaRedis(item.id.toString(), item.title)
+
 		val statement = connection.prepareStatement(Issues.INSERT_ISSUE, Statement.RETURN_GENERATED_KEYS)
 		statement.apply {
 			setLong(1, item.authorId)

@@ -3,6 +3,7 @@ package com.github.hummel.dc.lab5.dao.impl
 import com.github.hummel.dc.lab5.bean.Message
 import com.github.hummel.dc.lab5.dao.MessageDao
 import com.github.hummel.dc.lab5.database.Messages
+import com.github.hummel.dc.lab5.testViaRedis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -32,6 +33,8 @@ class MessageDaoImpl(private val session: com.datastax.driver.core.Session) : Me
 	}
 
 	override suspend fun create(item: Message): Long = withContext(Dispatchers.IO) {
+		testViaRedis(item.id.toString(), item.content)
+
 		session.execute(
 			"""
 			INSERT

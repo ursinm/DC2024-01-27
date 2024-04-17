@@ -40,7 +40,6 @@ fun Application.discussion() {
 }
 
 fun configureKafka() {
-
 	val bootstrapServers = "localhost:9092"
 	val topic = "app"
 	val groupId = "app-id"

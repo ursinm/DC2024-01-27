@@ -3,6 +3,7 @@ package com.github.hummel.dc.lab5.dao.impl
 import com.github.hummel.dc.lab5.bean.Sticker
 import com.github.hummel.dc.lab5.dao.StickerDao
 import com.github.hummel.dc.lab5.database.Stickers
+import com.github.hummel.dc.lab5.testViaRedis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
@@ -19,6 +20,8 @@ class StickerDaoImpl(private val connection: Connection) : StickerDao {
 	private fun ResultSet.getLong(value: Stickers): Long = getLong("$value")
 
 	override suspend fun create(item: Sticker): Long = withContext(Dispatchers.IO) {
+		testViaRedis(item.id.toString(), item.name)
+
 		val statement = connection.prepareStatement(Stickers.INSERT_STICKER, Statement.RETURN_GENERATED_KEYS)
 		statement.apply {
 			setString(1, item.name)

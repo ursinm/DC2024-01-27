@@ -3,6 +3,7 @@ package com.github.hummel.dc.lab5.dao.impl
 import com.github.hummel.dc.lab5.bean.Author
 import com.github.hummel.dc.lab5.dao.AuthorDao
 import com.github.hummel.dc.lab5.database.Authors
+import com.github.hummel.dc.lab5.testViaRedis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
@@ -19,6 +20,8 @@ class AuthorDaoImpl(private val connection: Connection) : AuthorDao {
 	private fun ResultSet.getLong(value: Authors): Long = getLong("$value")
 
 	override suspend fun create(item: Author): Long = withContext(Dispatchers.IO) {
+		testViaRedis(item.id.toString(), item.login)
+
 		val statement = connection.prepareStatement(Authors.INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS)
 		statement.apply {
 			setString(1, item.login)
