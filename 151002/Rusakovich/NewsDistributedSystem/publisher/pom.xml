@@ -80,6 +80,14 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>6.4.1.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-shaded-guava</artifactId>
+		</dependency>
 
 	</dependencies>
 
