@@ -11,17 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
 public class KafkaMessageServiceImpl {
+
+    private final RedisMessageService redisService;
 
     private static final String IN_TOPIC= "InTopic";
 
@@ -95,30 +96,49 @@ public class KafkaMessageServiceImpl {
         messageEvent = getResponseEvent(messageEvent);
 
         MessageRequestTo res = messageEvent.getMessageRequestTos().getFirst();
-        return mapper.modelToResponse(mapper.requestToModel(res));
+        MessageResponseTo responseMessage = mapper.modelToResponse(mapper.requestToModel(res));
+
+        redisService.save(responseMessage);
+
+        return responseMessage;
     }
 
-    public List<MessageResponseTo> getAll() throws ApiException {
-        MessageEvent messageEvent = new MessageEvent(
-                UUID.randomUUID(),
-                Operation.FIND_ALL,
-                null,
-                null,
-                null
-        );
+    public List<MessageResponseTo> getAll() {
 
-        messageEvent = getResponseEvent(messageEvent);
+        return StreamSupport.stream(
+                redisService
+                        .findAll()
+                        .spliterator(),
+                false
+        ).toList();
 
-        List<MessageRequestTo> res = messageEvent.getMessageRequestTos();
-        return res
-                .stream()
-                .map(mapper::requestToModel)
-                .map(mapper::modelToResponse)
-                .toList();
+        //MessageEvent messageEvent = new MessageEvent(
+        //        UUID.randomUUID(),
+        //        Operation.FIND_ALL,
+        //        null,
+        //        null,
+        //        null
+        //);
+
+        //messageEvent = getResponseEvent(messageEvent);
+
+        //List<MessageRequestTo> res = messageEvent.getMessageRequestTos();
+        //return res
+        //        .stream()
+        //        .map(mapper::requestToModel)
+        //        .map(mapper::modelToResponse)
+        //        .toList();
     }
 
 
     public MessageResponseTo get(Long id) throws ApiException {
+
+        Optional<MessageResponseTo> cachedMessage = redisService.findById(id);
+
+        if (cachedMessage.isPresent()) {
+            return cachedMessage.get();
+        }
+
         MessageEvent messageEvent = new MessageEvent(
                 UUID.randomUUID(),
                 Operation.FIND_BY_ID,
@@ -136,8 +156,8 @@ public class KafkaMessageServiceImpl {
                                 .getFirst()
                 )
         );
-    }
 
+    }
 
     public MessageResponseTo update(MessageRequestTo requestTo) throws ApiException {
         MessageEvent messageEvent = new MessageEvent(
@@ -150,13 +170,17 @@ public class KafkaMessageServiceImpl {
 
         messageEvent = getResponseEvent(messageEvent);
 
-        return mapper.modelToResponse(
+        MessageResponseTo response = mapper.modelToResponse(
                 mapper.requestToModel(
                         messageEvent
                                 .getMessageRequestTos()
                                 .getFirst()
                 )
         );
+
+        redisService.save(response);
+
+        return response;
     }
 
 
@@ -170,6 +194,8 @@ public class KafkaMessageServiceImpl {
         );
 
         messageEvent = getResponseEvent(messageEvent);
+
+        redisService.deleteById(id);
     }
 
     @KafkaListener(topics = OUT_TOPIC, groupId = "1", containerFactory = "messageKafkaListenerFactory")
