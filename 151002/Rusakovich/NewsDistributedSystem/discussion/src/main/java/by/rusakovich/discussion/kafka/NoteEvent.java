@@ -1,7 +1,8 @@
-package by.rusakovich.publisher.kafka;
+package by.rusakovich.discussion.kafka;
 
-import by.rusakovich.publisher.model.dto.note.NoteRequestTO;
-import by.rusakovich.publisher.model.dto.note.NoteResponseTO;
+
+import by.rusakovich.discussion.model.dto.NoteRequestTO;
+import by.rusakovich.discussion.model.dto.NoteResponseTO;
 
 import java.util.List;
 
