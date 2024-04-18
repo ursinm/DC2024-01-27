@@ -5,7 +5,6 @@ import by.bsuir.dc.publisher.entities.dtos.response.LabelResponseTo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -33,7 +32,6 @@ public class RedisLabelService {
 
     public Iterable<LabelResponseTo> findAll() {
         return StreamSupport.stream(dao.findAll().spliterator(), false)
-                .filter(Objects::nonNull)
                 .toList();
     }
 
