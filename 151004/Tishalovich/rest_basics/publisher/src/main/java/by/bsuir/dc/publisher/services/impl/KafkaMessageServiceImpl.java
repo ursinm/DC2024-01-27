@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,10 @@ public class KafkaMessageServiceImpl {
     private final Map<UUID, Exchanger<MessageEvent>> exchangers = new HashMap<>();
 
     private String getCountry(String lang) {
+        if (lang == null) {
+            lang = "ru";
+        }
+
         int commaIndex = lang.indexOf(',');
         String country = lang;
 
@@ -45,70 +48,66 @@ public class KafkaMessageServiceImpl {
         return country;
     }
 
+    private MessageEvent getResponseEvent(MessageEvent messageEvent) throws ApiException {
+        Exchanger<MessageEvent> exchanger = new Exchanger<>();
+        exchangers.put(messageEvent.getId(), exchanger);
+        kafkaTemplate.send(IN_TOPIC, messageEvent);
+
+        MessageEvent responseEvent;
+
+        try {
+            responseEvent = exchanger.exchange(messageEvent, 1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            throw new ApiException(
+                    HttpStatus.GATEWAY_TIMEOUT.value(),
+                    MessageSubCode.DISCUSSION_TIMEOUT.getSubCode(),
+                    MessageSubCode.DISCUSSION_TIMEOUT.getMessage()
+            );
+        }
+
+        if (responseEvent.getErrorInfo() != null) {
+            throw new ApiException(
+                    responseEvent.getErrorInfo()
+            );
+        }
+
+        return responseEvent;
+    }
+
     public MessageResponseTo create(MessageRequestTo messageRequestTo, String lang)
             throws ApiException {
-
-        if (lang == null) {
-            lang = "ru";
-        }
 
         String country = getCountry(lang);
 
         Message message = mapper.requestToModel(messageRequestTo);
         message.setCountry(country);
 
-        UUID eventId = UUID.randomUUID();
-
         MessageEvent messageEvent = new MessageEvent(
-                eventId,
+                UUID.randomUUID(),
                 Operation.CREATE,
                 mapper.modelToRequest(message),
                 null,
                 null
         );
 
-        Exchanger<MessageEvent> exchanger = new Exchanger<>();
-        exchangers.put(eventId, exchanger);
-        kafkaTemplate.send(IN_TOPIC, messageEvent);
-
-        try {
-            messageEvent = exchanger.exchange(messageEvent, 1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
-            throw new ApiException(MessageSubCode.STUB.getSubCode(),
-                    HttpStatus.GATEWAY_TIMEOUT.value(),
-                    MessageSubCode.STUB.getMessage());
-        }
+        messageEvent = getResponseEvent(messageEvent);
 
         MessageRequestTo res = messageEvent.getMessageRequestTos().getFirst();
         return mapper.modelToResponse(mapper.requestToModel(res));
     }
 
     public List<MessageResponseTo> getAll() throws ApiException {
-        UUID eventId = UUID.randomUUID();
-
         MessageEvent messageEvent = new MessageEvent(
-                eventId,
+                UUID.randomUUID(),
                 Operation.FIND_ALL,
                 null,
                 null,
                 null
         );
 
-        Exchanger<MessageEvent> exchanger = new Exchanger<>();
-        exchangers.put(eventId, exchanger);
-        kafkaTemplate.send(IN_TOPIC, messageEvent);
-
-        try {
-            messageEvent = exchanger.exchange(messageEvent, 1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
-            throw new ApiException(MessageSubCode.STUB.getSubCode(),
-                    HttpStatus.GATEWAY_TIMEOUT.value(),
-                    MessageSubCode.STUB.getMessage());
-        }
+        messageEvent = getResponseEvent(messageEvent);
 
         List<MessageRequestTo> res = messageEvent.getMessageRequestTos();
         return res
@@ -120,29 +119,15 @@ public class KafkaMessageServiceImpl {
 
 
     public MessageResponseTo get(Long id) throws ApiException {
-        UUID eventId = UUID.randomUUID();
-
         MessageEvent messageEvent = new MessageEvent(
-                eventId,
+                UUID.randomUUID(),
                 Operation.FIND_BY_ID,
                 new MessageRequestTo(id, null, null, null),
                 null,
                 null
         );
 
-        Exchanger<MessageEvent> exchanger = new Exchanger<>();
-        exchangers.put(eventId, exchanger);
-        kafkaTemplate.send(IN_TOPIC, messageEvent);
-
-        try {
-            messageEvent = exchanger.exchange(messageEvent, 1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
-            throw new ApiException(MessageSubCode.STUB.getSubCode(),
-                    HttpStatus.GATEWAY_TIMEOUT.value(),
-                    MessageSubCode.STUB.getMessage());
-        }
+        messageEvent = getResponseEvent(messageEvent);
 
         return mapper.modelToResponse(
                 mapper.requestToModel(
@@ -155,29 +140,15 @@ public class KafkaMessageServiceImpl {
 
 
     public MessageResponseTo update(MessageRequestTo requestTo) throws ApiException {
-        UUID eventId = UUID.randomUUID();
-
         MessageEvent messageEvent = new MessageEvent(
-                eventId,
+                UUID.randomUUID(),
                 Operation.UPDATE,
                 requestTo,
                 null,
                 null
         );
 
-        Exchanger<MessageEvent> exchanger = new Exchanger<>();
-        exchangers.put(eventId, exchanger);
-        kafkaTemplate.send(IN_TOPIC, messageEvent);
-
-        try {
-            messageEvent = exchanger.exchange(messageEvent, 1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
-            throw new ApiException(MessageSubCode.STUB.getSubCode(),
-                    HttpStatus.GATEWAY_TIMEOUT.value(),
-                    MessageSubCode.STUB.getMessage());
-        }
+        messageEvent = getResponseEvent(messageEvent);
 
         return mapper.modelToResponse(
                 mapper.requestToModel(
@@ -190,29 +161,15 @@ public class KafkaMessageServiceImpl {
 
 
     public void delete(Long id) throws ApiException {
-        UUID eventId = UUID.randomUUID();
-
         MessageEvent messageEvent = new MessageEvent(
-                eventId,
+                UUID.randomUUID(),
                 Operation.REMOVE_BY_ID,
                 new MessageRequestTo(id, null, null, null),
                 null,
                 null
         );
 
-        Exchanger<MessageEvent> exchanger = new Exchanger<>();
-        exchangers.put(eventId, exchanger);
-        kafkaTemplate.send(IN_TOPIC, messageEvent);
-
-        try {
-            messageEvent = exchanger.exchange(messageEvent, 1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
-            throw new ApiException(MessageSubCode.STUB.getSubCode(),
-                    HttpStatus.GATEWAY_TIMEOUT.value(),
-                    MessageSubCode.STUB.getMessage());
-        }
+        messageEvent = getResponseEvent(messageEvent);
     }
 
     @KafkaListener(topics = OUT_TOPIC, groupId = "1", containerFactory = "messageKafkaListenerFactory")
