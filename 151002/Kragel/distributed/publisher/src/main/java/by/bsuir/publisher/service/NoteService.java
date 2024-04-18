@@ -9,6 +9,9 @@ import by.bsuir.publisher.model.NoteState;
 import by.bsuir.publisher.repository.TweetRepository;
 import by.bsuir.publisher.service.mapper.NoteMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -45,6 +48,7 @@ public class NoteService {
         return noteMapper.toDto(outTopicMsg.resultList());
     }
 
+    @CacheEvict(value = "note", key = "#id")
     public void deleteById(Long id) {
         NoteInTopicDto inTopicDto = new NoteInTopicDto();
         inTopicDto.setId(id);
@@ -59,6 +63,7 @@ public class NoteService {
         }
     }
 
+    @CachePut(value = "note", key = "#result.id()")
     public NoteResponseDto create(NoteRequestDto dto, Locale locale) {
         Long tweetId = dto.tweetId();
         if (!tweetRepository.existsById(tweetId)) {
@@ -79,6 +84,7 @@ public class NoteService {
         return noteMapper.toDto(created);
     }
 
+    @Cacheable(value = "note", key = "#id")
     public NoteResponseDto getById(Long id) {
         NoteInTopicDto inTopicDto = new NoteInTopicDto();
         inTopicDto.setId(id);
@@ -91,6 +97,7 @@ public class NoteService {
         return noteMapper.toDto(noteOut);
     }
 
+    @CachePut(value = "note", key = "#result.id()")
     public NoteResponseDto update(NoteRequestDto dto) {
         Long tweetId = dto.tweetId();
         if (!tweetRepository.existsById(tweetId)) {
