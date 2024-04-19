@@ -42,7 +42,7 @@ public class EditorService {
         return editorMapper.editorToResponseTo(editor.get());
     }
 
-
+    @CacheEvict(cacheNames = "editors", allEntries = true)
     public EditorResponseTo createEditor(EditorRequestTo editor) throws DuplicateEntityException {
         try {
             Editor savedEditor = editorRepository.save(editorMapper.dtoToEntity(editor));
@@ -53,7 +53,7 @@ public class EditorService {
         }
     }
 
-
+    @CacheEvict(cacheNames = "editors", allEntries = true)
     public EditorResponseTo updateEditor(EditorRequestTo editor) throws EntityNotFoundException {
         if (editorRepository.findById(editor.getId()).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, editor.getId());
@@ -62,7 +62,8 @@ public class EditorService {
         return editorMapper.editorToResponseTo(savedEditor);
     }
 
-
+    @Caching(evict = { @CacheEvict(cacheNames = "editors", key = "#id"),
+            @CacheEvict(cacheNames = "editors", allEntries = true) })
     public void deleteEditor(BigInteger id) throws EntityNotFoundException {
         if (editorRepository.findById(id).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, id);
