@@ -10,6 +10,7 @@ import org.example.publisher.impl.tweet.dto.TweetRequestTo;
 import org.example.publisher.impl.tweet.dto.TweetResponseTo;
 import org.example.publisher.impl.tweet.mapper.Impl.TweetMapperImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class TweetService {
 
     private final String ENTITY_NAME = "tweet";
 
+
     public List<TweetResponseTo> getTweets() {
         List<Tweet> tweets = tweetRepository.findAll();
         List<TweetResponseTo> tweetResponseTos = new ArrayList<>();
@@ -42,6 +44,7 @@ public class TweetService {
         }
         return tweetResponseTos;
     }
+
 
     public TweetResponseTo getTweetById(BigInteger id) throws EntityNotFoundException {
         Optional<Tweet> tweet = tweetRepository.findById(id);

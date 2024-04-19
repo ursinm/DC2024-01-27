@@ -8,8 +8,10 @@ import org.example.publisher.impl.editor.dto.EditorRequestTo;
 import org.example.publisher.impl.editor.dto.EditorResponseTo;
 import org.example.publisher.impl.editor.mapper.Impl.EditorMapperImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.*;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "editorsCache")
 public class EditorService {
 
     private final EditorRepository editorRepository;
@@ -24,11 +27,13 @@ public class EditorService {
     private final EditorMapperImpl editorMapper;
     private final String ENTITY_NAME = "editor";
 
+
+    @Cacheable(cacheNames = "editors")
     public List<EditorResponseTo> getEditors(){
         List<Editor> editors = editorRepository.findAll();
         return editorMapper.editorToResponseTo(editors);
     }
-
+    @Cacheable(cacheNames = "editors", key = "#id", unless = "#result == null")
     public EditorResponseTo getEditorById(BigInteger id) throws EntityNotFoundException{
         Optional<Editor> editor = editorRepository.findById(id);
         if (editor.isEmpty()){
@@ -36,6 +41,7 @@ public class EditorService {
         }
         return editorMapper.editorToResponseTo(editor.get());
     }
+
 
     public EditorResponseTo createEditor(EditorRequestTo editor) throws DuplicateEntityException {
         try {
@@ -46,6 +52,7 @@ public class EditorService {
             throw new DuplicateEntityException(ENTITY_NAME, "login");
         }
     }
+
 
     public EditorResponseTo updateEditor(EditorRequestTo editor) throws EntityNotFoundException {
         if (editorRepository.findById(editor.getId()).isEmpty()) {
