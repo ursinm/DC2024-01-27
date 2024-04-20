@@ -35,14 +35,15 @@ public class KafkaServer {
         try {
             NoteEvent noteEvent = jsonMapper.readValue(record.value(), NoteEvent.class);
             NoteRequestTO noteRequest = noteEvent.request();
+            var noteId = noteEvent.id();
             List<NoteResponseTO> response = switch (noteEvent.operation()){
                 // include country in event?
                 case CREATE ->List.of(noteService.create(noteRequest, "by"));
                 case UPDATE -> List.of(noteService.update(noteRequest));
                 case FIND_ALL -> noteService.readAll();
-                case FIND_BY_ID -> List.of(noteService.readById(noteRequest.id()));
+                case FIND_BY_ID -> List.of(noteService.readById(noteId));
                 case REMOVE_BY_ID -> {
-                    noteService.deleteById(noteRequest.id());
+                    noteService.deleteById(noteId);
                     yield null;
                 }
 

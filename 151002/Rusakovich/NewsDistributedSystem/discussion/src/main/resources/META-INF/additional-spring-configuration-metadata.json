@@ -4,5 +4,10 @@
       "name": "api.url",
       "type": "java.lang.String",
       "description": "Current api version for discussion"
-  }
-] }
+    },
+    {
+      "name": "api.kafka.request-topic",
+      "type": "java.lang.String",
+      "description": "Description for api.kafka.request-topic."
+    }
+  ] }

@@ -7,6 +7,12 @@ spring:
     password: postgres
   liquibase:
     change-log: classpath:db/changelog/publisher-master.xml
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 6000
+
 
 server:
   port: 24110

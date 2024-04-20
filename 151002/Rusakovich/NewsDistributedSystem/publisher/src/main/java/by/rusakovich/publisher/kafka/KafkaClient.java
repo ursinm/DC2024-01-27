@@ -31,7 +31,7 @@ public class KafkaClient {
         kafkCache.put(uuid, exchanger);
         try{
             sender.send(REQUEST_TOPIC, uuid.toString(), jsonMapper.writeValueAsString(noteEvent));
-            return exchanger.exchange(noteEvent, 2, TimeUnit.SECONDS);
+            return exchanger.exchange(noteEvent, 1, TimeUnit.SECONDS);
         } catch (JsonProcessingException | InterruptedException | TimeoutException e) {
             kafkCache.remove(uuid);
             throw new RuntimeException(e);
@@ -45,7 +45,7 @@ public class KafkaClient {
             NoteEvent result = jsonMapper.readValue(record.value(), NoteEvent.class);
             Exchanger<NoteEvent> exchanger = kafkCache.remove(uuid);
             if(exchanger != null) {
-                exchanger.exchange(result, 2, TimeUnit.SECONDS);
+                exchanger.exchange(result, 1, TimeUnit.SECONDS);
             }
         } catch (JsonProcessingException | TimeoutException | InterruptedException e) {
             throw new RuntimeException(e);
