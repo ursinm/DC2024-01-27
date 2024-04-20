@@ -17,13 +17,17 @@ public class IssueController {
     IssueService issueService;
 
     @GetMapping
-    public ResponseEntity<List<IssueResponseTo>> getIssues() {
-        return ResponseEntity.status(200).body(issueService.getIssues());
+    public ResponseEntity<List<IssueResponseTo>> getIssues(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(issueService.getIssues(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IssueResponseTo> getIssue(@PathVariable Long id) {
-        return ResponseEntity.status(200).body(issueService.getIssueById(id));
+    public ResponseEntity<IssueResponseTo> getIssue(@PathVariable int id) {
+        return ResponseEntity.status(200).body(issueService.getIssueById((long) id));
     }
 
     @DeleteMapping("/{id}")
@@ -41,5 +45,15 @@ public class IssueController {
     @PutMapping()
     public ResponseEntity<IssueResponseTo> updateIssue(@RequestBody IssueRequestTo issue) {
         return ResponseEntity.status(HttpStatus.OK).body(issueService.updateIssue(issue));
+    }
+
+    @GetMapping("/byCriteria")
+    public ResponseEntity<List<IssueResponseTo>> getIssueByCriteria(
+            @RequestParam(required = false) List<String> labelName,
+            @RequestParam(required = false) List<Long> labelId,
+            @RequestParam(required = false) String creatorLogin,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String content){
+        return ResponseEntity.status(HttpStatus.OK).body(issueService.getIssueByCriteria(labelName, labelId, creatorLogin, title, content));
     }
 }
