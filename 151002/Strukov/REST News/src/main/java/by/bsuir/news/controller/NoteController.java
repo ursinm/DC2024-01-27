@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("/notes")
 @RequiredArgsConstructor
 public class NoteController {
-    @Value("{app.notes-path}")
+    @Value("${app.notes-path}")
     private String notesPath;
     private final RestClient restClient;
 
@@ -36,22 +36,22 @@ public class NoteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getNote(@RequestHeader HttpHeaders headers, @PathVariable Map<String, Object> pathVariables) {
-        return restClient.get().uri(notesPath + "/{id}", pathVariables).headers(httpHeaders -> AddHeadersWithoutLength(httpHeaders, headers)).retrieve().toEntity(String.class);
+    public ResponseEntity<?> getNote(@RequestHeader HttpHeaders headers, @PathVariable Map<String, Object> id) {
+        return restClient.get().uri(notesPath + "/{id}", id).headers(httpHeaders -> AddHeadersWithoutLength(httpHeaders, headers)).retrieve().toEntity(String.class);
     }
 
     @PostMapping
-    public ResponseEntity saveNote(@RequestHeader HttpHeaders headers, @RequestBody Object note) {
+    public ResponseEntity<?> saveNote(@RequestHeader HttpHeaders headers, @RequestBody Object note) {
         return restClient.post().uri(notesPath).headers(httpHeaders -> AddHeadersWithoutLength(httpHeaders, headers)).body(note).retrieve().toEntity(String.class);
     }
 
     @PutMapping
-    public ResponseEntity updateNote(@RequestHeader HttpHeaders headers, @RequestBody Object note) {
+    public ResponseEntity<?> updateNote(@RequestHeader HttpHeaders headers, @RequestBody Object note) {
         return restClient.put().uri(notesPath).headers(httpHeaders -> AddHeadersWithoutLength(httpHeaders, headers)).body(note).retrieve().toEntity(String.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteNote(@RequestHeader HttpHeaders headers, @PathVariable Map<String, Object> pathVariables) {
-        return restClient.delete().uri(notesPath + "/{id}", pathVariables).headers(httpHeaders -> AddHeadersWithoutLength(httpHeaders, headers)).retrieve().toEntity(String.class);
+    public ResponseEntity<?> deleteNote(@RequestHeader HttpHeaders headers, @PathVariable Map<String, Object> id) {
+        return restClient.delete().uri(notesPath + "/{id}", id).headers(httpHeaders -> AddHeadersWithoutLength(httpHeaders, headers)).retrieve().toEntity(String.class);
     }
 }

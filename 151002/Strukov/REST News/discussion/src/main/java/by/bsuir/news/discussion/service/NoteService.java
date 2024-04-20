@@ -10,21 +10,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
 public class NoteService {
     @Autowired
     private NoteRepository noteRepository;
+    private static final AtomicLong ids = new AtomicLong(1);
 
     public NoteResponseTo create(NoteRequestTo request) {
-        //Optional<News> news = newsRepository.findById(request.getNewsId());
-//        if(news.isEmpty()) {
-////            throw new ClientException("News with specified id don't exist");
-//            return
-//        }
         Note note = NoteRequestTo.fromRequest(request);
-
+        note.getKey().setId(ids.getAndIncrement());
         return NoteResponseTo.toResponse(noteRepository.save(note));
     }
 
@@ -34,7 +31,7 @@ public class NoteService {
     }
 
     public NoteResponseTo getById(Long id) throws ClientException{
-        Optional<Note> note = noteRepository.findById(id);
+        Optional<Note> note = noteRepository.findByKeyId(id);
         if(note.isPresent()) {
             return NoteResponseTo.toResponse(note.get());
         }
@@ -42,25 +39,20 @@ public class NoteService {
     }
 
     public NoteResponseTo update(NoteRequestTo request) throws ClientException {
-        if(noteRepository.findById(request.getId()).isEmpty()) {
+        if(noteRepository.findByKeyId(request.getId()).isEmpty()) {
             throw new ClientException("Note doesn't exist");
         }
-//        Optional<News> news = newsRepository.findById(request.getNewsId());
-//        if(news.isEmpty()) {
-//            throw new ClientException("News with specified id don't exist");
-//        }
         Note note = NoteRequestTo.fromRequest(request);
-        //note.setNews(news.get());
         noteRepository.save(note);
         return NoteResponseTo.toResponse(note);
     }
 
     public Long delete(Long id) throws ClientException {
-        if(noteRepository.findById(id).isEmpty()) {
+        if(noteRepository.findByKeyId(id).isEmpty()) {
             throw new ClientException("Note doesn't exist");
         }
-        noteRepository.deleteById(id);
-        if(noteRepository.findById(id).isPresent()) {
+        noteRepository.delete(noteRepository.findByKeyId(id).get());
+        if(noteRepository.findByKeyId(id).isPresent()) {
             throw new ClientException("Failed to delete the note");
         }
         return id;

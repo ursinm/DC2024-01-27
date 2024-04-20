@@ -15,14 +15,13 @@ import java.util.Locale;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoteRequestTo {
-    private Locale locale;
-    private Long id;
+    private Long id = 0L;
     private String content;
     private Long newsId;
     public static Note fromRequest(NoteRequestTo request) {
         Note note = new Note();
         note.setContent(request.content);
-        note.setKey(new NoteKey(request.locale, request.id, request.newsId));
+        note.setKey(new NoteKey(Locale.ENGLISH, request.id, request.newsId));
         return note;
     }
 }
