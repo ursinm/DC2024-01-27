@@ -1,8 +1,8 @@
 package app.mapper;
 
-import app.entities.Marker;
 import app.dto.MarkerRequestTo;
 import app.dto.MarkerResponseTo;
+import app.entities.Marker;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -1,17 +1,21 @@
 package app.services;
 
-import app.entities.Marker;
-import app.exceptions.NotFoundException;
-import app.exceptions.UpdateException;
-import app.mapper.MarkerListMapper;
-import app.mapper.MarkerMapper;
-import app.repository.MarkerRepository;
 import app.dto.MarkerRequestTo;
 import app.dto.MarkerResponseTo;
 import app.exceptions.DeleteException;
+import app.exceptions.NotFoundException;
+import app.exceptions.UpdateException;
+import app.repository.MarkerRepository;
+import app.entities.Marker;
+import app.mapper.MarkerListMapper;
+import app.mapper.MarkerMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +28,7 @@ import java.util.Optional;
 
 @Service
 @Validated
+@CacheConfig(cacheNames = "markerCache")
 public class MarkerService {
     @Autowired
     MarkerMapper markerMapper;
@@ -31,12 +36,12 @@ public class MarkerService {
     MarkerRepository markerDao;
     @Autowired
     MarkerListMapper markerListMapper;
-
+    @Cacheable(cacheNames = "markers", key = "#id", unless = "#result == null")
     public MarkerResponseTo getMarkerById(@Min(0) Long id) throws NotFoundException {
         Optional<Marker> marker = markerDao.findById(id);
         return marker.map(value -> markerMapper.markerToMarkerResponse(value)).orElseThrow(() -> new NotFoundException("Marker not found!", 40004L));
     }
-
+    @Cacheable(cacheNames = "markers")
     public List<MarkerResponseTo> getMarkers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
         if (sortOrder != null && sortOrder.equals("asc")) {
@@ -47,12 +52,13 @@ public class MarkerService {
         Page<Marker> markers = markerDao.findAll(pageable);
         return markerListMapper.toMarkerResponseList(markers.toList());
     }
-
+    @CacheEvict(cacheNames = "markers", allEntries = true)
     public MarkerResponseTo saveMarker(@Valid MarkerRequestTo marker) {
         Marker markerToSave = markerMapper.markerRequestToMarker(marker);
         return markerMapper.markerToMarkerResponse(markerDao.save(markerToSave));
     }
-
+    @Caching(evict = { @CacheEvict(cacheNames = "markers", key = "#id"),
+            @CacheEvict(cacheNames = "markers", allEntries = true) })
     public void deleteMarker(@Min(0) Long id) throws DeleteException {
         if (!markerDao.existsById(id)) {
             throw new DeleteException("Marker not found!", 40004L);
@@ -60,7 +66,7 @@ public class MarkerService {
             markerDao.deleteById(id);
         }
     }
-
+    @CacheEvict(cacheNames = "markers", allEntries = true)
     public MarkerResponseTo updateMarker(@Valid MarkerRequestTo marker) throws UpdateException {
         Marker markerToUpdate = markerMapper.markerRequestToMarker(marker);
         if (!markerDao.existsById(markerToUpdate.getId())) {

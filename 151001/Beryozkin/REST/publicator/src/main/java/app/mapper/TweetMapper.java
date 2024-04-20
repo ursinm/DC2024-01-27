@@ -1,8 +1,8 @@
 package app.mapper;
 
-import app.entities.Tweet;
 import app.dto.TweetRequestTo;
 import app.dto.TweetResponseTo;
+import app.entities.Tweet;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
