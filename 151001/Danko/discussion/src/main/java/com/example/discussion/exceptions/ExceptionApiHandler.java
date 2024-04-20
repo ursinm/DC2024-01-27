@@ -1,6 +1,7 @@
 package com.example.discussion.exceptions;
 
 
+import com.fasterxml.jackson.core.JsonParseException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,5 +42,12 @@ public class ExceptionApiHandler {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ErrorMessage(exception.getStatus(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(JsonParseException.class)
+    public ResponseEntity<ErrorMessage> catchNumberInsteadOfStringExceptionException(JsonParseException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(40006L, exception.getMessage()));
     }
 }
