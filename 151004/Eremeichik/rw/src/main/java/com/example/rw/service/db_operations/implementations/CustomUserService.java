@@ -6,6 +6,9 @@ import com.example.rw.model.entity.implementations.User;
 import com.example.rw.repository.interfaces.UserRepository;
 import com.example.rw.service.db_operations.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +20,7 @@ public class CustomUserService implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Cacheable(value = "user", key = "#id", unless="#result==null")
     public User findById(Long id) throws EntityNotFoundException {
         return userRepository
                 .findById(id)
@@ -34,6 +38,7 @@ public class CustomUserService implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "user", key = "#id")
     public void deleteById(Long id) throws EntityNotFoundException {
         boolean wasDeleted = userRepository.findById(id).isPresent();
         if(!wasDeleted){
@@ -44,12 +49,14 @@ public class CustomUserService implements UserService {
     }
 
     @Override
-    public void update(User entity) {
+    @CachePut(value = "user", key = "#entity.id", unless="#result==null")
+    public User update(User entity) {
         boolean wasUpdated = userRepository.findById(entity.getId()).isPresent();
         if(!wasUpdated){
             throw new EntityNotFoundException();
         } else{
             userRepository.save(entity);
         }
+        return entity;
     }
 }

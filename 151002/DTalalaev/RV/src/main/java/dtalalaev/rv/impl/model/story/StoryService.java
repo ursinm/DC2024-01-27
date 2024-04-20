@@ -1,8 +1,11 @@
 package dtalalaev.rv.impl.model.story;
 
+import dtalalaev.rv.impl.model.creator.CreatorRepository;
+import dtalalaev.rv.impl.model.creator.CreatorResponseTo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.datasource.init.CannotReadScriptException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,6 +21,8 @@ public class StoryService {
 
     @Autowired
     private StoryRepository storyRepository;
+    @Autowired
+    private CreatorRepository creatorRepository;
 
     public StoryResponseTo findOne(BigInteger id) throws ResponseStatusException {
         if(!storyRepository.existsById(id)){
@@ -33,6 +38,9 @@ public class StoryService {
     }
 
     public StoryResponseTo create(StoryRequestTo dto) throws ResponseStatusException{
+        if(!creatorRepository.existsById(dto.getCreatorId())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Creator not found");
+        }
         Story story = new Story();
         story.setCreatorId(dto.getCreatorId());
         story.setTitle(dto.getTitle());

@@ -84,7 +84,7 @@ namespace RV.Migrations
 
                     b.HasIndex("stickerId");
 
-                    b.ToTable("tbl_NewsSticker", (string)null);
+                    b.ToTable("NewsSticker", (string)null);
                 });
 
             modelBuilder.Entity("RV.Models.Note", b =>
