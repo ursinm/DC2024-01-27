@@ -26,7 +26,7 @@ builder.Services.AddTransient<IRepository<Sticker>, SQLStickerRepository>();
 builder.Services.AddTransient<IUserDataProvider, SQLUserDataProvider>();
 builder.Services.AddTransient<INewsDataProvider, SQLNewsDataProvider>();
 //builder.Services.AddTransient<INoteDataProvider, SQLNoteDataProvider>();
-builder.Services.AddTransient<INoteDataProvider, NoteDataProvider>();
+builder.Services.AddTransient<INoteDataProvider, KafkaNoteDataProvider>();
 builder.Services.AddTransient<IStickerDataProvider, SQLStickerDataProvider>();
 
 builder.Services.AddTransient<IDataProvider, DataProvider>();
@@ -36,6 +36,10 @@ builder.Services.AddAutoMapper(typeof(NewsMapper));
 builder.Services.AddAutoMapper(typeof(NoteMapper));
 builder.Services.AddAutoMapper(typeof(StickerMapper));
 
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "local";
+});
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
