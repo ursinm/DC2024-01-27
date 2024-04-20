@@ -2,15 +2,11 @@ package by.bsuir.dc.publisher.controllers;
 
 import by.bsuir.dc.publisher.entities.dtos.request.MessageRequestTo;
 import by.bsuir.dc.publisher.entities.dtos.response.MessageResponseTo;
-import by.bsuir.dc.publisher.services.MessageService;
-import by.bsuir.dc.publisher.services.common.AbstractService;
-import by.bsuir.dc.publisher.controllers.common.AbstractController;
 import by.bsuir.dc.publisher.services.exceptions.ApiException;
-import by.bsuir.dc.publisher.services.impl.MessageServiceImpl;
+import by.bsuir.dc.publisher.services.impl.KafkaMessageServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -18,13 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageController {
 
-    private final MessageServiceImpl service;
+    private final KafkaMessageServiceImpl service;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public MessageResponseTo createMessage(
             @RequestBody MessageRequestTo requestTo,
-            @RequestHeader("Accept-Language") String lang) throws ApiException {
+            @RequestHeader(value = "Accept-Language", required = false) String lang) throws ApiException {
 
         return service.create(requestTo, lang);
     }

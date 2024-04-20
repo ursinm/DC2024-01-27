@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -25,6 +25,8 @@ public class LabelServiceImpl implements LabelService {
     private final LabelDao dao;
 
     private final LabelMapper mapper;
+
+    private final RedisLabelService redisService;
 
     @Override
     public LabelResponseTo create(LabelRequestTo requestTo) throws ApiException {
@@ -39,20 +41,28 @@ public class LabelServiceImpl implements LabelService {
                     e.getMessage()
             );
         }
-        return mapper.modelToResponse(savingRes);
+
+        LabelResponseTo res = mapper.modelToResponse(savingRes);
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
     public List<LabelResponseTo> getAll() {
-        Iterable<Label> models = dao.findAll();
         return StreamSupport
-                .stream(models.spliterator(), false)
-                .map(mapper::modelToResponse)
-                .collect(Collectors.toList());
+                .stream(redisService.findAll().spliterator(), false)
+                .toList();
     }
 
     @Override
     public LabelResponseTo get(Long id) throws ApiException {
+        Optional<LabelResponseTo> cachedLabel = redisService.findById(id);
+        if (cachedLabel.isPresent()) {
+            return cachedLabel.get();
+        }
+
         Optional<Label> author = dao.findById(id);
 
         if (author.isEmpty()) {
@@ -63,7 +73,11 @@ public class LabelServiceImpl implements LabelService {
             );
         }
 
-        return mapper.modelToResponse(author.get());
+        LabelResponseTo res = mapper.modelToResponse(author.get());
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
@@ -79,7 +93,11 @@ public class LabelServiceImpl implements LabelService {
         //    );
         //}
 
-        return mapper.modelToResponse(updateRes);
+        LabelResponseTo res = mapper.modelToResponse(updateRes);
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
@@ -93,6 +111,8 @@ public class LabelServiceImpl implements LabelService {
         }
 
         dao.deleteById(id);
+
+        redisService.deleteById(id);
     }
 
 }

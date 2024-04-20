@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -25,6 +24,8 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorDao dao;
 
     private final AuthorMapper mapper;
+
+    private final RedisAuthorService redisService;
 
     @Override
     public AuthorResponseTo create(AuthorRequestTo requestTo) throws ApiException {
@@ -39,20 +40,27 @@ public class AuthorServiceImpl implements AuthorService {
                     e.getMessage()
             );
         }
-        return mapper.modelToResponse(savingRes);
+        AuthorResponseTo res = mapper.modelToResponse(savingRes);
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
     public List<AuthorResponseTo> getAll() {
-        Iterable<Author> models = dao.findAll();
         return StreamSupport
-                .stream(models.spliterator(), false)
-                .map(mapper::modelToResponse)
-                .collect(Collectors.toList());
+                .stream(redisService.findAll().spliterator(), false)
+                .toList();
     }
 
     @Override
     public AuthorResponseTo get(Long id) throws ApiException {
+        Optional<AuthorResponseTo> cachedAuthor = redisService.findById(id);
+        if (cachedAuthor.isPresent()) {
+            return cachedAuthor.get();
+        }
+
         Optional<Author> author = dao.findById(id);
 
         if (author.isEmpty()) {
@@ -63,7 +71,11 @@ public class AuthorServiceImpl implements AuthorService {
             );
         }
 
-        return mapper.modelToResponse(author.get());
+        AuthorResponseTo res = mapper.modelToResponse(author.get());
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
@@ -79,7 +91,12 @@ public class AuthorServiceImpl implements AuthorService {
         //    );
         //}
 
-        return mapper.modelToResponse(updateRes);
+
+        AuthorResponseTo res = mapper.modelToResponse(updateRes);
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
@@ -93,6 +110,8 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         dao.deleteById(id);
+
+        redisService.deleteById(id);
     }
 
 }

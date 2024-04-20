@@ -1,8 +1,13 @@
 package by.bsuir.dc.publisher.entities.dtos.response;
 
-public record AuthorResponseTo(
+import org.springframework.data.redis.core.RedisHash;
+
+import java.io.Serializable;
+
+@RedisHash("author")
+public record AuthorResponseTo (
     Long id,
     String login,
     String firstname,
-    String lastname) {
+    String lastname) implements Serializable {
 }
