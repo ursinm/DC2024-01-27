@@ -1,13 +1,15 @@
 package com.example.rw.controller;
 
-import com.example.rw.exception.model.not_found.EntityNotFoundException;
+import com.example.rw.kafkacl.response.KafkaResponse;
 import com.example.rw.model.dto.message.MessageRequestTo;
 import com.example.rw.model.dto.message.MessageResponseTo;
-import com.example.rw.model.entity.implementations.Message;
 import com.example.rw.service.db_operations.interfaces.MessageService;
-import com.example.rw.service.dto_converter.interfaces.MessageToConverter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,52 +26,41 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.request.prefix}/messages")
 @RequiredArgsConstructor
+@Slf4j
 public class MessageController {
-
     private final MessageService messageService;
-    private final MessageToConverter messageToConverter;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping()
-    public ResponseEntity<MessageResponseTo> createMessage(@RequestBody @Valid MessageRequestTo messageRequestTo) {
-        Message message = messageToConverter.convertToEntity(messageRequestTo);
-        messageService.save(message);
-        MessageResponseTo messageResponseTo = messageToConverter.convertToDto(message);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(messageResponseTo);
+    public ResponseEntity<?> createMessage(@RequestBody @Valid MessageRequestTo messageRequestTo) throws JsonProcessingException {
+        KafkaResponse response = messageService.save(messageRequestTo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response.getResponseObject());
     }
 
     @GetMapping()
-    public ResponseEntity<List<MessageResponseTo>> receiveAllMessages() {
-        List<Message> messages = messageService.findAll();
-        List<MessageResponseTo> responseList = messages.stream()
-                .map(messageToConverter::convertToDto)
-                .toList();
-        return ResponseEntity.ok(responseList);
+    public ResponseEntity<List<MessageResponseTo>> receiveAllMessages() throws JsonProcessingException{
+        KafkaResponse response = messageService.findAll();
+        List<MessageResponseTo> list = objectMapper.readValue(response.getResponseObject(), new TypeReference<List<MessageResponseTo>>() {});
+        return ResponseEntity.status(200).body(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MessageResponseTo> receiveMessageById(@PathVariable Long id) {
-        Message message = messageService.findById(id);
-        MessageResponseTo messageResponseTo = messageToConverter.convertToDto(message);
-        return ResponseEntity.ok(messageResponseTo);
+    public ResponseEntity<MessageResponseTo> receiveMessageById(@PathVariable Long id) throws JsonProcessingException{
+        KafkaResponse response = messageService.findById(id);
+        MessageResponseTo responseTo = objectMapper.readValue(response.getResponseObject(),MessageResponseTo.class);
+        return ResponseEntity.status(response.getStatus()).body(responseTo);
     }
 
     @PutMapping()
-    public ResponseEntity<MessageResponseTo> updateMessage(@RequestBody @Valid MessageRequestTo messageRequestTo) {
-        Message message = messageToConverter.convertToEntity(messageRequestTo);
-        messageService.save(message);
-        MessageResponseTo messageResponseTo = messageToConverter.convertToDto(message);
-        return ResponseEntity.ok(messageResponseTo);
+    public ResponseEntity<MessageResponseTo> updateMessage(@RequestBody @Valid MessageRequestTo messageRequestTo) throws JsonProcessingException{
+        KafkaResponse response = messageService.update(messageRequestTo);
+        MessageResponseTo responseTo = objectMapper.readValue(response.getResponseObject(), MessageResponseTo.class);
+        return ResponseEntity.status(response.getStatus()).body(responseTo);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMessageById(@PathVariable Long id) {
-        try {
-            messageService.deleteById(id);
-        } catch (EntityNotFoundException entityNotFoundException){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public ResponseEntity<Void> deleteMessageById(@PathVariable Long id) throws JsonProcessingException{
+        messageService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -3,6 +3,9 @@ using RV.Services.DataProviderServices;
 using RV.Views.DTO;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
+using RV.Models;
 
 namespace RV.Controllers
 {
@@ -11,10 +14,12 @@ namespace RV.Controllers
     public class NotesController : ControllerBase
     {
         private readonly IDataProvider _context;
+        private readonly IDistributedCache _cache;
 
-        public NotesController(IDataProvider context)
+        public NotesController(IDataProvider context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -26,6 +31,9 @@ namespace RV.Controllers
         [HttpGet("{id}")]
         public IActionResult GetNote(int id)
         {
+            var res = _cache.GetString("note_" + id.ToString());
+            if (res != null)
+                return StatusCode(200, JsonConvert.DeserializeObject<NoteDTO>(res));
             return StatusCode(200, _context.GetNote(id));
         }
 
@@ -34,7 +42,12 @@ namespace RV.Controllers
         {
             try
             {
-                return StatusCode(200, _context.UpdateNote(note));
+                var newNote = _context.UpdateNote(note);
+                _cache.SetString("note_" + newNote.id.ToString(), JsonConvert.SerializeObject(newNote), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+                return StatusCode(200, newNote);
             }
             catch (DbUpdateException ex)
             {
@@ -55,6 +68,7 @@ namespace RV.Controllers
         {
             try
             { 
+
                 return StatusCode(201, _context.CreateNote(note));
             }
             catch (DbUpdateException ex)
@@ -86,7 +100,10 @@ namespace RV.Controllers
             if (res == 0)
                 return StatusCode(400);
             else
+            {
+                _cache.Remove("note_" + id.ToString());
                 return StatusCode(204);
+            }
         }
     }
 }

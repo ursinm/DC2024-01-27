@@ -26,6 +26,8 @@ namespace Discussion.Controllers
         public IActionResult GetNote(int id)
         {
             var res = _context.GetNote(id);
+            if (res == null)
+                return StatusCode(400);
             return StatusCode(200, res);
         }
 
