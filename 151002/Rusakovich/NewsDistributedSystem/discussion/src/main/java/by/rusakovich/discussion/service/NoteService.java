@@ -1,16 +1,12 @@
 package by.rusakovich.discussion.service;
 
-import by.rusakovich.discussion.dao.NoteRepository;
-import by.rusakovich.discussion.model.Note;
-import by.rusakovich.discussion.model.dto.NoteMapper;
-import by.rusakovich.discussion.model.dto.NoteRequestTO;
-import by.rusakovich.discussion.model.dto.NoteResponseTO;
-import by.rusakovich.discussion.service.exceptions.NotFound;
+import by.rusakovich.discussion.model.*;
+import by.rusakovich.discussion.spi.dao.NoteRepository;
+import by.rusakovich.discussion.error.exceptions.NotFound;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +15,6 @@ public class NoteService implements INoteService {
 
     private NoteMapper mapper;
     private NoteRepository rep;
-    private static final AtomicLong idGenerator = new AtomicLong(0);
 
     @Override
     public NoteResponseTO readById(Long id) {
@@ -35,16 +30,16 @@ public class NoteService implements INoteService {
     }
 
     @Override
-    public NoteResponseTO create(NoteRequestTO newEntity, String country) {
+    public NoteResponseTO create(NoteIternalRequestTO newEntity) {
         var mappedNewEntity= mapper.mapToEntity(newEntity);
-        mappedNewEntity.setId(idGenerator.incrementAndGet());
-        mappedNewEntity.setCountry(country);
+        if(mappedNewEntity.getId() == null)
+            mappedNewEntity.setId(CassandraIdGenerator.getId());
         var res = rep.save(mappedNewEntity);
         return mapper.mapToResponse(res);
     }
 
     @Override
-    public NoteResponseTO update(NoteRequestTO updatedEntity) {
+    public NoteResponseTO update(NoteIternalRequestTO updatedEntity) {
         var entity = rep.findById(updatedEntity.id()).stream().findFirst().orElseThrow(NotFound::new);
         Note mappedEntityToUpdate = mapper.mapToEntity(updatedEntity);
         rep.deleteByCountryAndNewsIdAndId(entity.getCountry(), entity.getNewsId(), entity.getId());
@@ -58,9 +53,4 @@ public class NoteService implements INoteService {
         var entity = rep.findById(id).stream().findFirst().orElseThrow(NotFound::new);
         rep.deleteByCountryAndNewsIdAndId(entity.getCountry(), entity.getNewsId(), id);
     }
-
-    private long getId (){
-        return idGenerator.incrementAndGet();
-    }
-
 }

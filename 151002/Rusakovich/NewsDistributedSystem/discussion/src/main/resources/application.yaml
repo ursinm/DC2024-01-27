@@ -16,3 +16,6 @@ server:
 
 api:
   url: /api/v1.0
+  kafka:
+    request-topic: InTopic
+    response-topic: OutTopic

@@ -3,11 +3,16 @@
     {
       "name": "api.url",
       "type": "java.lang.String",
-      "description": "Current api version for discussion"
+      "description": "Current api version for discussion."
     },
     {
       "name": "api.kafka.request-topic",
       "type": "java.lang.String",
-      "description": "Description for api.kafka.request-topic."
+      "description": "Topic for requests from publisher."
+    },
+    {
+      "name": "api.kafka.response-topic",
+      "type": "java.lang.String",
+      "description": "Topic for responses to publisher."
     }
   ] }

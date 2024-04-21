@@ -20,3 +20,6 @@ server:
 api:
   url: /api/v1.0
   notes-url: http://localhost:24130/api/v1.0/notes
+  kafka:
+    request-topic: InTopic
+    response-topic: OutTopic

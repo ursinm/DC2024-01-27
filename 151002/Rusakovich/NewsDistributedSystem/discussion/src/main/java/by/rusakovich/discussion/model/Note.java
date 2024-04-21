@@ -1,14 +1,12 @@
 package by.rusakovich.discussion.model;
 
 
-import com.datastax.oss.driver.api.mapper.annotations.NamingStrategy;
 import lombok.*;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 
 @Getter
 @Setter
-@NamingStrategy(customConverterClass = DCNameConvention.class)
 public class Note {
     @PrimaryKeyColumn(name = "country", type= PrimaryKeyType.PARTITIONED)
     private String country;
