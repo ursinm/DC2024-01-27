@@ -1,7 +1,7 @@
-import { PROVIDERS } from 'src/constants';
-import { Client } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from 'src/schemas';
+import { PROVIDERS } from "src/constants";
+import { Client } from "pg";
+import { drizzle } from "drizzle-orm/node-postgres";
+import * as schema from "src/schemas";
 
 export const DrizzleProvider = {
   provide: PROVIDERS.DRIZZLE,

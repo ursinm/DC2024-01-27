@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Npgsql;
+using RV.Models;
 using RV.Services.DataProviderServices;
 using RV.Views.DTO;
 
@@ -11,10 +14,12 @@ namespace RV.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IDataProvider _context;
+        private readonly IDistributedCache _cache;
 
-        public UsersController(IDataProvider context)
+        public UsersController(IDataProvider context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -26,6 +31,9 @@ namespace RV.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
         {
+            var res = _cache.GetString("user_" + id.ToString());
+            if (res != null)
+                return StatusCode(200, JsonConvert.DeserializeObject<UserDTO>(res));
             return StatusCode(200, _context.GetUser(id));
         }
 
@@ -34,7 +42,12 @@ namespace RV.Controllers
         {
             try
             {
-                return StatusCode(200, _context.UpdateUser(user));
+                var newUser = _context.UpdateUser(user);
+                _cache.SetString("user_" + newUser.id.ToString(), JsonConvert.SerializeObject(newUser), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+                return StatusCode(200, newUser);
             } catch (DbUpdateException ex) {
                 string errorCode = "400";
                 string hash = ex.Message.GetHashCode().ToString();
@@ -84,7 +97,10 @@ namespace RV.Controllers
             if (res == 0)
                 return StatusCode(400);
             else
+            {
+                _cache.Remove("user_" + id.ToString());
                 return StatusCode(204);
+            }
         }
     }
 }

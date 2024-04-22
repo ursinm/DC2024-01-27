@@ -10,13 +10,13 @@ import {
   HttpCode,
   ParseIntPipe,
   Put,
-} from '@nestjs/common';
-import { TagsService } from './tags.service';
-import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
-import { ZodValidationPipe } from 'nestjs-zod';
+} from "@nestjs/common";
+import { TagsService } from "./tags.service";
+import { CreateTagDto } from "./dto/create-tag.dto";
+import { UpdateTagDto } from "./dto/update-tag.dto";
+import { ZodValidationPipe } from "nestjs-zod";
 
-@Controller('tags')
+@Controller("tags")
 @UsePipes(ZodValidationPipe)
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
@@ -31,8 +31,8 @@ export class TagsController {
     return this.tagsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  @Get(":id")
+  findOne(@Param("id", ParseIntPipe) id: number) {
     return this.tagsService.findOne(id);
   }
 
@@ -41,9 +41,9 @@ export class TagsController {
     return this.tagsService.update(updateTagDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @HttpCode(204)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.tagsService.remove(id);
   }
 }
