@@ -9,7 +9,6 @@ import by.bsuir.publisherservice.repository.StoryRepository;
 import by.bsuir.publisherservice.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -60,6 +59,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @CacheEvict(value = "messages", allEntries = true)
     public MessageResponseTo updateMessage(MessageRequestTo message, String country) {
         return updateMessage(message.id(), message, country);
     }

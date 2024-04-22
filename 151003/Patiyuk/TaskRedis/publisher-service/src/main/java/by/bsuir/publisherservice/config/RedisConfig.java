@@ -1,7 +1,10 @@
 package by.bsuir.publisherservice.config;
 
 import by.bsuir.publisherservice.dto.response.MessageResponseTo;
+import com.fasterxml.jackson.databind.Module;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -13,11 +16,14 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.io.Serializable;
 import java.time.Duration;
 
 @Configuration
+@EnableCaching
+@RequiredArgsConstructor
 public class RedisConfig {
+
+    private final Module javaTimeModule;
 
     @Value("${spring.data.redis.host}")
     private String redisHost;
@@ -36,8 +42,14 @@ public class RedisConfig {
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(12))
                 .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                .serializeKeysWith(RedisSerializationContext
+                        .SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext
+                        .SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer()
+                                .configure(objectMapper -> objectMapper
+                                        .registerModule(javaTimeModule))));
     }
 
     @Bean

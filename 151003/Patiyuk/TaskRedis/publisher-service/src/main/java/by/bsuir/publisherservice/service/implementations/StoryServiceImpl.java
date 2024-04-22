@@ -9,7 +9,6 @@ import by.bsuir.publisherservice.repository.StoryRepository;
 import by.bsuir.publisherservice.service.StoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -45,7 +44,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    @CachePut(value = "stories", key = "#result.id()")
+    @CacheEvict(cacheNames = "stories", allEntries = true)
     public StoryResponseTo createStory(StoryRequestTo story) {
         return Optional.of(story)
                 .map(request -> mapper.toEntity(request, creatorRepository.findById(story.creatorId())
@@ -57,12 +56,13 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "stories", allEntries = true)
     public StoryResponseTo updateStory(StoryRequestTo story) {
         return updateStory(story.id(), story);
     }
 
     @Override
-    @CachePut(value = "stories", key = "#id")
+    @CacheEvict(cacheNames = "stories", allEntries = true)
     public StoryResponseTo updateStory(Long id, StoryRequestTo story) {
         return storyRepository.findById(id)
                 .map(entity -> mapper.updateEntity(entity, story))
@@ -73,7 +73,7 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
-    @CacheEvict(value = "stories", key = "#id")
+    @CacheEvict(cacheNames = "stories", allEntries = true)
     public void deleteStory(Long id) {
         storyRepository.findById(id)
                 .ifPresentOrElse(storyRepository::delete, () -> {

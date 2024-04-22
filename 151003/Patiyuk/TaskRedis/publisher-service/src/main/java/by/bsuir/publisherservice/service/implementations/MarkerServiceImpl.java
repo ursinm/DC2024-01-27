@@ -9,7 +9,6 @@ import by.bsuir.publisherservice.repository.MarkerRepository;
 import by.bsuir.publisherservice.service.MarkerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,7 @@ public class MarkerServiceImpl implements MarkerService {
     }
 
     @Override
-    @CachePut(value = "markers", key = "#result.id()")
+    @CacheEvict(cacheNames = "markers", allEntries = true)
     public MarkerResponseTo createMarker(MarkerRequestTo marker) {
         return Optional.of(marker)
                 .map(mapper::toEntity)
@@ -63,12 +62,13 @@ public class MarkerServiceImpl implements MarkerService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "markers", allEntries = true)
     public MarkerResponseTo updateMarker(MarkerRequestTo marker) {
         return updateMarker(marker.id(), marker);
     }
 
     @Override
-    @CachePut(value = "markers", key = "#id")
+    @CacheEvict(cacheNames = "markers", allEntries = true)
     public MarkerResponseTo updateMarker(Long id, MarkerRequestTo marker) {
         return markerRepository.findById(id)
                 .map(entity -> mapper.updateEntity(entity, marker))
@@ -79,7 +79,7 @@ public class MarkerServiceImpl implements MarkerService {
     }
 
     @Override
-    @CacheEvict(value = "markers", key = "#id")
+    @CacheEvict(cacheNames = "markers", allEntries = true)
     public void deleteMarker(Long id) {
         markerRepository.findById(id)
                 .ifPresentOrElse(markerRepository::delete, () -> {

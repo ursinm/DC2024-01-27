@@ -9,7 +9,6 @@ import by.bsuir.publisherservice.repository.CreatorRepository;
 import by.bsuir.publisherservice.service.CreatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,7 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
-    @CachePut(value = "creators", key = "#result.id()")
+    @CacheEvict(cacheNames = "creators", allEntries = true)
     public CreatorResponseTo createCreator(CreatorRequestTo creator) {
         return Optional.of(creator)
                 .map(mapper::toEntity)
@@ -63,12 +62,13 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "creators", allEntries = true)
     public CreatorResponseTo updateCreator(CreatorRequestTo creator) {
         return updateCreator(creator.id(), creator);
     }
 
     @Override
-    @CachePut(value = "creators", key = "#id")
+    @CacheEvict(cacheNames = "creators", allEntries = true)
     public CreatorResponseTo updateCreator(Long id, CreatorRequestTo request) {
         return creatorRepository.findById(id)
                 .map(creator -> mapper.updateEntity(creator, request))
@@ -79,7 +79,7 @@ public class CreatorServiceImpl implements CreatorService {
     }
 
     @Override
-    @CacheEvict(value = "creators", key = "#id")
+    @CacheEvict(cacheNames = "creators", allEntries = true)
     public void deleteCreator(Long id) {
         creatorRepository.findById(id)
                 .ifPresentOrElse(creatorRepository::delete, () -> {
