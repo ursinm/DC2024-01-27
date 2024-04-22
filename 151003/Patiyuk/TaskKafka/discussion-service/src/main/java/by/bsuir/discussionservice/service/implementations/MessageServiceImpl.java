@@ -2,6 +2,7 @@ package by.bsuir.discussionservice.service.implementations;
 
 import by.bsuir.discussionservice.dto.request.MessageRequestTo;
 import by.bsuir.discussionservice.dto.response.MessageResponseTo;
+import by.bsuir.discussionservice.entity.MessageState;
 import by.bsuir.discussionservice.exception.CreateEntityException;
 import by.bsuir.discussionservice.exception.EntityNotFoundException;
 import by.bsuir.discussionservice.mapper.MessageMapper;
@@ -49,8 +50,12 @@ public class MessageServiceImpl implements MessageService {
                 .filter(m -> !messageRepository.existsByKey_Id(m.id()))
                 .map(mapper::toEntity)
                 .map(messageRepository::save)
-                .map(mapper::toResponseTo)
+                .map(m -> mapper.toResponseTo(m, moderateMessage(message)))
                 .orElseThrow(() -> new CreateEntityException("Message with id " + message.id() + " already exists"));
+    }
+
+    private MessageState moderateMessage(MessageRequestTo message) {
+        return message.content().contains("bad word") ? MessageState.DECLINED : MessageState.APPROVED;
     }
 
     @Override

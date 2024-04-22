@@ -57,12 +57,7 @@ public class CreatorServiceImpl implements CreatorService {
 
     @Override
     public CreatorResponseTo updateCreator(CreatorRequestTo creator) {
-        return creatorRepository.findById(creator.id())
-                .map(creatorEntity -> mapper.updateEntity(creatorEntity, creator))
-                .map(creatorRepository::save)
-                .map(mapper::toResponseTo)
-                .orElseThrow(()
-                        -> new EntityNotFoundException("Creator with id " + creator.id() + " not found"));
+        return updateCreator(creator.id(), creator);
     }
 
     @Override

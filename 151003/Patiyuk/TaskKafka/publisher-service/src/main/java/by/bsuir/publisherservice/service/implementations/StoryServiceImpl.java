@@ -51,12 +51,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public StoryResponseTo updateStory(StoryRequestTo story) {
-        return storyRepository.findById(story.id())
-                .map(entity -> mapper.updateEntity(entity, story))
-                .map(storyRepository::save)
-                .map(mapper::toResponseTo)
-                .orElseThrow(()
-                        -> new EntityNotFoundException("Story with id " + story.id() + " not found"));
+        return updateStory(story.id(), story);
     }
 
     @Override

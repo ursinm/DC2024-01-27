@@ -57,12 +57,7 @@ public class MarkerServiceImpl implements MarkerService {
 
     @Override
     public MarkerResponseTo updateMarker(MarkerRequestTo marker) {
-        return markerRepository.findById(marker.id())
-                .map(entity -> mapper.updateEntity(entity, marker))
-                .map(markerRepository::save)
-                .map(mapper::toResponseTo)
-                .orElseThrow(()
-                        -> new EntityNotFoundException("Marker with id " + marker.id() + " not found"));
+        return updateMarker(marker.id(), marker);
     }
 
     @Override

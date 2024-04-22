@@ -1,52 +1,58 @@
 package by.bsuir.publisherservice.service.kafka;
 
-import by.bsuir.publisherservice.dto.message.TopicMessage;
+import by.bsuir.publisherservice.dto.message.InTopicMessage;
+import by.bsuir.publisherservice.dto.message.OutTopicMessage;
+import by.bsuir.publisherservice.exception.ExchangeFailedException;
 import by.bsuir.publisherservice.exception.ExchangeTimeoutException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Exchanger;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaClientService {
-    private final KafkaTemplate<String, TopicMessage> kafkaTemplate;
-    private final ConcurrentHashMap<String, Exchanger<TopicMessage>> cache = new ConcurrentHashMap<>();
+    private final KafkaTemplate<String, InTopicMessage> kafkaTemplate;
+    private final ConcurrentHashMap<String, CompletableFuture<OutTopicMessage>> cache = new ConcurrentHashMap<>();
 
-    public void sendMessage(TopicMessage message, String topic) {
+    public void sendMessage(InTopicMessage message, String topic) {
         kafkaTemplate.send(topic, createId(), message);
     }
 
-    public TopicMessage sendSyncMessage(TopicMessage message, String topic) {
+    public OutTopicMessage sendSyncMessage(InTopicMessage message, String topic) {
         String id = createId();
-        Exchanger<TopicMessage> exchanger = new Exchanger<>();
-        cache.put(id, exchanger);
+        CompletableFuture<OutTopicMessage> future = new CompletableFuture<>();
+        cache.put(id, future);
+        log.info("Sending message: {}", message);
         try {
             kafkaTemplate.send(topic, id, message);
-            return exchanger.exchange(null, 1, TimeUnit.SECONDS);
+            return future.get(1, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             cache.remove(id);
+            log.error("Timeout while waiting for response");
             throw new ExchangeTimeoutException("Timeout while waiting for response");
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new ExchangeTimeoutException("Interrupted while waiting for response");
+            log.error("Failed to exchange messages", e);
+            throw new ExchangeFailedException("Failed to exchange messages");
         }
     }
 
     @KafkaListener(topics = "${spring.kafka.topic.response}", groupId = "group_id-#{T(java.util.UUID).randomUUID().toString()}")
-    private void listen(ConsumerRecord<String, TopicMessage> response) throws InterruptedException, TimeoutException {
+    private void listen(ConsumerRecord<String, OutTopicMessage> response) {
         String key = response.key();
-        TopicMessage message = response.value();
-        Exchanger<TopicMessage> exchanger = cache.remove(key);
-        if (exchanger != null) {
-            exchanger.exchange(message, 1, TimeUnit.SECONDS);
+        OutTopicMessage message = response.value();
+        log.info("Received message: {}", message);
+        CompletableFuture<OutTopicMessage> future = cache.remove(key);
+        if (future != null) {
+            log.info("Completing future: {}", message);
+            future.complete(message);
         }
     }
 
