@@ -8,14 +8,6 @@ describe('TweetController', () => {
   let controller: TweetController;
   let service: TweetService;
 
-  // beforeEach(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     controllers: [TweetController],
-  //   }).compile();
-
-  //   controller = module.get<TweetController>(TweetController);
-  // });
-
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
         imports: [TypeOrmModule.forFeature([Tweet])],

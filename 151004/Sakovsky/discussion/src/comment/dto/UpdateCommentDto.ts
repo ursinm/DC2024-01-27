@@ -1,6 +1,9 @@
 import { IsNumber, IsString, Length } from "class-validator";
 
-export class CommentRequestToCreate{
+export class UpdateCommentDto{
+    @IsNumber()
+    id: number;
+
     @IsNumber()
     tweetId: number;
 

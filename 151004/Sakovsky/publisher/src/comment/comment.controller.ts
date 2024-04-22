@@ -53,7 +53,9 @@ export class CommentController {
 
   @UsePipes(new ValidationPipe())
   @Post()
-  async createComent(@Body() commentReqDto: CommentRequestToCreate): Promise<CommentResponseTo> {
+  async createComent(
+    @Body() commentReqDto: CommentRequestToCreate,
+  ): Promise<CommentResponseTo> {
     const comment = await this.commentService.createComment(commentReqDto);
     const commentRespDto = new CommentResponseTo();
     commentRespDto.content = comment.content;
@@ -64,7 +66,9 @@ export class CommentController {
 
   @UsePipes(new ValidationPipe())
   @Put()
-  async updateComment(@Body() commentReqDto: CommentRequestToUpdate): Promise<CommentResponseTo> {
+  async updateComment(
+    @Body() commentReqDto: CommentRequestToUpdate,
+  ): Promise<CommentResponseTo> {
     const comment = await this.commentService.updateComment(commentReqDto);
     const commentRespDto = new CommentResponseTo();
     commentRespDto.content = comment.content;

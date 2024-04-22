@@ -1,7 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, Table } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'tbl_authors'})
-// @Table()
 export class Author {
     @PrimaryGeneratedColumn()
     id: number;
