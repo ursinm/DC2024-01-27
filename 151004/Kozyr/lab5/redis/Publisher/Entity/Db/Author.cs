@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Publisher.Entity.Db
 {
-    public class Author(string login, string password, string firstName, string lastName) : AbstractEntity
+    public class Creator(string login, string password, string firstName, string lastName) : AbstractEntity
     {
         [MinLength(2)]
         public string Login { get; set; } = login;
@@ -13,15 +13,15 @@ namespace Publisher.Entity.Db
         public string FirstName { get; set; } = firstName;
         [MinLength(2)]
         public string LastName { get; set; } = lastName;
-        public ICollection<Tweet> Tweets { get; set; } = [];
+        public ICollection<Issue> Issues { get; set; } = [];
 
 
-        public Author(int id, string login, string password, string firstName, string lastName) :
+        public Creator(int id, string login, string password, string firstName, string lastName) :
             this(login, password, firstName, lastName)
         {
             Id = id;
         }
 
-        public Author() : this(string.Empty, string.Empty, string.Empty, string.Empty) { }
+        public Creator() : this(string.Empty, string.Empty, string.Empty, string.Empty) { }
     }
 }

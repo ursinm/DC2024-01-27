@@ -1,27 +1,27 @@
 ﻿using Cassandra.Mapping;
 using Discussion.Common;
-using Discussion.PostEntity.Interface;
+using Discussion.CommentEntity.Interface;
 using Discussion.Storage.Cassandra;
 
-namespace Discussion.PostEntity
+namespace Discussion.CommentEntity
 {
-    public class PostRepository(CassandraStorage storage, Random random) : AbstractCrudRepository<Post>(storage, random), IPostRepository
+    public class CommentRepository(CassandraStorage storage, Random random) : AbstractCrudRepository<Comment>(storage, random), ICommentRepository
     {
-        public override Post Add(Post entity)
+        public override Comment Add(Comment entity)
         {
             entity.Country = "Belarus";
 
             return base.Add(entity);
         }
 
-        public override async Task<Post> AddAsync(Post entity)
+        public override async Task<Comment> AddAsync(Comment entity)
         {
             entity.Country = "Belarus";
 
             return await base.AddAsync(entity);
         }
 
-        public override async Task<Post> UpdateAsync(Post entity)
+        public override async Task<Comment> UpdateAsync(Comment entity)
         {
             entity.Country = "Belarus";
 

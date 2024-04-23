@@ -1,8 +1,8 @@
 using Confluent.Kafka;
 using Discussion.Kafka;
 using Discussion.Middleware;
-using Discussion.PostEntity;
-using Discussion.PostEntity.Interface;
+using Discussion.CommentEntity;
+using Discussion.CommentEntity.Interface;
 using Discussion.Storage.Cassandra;
 using MyCoolMapper = Discussion.Common.AutoMapper;
 
@@ -14,8 +14,8 @@ builder.Services.AddSingleton<Random>();
 builder.Services.AddAutoMapper(typeof(MyCoolMapper));
 builder.Services
     .AddScoped<CassandraStorage>()
-    .AddScoped<IPostRepository, PostRepository>()
-    .AddScoped<IPostService, PostService>();
+    .AddScoped<ICommentRepository, CommentRepository>()
+    .AddScoped<ICommentService, CommentService>();
 builder.Services
     .AddSingleton(provider =>
     {
@@ -32,12 +32,12 @@ app.MapControllers();
 app.UseURLLog();
 using (var scope = app.Services.CreateScope())
 {
-    var postService = scope.ServiceProvider.GetRequiredService<IPostService>();
-    var postProducer = scope.ServiceProvider.GetRequiredService<IProducer<string, string>>();
+    var commentService = scope.ServiceProvider.GetRequiredService<ICommentService>();
+    var commentProducer = scope.ServiceProvider.GetRequiredService<IProducer<string, string>>();
 
     new Thread(async () =>
     {
-        var listener = new PostKafkaController(postProducer, postService);
+        var listener = new CommentKafkaController(commentProducer, commentService);
         await listener.StartConsuming();
     }).Start();
 }

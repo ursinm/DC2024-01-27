@@ -8,9 +8,9 @@ using Publisher.Service.Interface;
 
 namespace Publisher.Controllers.V1_0
 {
-    [Route("api/v1.0/tweets")]
+    [Route("api/v1.0/issues")]
     [ApiController]
-    public class TweetController(ITweetService TweetService, ILogger<TweetController> Logger, IMapper Mapper)
-        : AbstractController<Tweet, TweetRequestTO, TweetResponseTO>(TweetService, Logger, Mapper)
+    public class IssueController(IIssueService IssueService, ILogger<IssueController> Logger, IMapper Mapper)
+        : AbstractController<Issue, IssueRequestTO, IssueResponseTO>(IssueService, Logger, Mapper)
     { }
 }

@@ -10,8 +10,8 @@ using Publisher.Service.Interface;
 
 namespace Publisher.Service.Implementation
 {
-    public class TweetService(IMapper mapper, ITweetRepository repository, IDistributedCache cache)
-        : AbstractCrudService<Tweet, TweetRequestTO, TweetResponseTO>(mapper, repository), ITweetService
+    public class IssueService(IMapper mapper, IIssueRepository repository, IDistributedCache cache)
+        : AbstractCrudService<Issue, IssueRequestTO, IssueResponseTO>(mapper, repository), IIssueService
     {
         public override async Task<bool> Remove(int id)
         {
@@ -20,7 +20,7 @@ namespace Publisher.Service.Implementation
             return await base.Remove(id);
         }
 
-        public override async Task<TweetResponseTO> GetByID(int id)
+        public override async Task<IssueResponseTO> GetByID(int id)
         {
             var cacheResponse = await cache.GetStringAsync(GetRedisId(id));
 
@@ -38,49 +38,49 @@ namespace Publisher.Service.Implementation
                 await cache.SetStringAsync(GetRedisId(id), JsonConvert.SerializeObject(res));
             });
 
-            return JsonConvert.DeserializeObject<TweetResponseTO>(cacheResponse)
-                ?? throw new Exception("Unable to deserialize Tweet");
+            return JsonConvert.DeserializeObject<IssueResponseTO>(cacheResponse)
+                ?? throw new Exception("Unable to deserialize Issue");
         }
 
-        public override async Task<TweetResponseTO> Add(TweetRequestTO tweetTo)
+        public override async Task<IssueResponseTO> Add(IssueRequestTO issueTo)
         {
-            if (!Validate(tweetTo))
+            if (!Validate(issueTo))
             {
-                throw new InvalidDataException("Tweet is not valid");
+                throw new InvalidDataException("Issue is not valid");
             }
 
-            var res = await base.Add(tweetTo);
+            var res = await base.Add(issueTo);
             await cache.SetStringAsync(GetRedisId(res.Id), JsonConvert.SerializeObject(res));
 
             return res;
         }
 
-        public override async Task<TweetResponseTO> Update(TweetRequestTO tweetTo)
+        public override async Task<IssueResponseTO> Update(IssueRequestTO issueTo)
         {
-            if (!Validate(tweetTo))
+            if (!Validate(issueTo))
             {
-                throw new InvalidDataException($"UPDATE invalid data: {tweetTo}");
+                throw new InvalidDataException($"UPDATE invalid data: {issueTo}");
             }
 
-            var res = await base.Update(tweetTo);
+            var res = await base.Update(issueTo);
             await cache.RemoveAsync(GetRedisId(res.Id));
             await cache.SetStringAsync(GetRedisId(res.Id), JsonConvert.SerializeObject(res));
 
             return res;
         }
 
-        private static string GetRedisId(int id) => $"Tweet:{id}";
+        private static string GetRedisId(int id) => $"Issue:{id}";
 
-        public Task<TweetResponseTO> GetTweetByParam(IList<string> markerNames, IList<int> markerIds, string authorLogin,
+        public Task<IssueResponseTO> GetIssueByParam(IList<string> markerNames, IList<int> markerIds, string creatorLogin,
             string title, string content)
         {
             throw new NotImplementedException();
         }
 
-        private static bool Validate(TweetRequestTO tweet)
+        private static bool Validate(IssueRequestTO issue)
         {
-            var titleLen = tweet.Title.Length;
-            var contentLen = tweet.Content.Length;
+            var titleLen = issue.Title.Length;
+            var contentLen = issue.Content.Length;
 
             if (titleLen < 2 || titleLen > 64)
             {
@@ -90,7 +90,7 @@ namespace Publisher.Service.Implementation
             {
                 return false;
             }
-            if (tweet.Modified < tweet.Created)
+            if (issue.Modified < issue.Created)
             {
                 return false;
             }

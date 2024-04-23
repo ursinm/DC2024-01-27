@@ -7,6 +7,6 @@ namespace Publisher.Service.Interface
 {
     public interface IMarkerService : ICrudService<Marker, MarkerRequestTO, MarkerResponseTO>
     {
-        Task<IList<MarkerResponseTO>> GetByTweetID(int tweetId);
+        Task<IList<MarkerResponseTO>> GetByIssueID(int issueId);
     }
 }

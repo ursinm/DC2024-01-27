@@ -5,9 +5,9 @@ namespace Publisher.Storage.Common
 {
     public abstract class DbStorage : DbContext
     {
-        public DbSet<Author> Authors { get; set; }
+        public DbSet<Creator> Creators { get; set; }
         public DbSet<Marker> Markers { get; set; }
-        public DbSet<Tweet> Tweets { get; set; }
+        public DbSet<Issue> Issues { get; set; }
 
         public DbStorage()
         {
@@ -19,9 +19,9 @@ namespace Publisher.Storage.Common
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Author>(entity =>
+            modelBuilder.Entity<Creator>(entity =>
             {
-                entity.ToTable("tbl_authors");
+                entity.ToTable("tbl_creators");
 
                 entity.HasKey(e => e.Id);
 
@@ -33,12 +33,12 @@ namespace Publisher.Storage.Common
 
                 entity.HasIndex(a => a.Login).IsUnique();
 
-                entity.HasMany(a => a.Tweets).WithOne(t => t.Author).HasForeignKey(t => t.AuthorId);
+                entity.HasMany(a => a.Issues).WithOne(t => t.Creator).HasForeignKey(t => t.CreatorId);
             });
 
-            modelBuilder.Entity<Tweet>(entity =>
+            modelBuilder.Entity<Issue>(entity =>
             {
-                entity.ToTable("tbl_tweets");
+                entity.ToTable("tbl_issues");
 
                 entity.HasKey(t => t.Id);
 
@@ -47,7 +47,7 @@ namespace Publisher.Storage.Common
                 entity.Property(t => t.Created).IsRequired();
                 entity.Property(t => t.Modified).IsRequired();
                 entity.Property(t => t.Title).IsRequired().HasMaxLength(64);
-                entity.Property(t => t.AuthorId).IsRequired();
+                entity.Property(t => t.CreatorId).IsRequired();
 
                 entity.HasIndex(t => t.Title).IsUnique();
             });
@@ -62,7 +62,7 @@ namespace Publisher.Storage.Common
 
                 entity.HasIndex(m => m.Name).IsUnique();
 
-                entity.HasMany(m => m.Tweets).WithMany(t => t.Markers);
+                entity.HasMany(m => m.Issues).WithMany(t => t.Markers);
             });
         }
     }

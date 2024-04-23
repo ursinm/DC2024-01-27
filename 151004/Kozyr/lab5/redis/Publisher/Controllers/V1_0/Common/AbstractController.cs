@@ -75,7 +75,7 @@ namespace Publisher.Controllers.V1_0.Common
         {
             JsonResult json = Json(patch);
             json.StatusCode = (int)HttpStatusCode.OK;
-            Logger.LogInformation("Patching {author}", patch);
+            Logger.LogInformation("Patching {creator}", patch);
 
             try
             {

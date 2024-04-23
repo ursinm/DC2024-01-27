@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Discussion.PostEntity;
-using Discussion.PostEntity.Dto;
+using Discussion.CommentEntity;
+using Discussion.CommentEntity.Dto;
 
 namespace Discussion.Common
 {
@@ -8,8 +8,8 @@ namespace Discussion.Common
     {
         public AutoMapper()
         {
-            CreateMap<PostRequestTO, Post>();
-            CreateMap<Post, PostResponseTO>();
+            CreateMap<CommentRequestTO, Comment>();
+            CreateMap<Comment, CommentResponseTO>();
         }
     }
 }

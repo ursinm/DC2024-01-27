@@ -10,8 +10,8 @@ using Publisher.Service.Interface;
 
 namespace Publisher.Service.Implementation
 {
-    public class AuthorService(IMapper mapper, IAuthorRepository repository, IDistributedCache cache) :
-        AbstractCrudService<Author, AuthorRequestTO, AuthorResponseTO>(mapper, repository), IAuthorService
+    public class CreatorService(IMapper mapper, ICreatorRepository repository, IDistributedCache cache) :
+        AbstractCrudService<Creator, CreatorRequestTO, CreatorResponseTO>(mapper, repository), ICreatorService
     {
         private readonly IMapper _mapper = mapper;
 
@@ -22,7 +22,7 @@ namespace Publisher.Service.Implementation
             return await base.Remove(id);
         }
 
-        public override async Task<AuthorResponseTO> GetByID(int id)
+        public override async Task<CreatorResponseTO> GetByID(int id)
         {
             var cacheResponse = await cache.GetStringAsync(GetRedisId(id));
 
@@ -40,52 +40,52 @@ namespace Publisher.Service.Implementation
                 await cache.SetStringAsync(GetRedisId(id), JsonConvert.SerializeObject(res));
             });
 
-            return JsonConvert.DeserializeObject<AuthorResponseTO>(cacheResponse)
-                ?? throw new Exception("Unable to deserialize Author");
+            return JsonConvert.DeserializeObject<CreatorResponseTO>(cacheResponse)
+                ?? throw new Exception("Unable to deserialize Creator");
         }
 
-        public override async Task<AuthorResponseTO> Add(AuthorRequestTO authorTo)
+        public override async Task<CreatorResponseTO> Add(CreatorRequestTO creatorTo)
         {
-            if (!Validate(authorTo))
+            if (!Validate(creatorTo))
             {
-                throw new InvalidDataException("Author is not valid");
+                throw new InvalidDataException("Creator is not valid");
             }
 
-            var res = await base.Add(authorTo);
+            var res = await base.Add(creatorTo);
             await cache.SetStringAsync(GetRedisId(res.Id), JsonConvert.SerializeObject(res));
 
             return res;
         }
 
-        public override async Task<AuthorResponseTO> Update(AuthorRequestTO authorTo)
+        public override async Task<CreatorResponseTO> Update(CreatorRequestTO creatorTo)
         {
-            if (!Validate(authorTo))
+            if (!Validate(creatorTo))
             {
-                throw new InvalidDataException($"UPDATE invalid data: {authorTo}");
+                throw new InvalidDataException($"UPDATE invalid data: {creatorTo}");
             }
 
-            var res = await base.Update(authorTo);
+            var res = await base.Update(creatorTo);
             await cache.RemoveAsync(GetRedisId(res.Id));
             await cache.SetStringAsync(GetRedisId(res.Id), JsonConvert.SerializeObject(res));
 
             return res;
         }
 
-        private static string GetRedisId(int id) => $"Author:{id}";
+        private static string GetRedisId(int id) => $"Creator:{id}";
 
-        public async Task<AuthorResponseTO> GetByTweetID(int tweetId)
+        public async Task<CreatorResponseTO> GetByIssueID(int issueId)
         {
-            var response = await repository.GetByTweetIdAsync(tweetId);
+            var response = await repository.GetByIssueIdAsync(issueId);
 
-            return _mapper.Map<AuthorResponseTO>(response.Author);
+            return _mapper.Map<CreatorResponseTO>(response.Creator);
         }
 
-        private static bool Validate(AuthorRequestTO author)
+        private static bool Validate(CreatorRequestTO creator)
         {
-            var fnameLen = author.FirstName.Length;
-            var lnameLen = author.LastName.Length;
-            var passLen = author.Password.Length;
-            var loginLen = author.Login.Length;
+            var fnameLen = creator.FirstName.Length;
+            var lnameLen = creator.LastName.Length;
+            var passLen = creator.Password.Length;
+            var loginLen = creator.Login.Length;
 
             if (fnameLen < 2 || fnameLen > 64)
             {

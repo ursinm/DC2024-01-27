@@ -7,7 +7,7 @@ namespace Publisher.Entity.Db
     {
         [MinLength(2)]
         public string Name { get; set; } = name;
-        public ICollection<Tweet> Tweets { get; set; } = [];
+        public ICollection<Issue> Issues { get; set; } = [];
 
         public Marker() : this(string.Empty) { }
         public Marker(int id, string name) : this(name)

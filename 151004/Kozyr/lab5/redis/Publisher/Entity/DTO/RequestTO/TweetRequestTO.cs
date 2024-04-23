@@ -1,4 +1,4 @@
 ﻿namespace Publisher.Entity.DTO.RequestTO
 {
-    public record class TweetRequestTO(int Id, int AuthorId, string Title, string Content, DateTime Created, DateTime Modified);
+    public record class IssueRequestTO(int Id, int CreatorId, string Title, string Content, DateTime Created, DateTime Modified);
 }

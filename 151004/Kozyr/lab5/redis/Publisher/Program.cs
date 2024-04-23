@@ -23,13 +23,13 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "dc";
 });
 builder.Services
-    .AddScoped<IAuthorService, AuthorService>()
+    .AddScoped<ICreatorService, CreatorService>()
     .AddScoped<IMarkerService, MarkerService>()
-    .AddScoped<ITweetService, TweetService>()
-    .AddScoped<IPostService, PostService>()
-    .AddScoped<IAuthorRepository, AuthorRepository>()
+    .AddScoped<IIssueService, IssueService>()
+    .AddScoped<ICommentService, CommentService>()
+    .AddScoped<ICreatorRepository, CreatorRepository>()
     .AddScoped<IMarkerRepository, MarkerRepository>()
-    .AddScoped<ITweetRepository, TweetRepository>();
+    .AddScoped<IIssueRepository, IssueRepository>();
 builder.Services
     .AddSingleton(provider =>
     {

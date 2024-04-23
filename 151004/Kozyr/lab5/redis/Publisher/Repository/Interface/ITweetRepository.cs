@@ -3,7 +3,7 @@ using Publisher.Repository.Interface.Common;
 
 namespace Publisher.Repository.Interface
 {
-    public interface ITweetRepository : ICrudRepository<Tweet>
+    public interface IIssueRepository : ICrudRepository<Issue>
     {
     }
 }

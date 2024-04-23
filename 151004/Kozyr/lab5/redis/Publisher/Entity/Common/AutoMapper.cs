@@ -9,14 +9,14 @@ namespace Publisher.Entity.Common
     {
         public AutoMapper()
         {
-            CreateMap<AuthorRequestTO, Author>();
-            CreateMap<Author, AuthorResponseTO>();
+            CreateMap<CreatorRequestTO, Creator>();
+            CreateMap<Creator, CreatorResponseTO>();
 
             CreateMap<MarkerRequestTO, Marker>();
             CreateMap<Marker, MarkerResponseTO>();
 
-            CreateMap<TweetRequestTO, Tweet>();
-            CreateMap<Tweet, TweetResponseTO>();
+            CreateMap<IssueRequestTO, Issue>();
+            CreateMap<Issue, IssueResponseTO>();
         }
     }
 }

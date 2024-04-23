@@ -71,7 +71,7 @@ namespace Publisher.Service.Implementation
 
         private static string GetRedisId(int id) => $"Marker:{id}";
 
-        public Task<IList<MarkerResponseTO>> GetByTweetID(int tweetId)
+        public Task<IList<MarkerResponseTO>> GetByIssueID(int issueId)
         {
             throw new NotImplementedException();
         }

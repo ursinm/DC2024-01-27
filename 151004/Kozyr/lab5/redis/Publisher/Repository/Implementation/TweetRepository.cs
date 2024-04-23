@@ -5,26 +5,26 @@ using Publisher.Storage.Common;
 
 namespace Publisher.Repository.Implementation
 {
-    public class TweetRepository(DbStorage context) : AbstractCrudRepository<Tweet>(context), ITweetRepository
+    public class IssueRepository(DbStorage context) : AbstractCrudRepository<Issue>(context), IIssueRepository
     {
         private readonly DbStorage _context = context;
 
-        public override Tweet Add(Tweet tweet)
+        public override Issue Add(Issue issue)
         {
-            var author = new Author { Id = tweet.AuthorId };
-            _context.Authors.Attach(author);
-            tweet.Author = author;
+            var creator = new Creator { Id = issue.CreatorId };
+            _context.Creators.Attach(creator);
+            issue.Creator = creator;
 
-            return base.Add(tweet);
+            return base.Add(issue);
         }
 
-        public override async Task<Tweet> AddAsync(Tweet tweet)
+        public override async Task<Issue> AddAsync(Issue issue)
         {
-            var author = new Author { Id = tweet.AuthorId };
-            _context.Authors.Attach(author);
-            tweet.Author = author;
+            var creator = new Creator { Id = issue.CreatorId };
+            _context.Creators.Attach(creator);
+            issue.Creator = creator;
 
-            return await base.AddAsync(tweet);
+            return await base.AddAsync(issue);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Publisher.Entity.DTO.ResponseTO
 {
-    public record class AuthorResponseTO(
+    public record class CreatorResponseTO(
         int Id,
         string Login,
         [property: JsonProperty("firstname")] string FirstName,

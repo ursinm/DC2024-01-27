@@ -5,14 +5,14 @@ using Publisher.Storage.Common;
 
 namespace Publisher.Repository.Implementation
 {
-    public class AuthorRepository(DbStorage context) : AbstractCrudRepository<Author>(context), IAuthorRepository
+    public class CreatorRepository(DbStorage context) : AbstractCrudRepository<Creator>(context), ICreatorRepository
     {
-        public Tweet GetByTweetId(int tweetId)
+        public Issue GetByIssueId(int issueId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Tweet> GetByTweetIdAsync(int tweetId)
+        public Task<Issue> GetByIssueIdAsync(int issueId)
         {
             throw new NotImplementedException();
         }

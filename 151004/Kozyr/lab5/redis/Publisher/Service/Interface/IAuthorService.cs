@@ -5,8 +5,8 @@ using Publisher.Service.Interface.Common;
 
 namespace Publisher.Service.Interface
 {
-    public interface IAuthorService : ICrudService<Author, AuthorRequestTO, AuthorResponseTO>
+    public interface ICreatorService : ICrudService<Creator, CreatorRequestTO, CreatorResponseTO>
     {
-        Task<AuthorResponseTO> GetByTweetID(int tweetId);
+        Task<CreatorResponseTO> GetByIssueID(int issueId);
     }
 }

@@ -55,9 +55,9 @@ namespace Discussion.Common
         {
             var entity = mapper.Map<Entity>(request);
 
-            var authorResponse = await repository.UpdateAsync(entity);
+            var creatorResponse = await repository.UpdateAsync(entity);
 
-            return mapper.Map<ResponseTo>(authorResponse);
+            return mapper.Map<ResponseTo>(creatorResponse);
         }
     }
 }

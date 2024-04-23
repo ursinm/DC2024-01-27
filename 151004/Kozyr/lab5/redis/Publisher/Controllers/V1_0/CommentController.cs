@@ -6,23 +6,23 @@ using System.Net;
 
 namespace Publisher.Controllers.V1_0
 {
-    [Route("api/v1.0/posts")]
+    [Route("api/v1.0/comments")]
     [ApiController]
-    public class PostController(IPostService postService, ILogger<PostController> logger) : Controller
+    public class CommentController(ICommentService commentService, ILogger<CommentController> logger) : Controller
     {
 
         [HttpGet]
         [Route("{id:int}")]
         public async Task<JsonResult> GetByID([FromRoute] int id)
         {
-            PostKafkaResponse? response = null;
+            CommentKafkaResponse? response = null;
             try
             {
-                response = await postService.GetByID(id);
+                response = await commentService.GetByID(id);
             }
             catch (Exception ex)
             {
-                logger.LogError($"Unable to deserialize PostKafkaResponse {ex.Message}");
+                logger.LogError($"Unable to deserialize CommentKafkaResponse {ex.Message}");
             }
 
             var statusCode =
@@ -37,14 +37,14 @@ namespace Publisher.Controllers.V1_0
         [HttpGet]
         public async Task<IActionResult> Read()
         {
-            IList<PostKafkaResponse>? response = null;
+            IList<CommentKafkaResponse>? response = null;
             try
             {
-                response = await postService.GetAll();
+                response = await commentService.GetAll();
             }
             catch (Exception ex)
             {
-                logger.LogError($"Unable to deserialize PostKafkaResponse[] {ex.Message}");
+                logger.LogError($"Unable to deserialize CommentKafkaResponse[] {ex.Message}");
             }
             
 
@@ -70,16 +70,16 @@ namespace Publisher.Controllers.V1_0
         }
 
         [HttpPost]
-        public async Task<JsonResult> Create([FromBody] PostRequestTO request)
+        public async Task<JsonResult> Create([FromBody] CommentRequestTO request)
         {
-            PostKafkaResponse? response = null;
+            CommentKafkaResponse? response = null;
             try
             {
-                response = await postService.Add(request);
+                response = await commentService.Add(request);
             }
             catch (Exception ex)
             {
-                logger.LogError($"Unable to deserialize PostKafkaResponse {ex.Message}");
+                logger.LogError($"Unable to deserialize CommentKafkaResponse {ex.Message}");
             }
 
             var statusCode =
@@ -92,16 +92,16 @@ namespace Publisher.Controllers.V1_0
         }
 
         [HttpPut]
-        public async Task<JsonResult> Update([FromBody] PostRequestTO request)
+        public async Task<JsonResult> Update([FromBody] CommentRequestTO request)
         {
-            PostKafkaResponse? response = null;
+            CommentKafkaResponse? response = null;
             try
             {
-                response = await postService.Update(request);
+                response = await commentService.Update(request);
             }
             catch (Exception ex)
             {
-                logger.LogError($"Unable to deserialize PostKafkaResponse {ex.Message}");
+                logger.LogError($"Unable to deserialize CommentKafkaResponse {ex.Message}");
             }
 
             var statusCode =
@@ -120,7 +120,7 @@ namespace Publisher.Controllers.V1_0
             bool response = false;
             try
             {
-                response = await postService.Remove(id);
+                response = await commentService.Remove(id);
             }
             catch (Exception ex)
             {

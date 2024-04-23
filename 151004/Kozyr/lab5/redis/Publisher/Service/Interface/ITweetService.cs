@@ -5,9 +5,9 @@ using Publisher.Service.Interface.Common;
 
 namespace Publisher.Service.Interface
 {
-    public interface ITweetService : ICrudService<Tweet, TweetRequestTO, TweetResponseTO>
+    public interface IIssueService : ICrudService<Issue, IssueRequestTO, IssueResponseTO>
     {
-        Task<TweetResponseTO> GetTweetByParam(IList<string> markerNames, IList<int> markerIds, string authorLogin,
+        Task<IssueResponseTO> GetIssueByParam(IList<string> markerNames, IList<int> markerIds, string creatorLogin,
             string title, string content);
     }
 }

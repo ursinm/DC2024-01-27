@@ -1,18 +1,18 @@
 ﻿using Confluent.Kafka;
 using Discussion.Kafka;
-using Discussion.PostEntity.Dto;
-using Discussion.PostEntity.Interface;
-using Discussion.PostEntity.Kafka;
+using Discussion.CommentEntity.Dto;
+using Discussion.CommentEntity.Interface;
+using Discussion.CommentEntity.Kafka;
 using Newtonsoft.Json;
 
-namespace Discussion.PostEntity
+namespace Discussion.CommentEntity
 {
-    public class PostKafkaController(IProducer<string, string> producer, IPostService service)
+    public class CommentKafkaController(IProducer<string, string> producer, ICommentService service)
     {
         private static readonly IConsumer<string, string> _consumer;
         private bool isConsuming = true;
 
-        static PostKafkaController()
+        static CommentKafkaController()
         {
             var consumerConfig = new ConsumerConfig
             {
@@ -38,7 +38,7 @@ namespace Discussion.PostEntity
                 var res = _consumer.Consume();
                 var key = res.Message.Key;
                 var value = res.Message.Value;
-                var entity = JsonConvert.DeserializeObject<PostKafkaRequest>(value);
+                var entity = JsonConvert.DeserializeObject<CommentKafkaRequest>(value);
 
                 if (entity is null)
                 {
@@ -81,19 +81,19 @@ namespace Discussion.PostEntity
             isConsuming = false;
         }
 
-        private async Task<string> GetAll(PostRequestTO request)
+        private async Task<string> GetAll(CommentRequestTO request)
         {
             string response;
-            var emptyResponse = new PostKafkaResponse(
-                new PostResponseTO(
+            var emptyResponse = new CommentKafkaResponse(
+                new CommentResponseTO(
                     default, default, string.Empty, string.Empty),
                 State.Decline);
-            List<PostKafkaResponse>? kafkaResponseTo = [emptyResponse];
+            List<CommentKafkaResponse>? kafkaResponseTo = [emptyResponse];
 
             try
             {
-                var postResponseList = await service.GetAll();
-                kafkaResponseTo = postResponseList.Select(r => new PostKafkaResponse(r, State.Approve)).ToList();
+                var commentResponseList = await service.GetAll();
+                kafkaResponseTo = commentResponseList.Select(r => new CommentKafkaResponse(r, State.Approve)).ToList();
             }
             finally
             {
@@ -103,91 +103,91 @@ namespace Discussion.PostEntity
             return response;
         }
 
-        private async Task<string> GetById(PostRequestTO request)
+        private async Task<string> GetById(CommentRequestTO request)
         {
             string response;
-            var emptyResponse = new PostKafkaResponse(
-                new PostResponseTO(
+            var emptyResponse = new CommentKafkaResponse(
+                new CommentResponseTO(
                     default, default, string.Empty, string.Empty),
                 State.Decline);
-            PostKafkaResponse postKafkaResponse = emptyResponse;
+            CommentKafkaResponse commentKafkaResponse = emptyResponse;
 
             try
             {
-                var postResponseTO = await service.GetByID(request.Id);
-                postKafkaResponse = new PostKafkaResponse(postResponseTO, State.Approve);
+                var commentResponseTO = await service.GetByID(request.Id);
+                commentKafkaResponse = new CommentKafkaResponse(commentResponseTO, State.Approve);
             }
             catch { }
             finally
             {
-                response = JsonConvert.SerializeObject(postKafkaResponse);
+                response = JsonConvert.SerializeObject(commentKafkaResponse);
             }
 
             return response;
         }
 
-        private async Task<string> Create(PostRequestTO request)
+        private async Task<string> Create(CommentRequestTO request)
         {
             string response;
-            var emptyResponse = new PostKafkaResponse(
-                new PostResponseTO(
+            var emptyResponse = new CommentKafkaResponse(
+                new CommentResponseTO(
                     default, default, string.Empty, string.Empty),
                 State.Decline);
-            PostKafkaResponse postKafkaResponse = emptyResponse;
+            CommentKafkaResponse commentKafkaResponse = emptyResponse;
 
             try
             {
-                var postResponseTO = await service.Add(request);
-                postKafkaResponse = new PostKafkaResponse(postResponseTO, State.Approve);
+                var commentResponseTO = await service.Add(request);
+                commentKafkaResponse = new CommentKafkaResponse(commentResponseTO, State.Approve);
             }
             finally
             {
-                response = JsonConvert.SerializeObject(postKafkaResponse);
+                response = JsonConvert.SerializeObject(commentKafkaResponse);
             }
 
             return response;
         }
 
-        private async Task<string> Update(PostRequestTO request)
+        private async Task<string> Update(CommentRequestTO request)
         {
             string response;
-            var emptyResponse = new PostKafkaResponse(
-                new PostResponseTO(
+            var emptyResponse = new CommentKafkaResponse(
+                new CommentResponseTO(
                     default, default, string.Empty, string.Empty),
                 State.Decline);
-            PostKafkaResponse postKafkaResponse = emptyResponse;
+            CommentKafkaResponse commentKafkaResponse = emptyResponse;
 
             try
             {
-                var postResponseTO = await service.Update(request);
-                postKafkaResponse = new PostKafkaResponse(postResponseTO, State.Approve);
+                var commentResponseTO = await service.Update(request);
+                commentKafkaResponse = new CommentKafkaResponse(commentResponseTO, State.Approve);
             }
             finally
             {
-                response = JsonConvert.SerializeObject(postKafkaResponse);
+                response = JsonConvert.SerializeObject(commentKafkaResponse);
             }
 
             return response;
         }
 
-        private async Task<string> Delete(PostRequestTO request)
+        private async Task<string> Delete(CommentRequestTO request)
         {
             string response;
-            var emptyResponse = new PostKafkaResponse(
-                new PostResponseTO(
+            var emptyResponse = new CommentKafkaResponse(
+                new CommentResponseTO(
                     default, default, string.Empty, string.Empty),
                 State.Decline);
-            PostKafkaResponse postKafkaResponse = emptyResponse;
+            CommentKafkaResponse commentKafkaResponse = emptyResponse;
 
             try
             {
-                var postResponseTO = await service.Remove(request.Id);
-                postKafkaResponse = new PostKafkaResponse(
-                    new PostResponseTO(request.Id, default, string.Empty, string.Empty), State.Approve);
+                var commentResponseTO = await service.Remove(request.Id);
+                commentKafkaResponse = new CommentKafkaResponse(
+                    new CommentResponseTO(request.Id, default, string.Empty, string.Empty), State.Approve);
             }
             finally
             {
-                response = JsonConvert.SerializeObject(postKafkaResponse);
+                response = JsonConvert.SerializeObject(commentKafkaResponse);
             }
 
             return response;
