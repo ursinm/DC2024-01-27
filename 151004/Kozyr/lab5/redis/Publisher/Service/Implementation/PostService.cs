@@ -39,12 +39,6 @@ namespace Publisher.Service.Implementation
                 return JsonConvert.DeserializeObject<PostKafkaResponse>(json);
             }
 
-            _ = Task.Run(async () =>
-            {
-                var json = await GetByIdFromBroker(id);
-                await cache.SetStringAsync(GetRedisId(id), json);
-            });
-
             return JsonConvert.DeserializeObject<PostKafkaResponse>(cacheResponse);
         }
 
