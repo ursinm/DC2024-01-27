@@ -13,7 +13,9 @@ public enum MessageSubCode {
     STORY_ID_IS_NULL(3, "Story id must be not null"),
 
     //403 - Forbidden
-    CONSTRAINT_VIOLATION(1, "");
+    CONSTRAINT_VIOLATION(4, ""),
+
+    DISCUSSION_TIMEOUT(5, "Discussion server timeout");
 
     private final int subCode;
 

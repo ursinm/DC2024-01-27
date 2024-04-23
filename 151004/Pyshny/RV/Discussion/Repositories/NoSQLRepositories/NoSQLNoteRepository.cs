@@ -1,6 +1,7 @@
 ﻿using Cassandra;
 using Cassandra.Mapping;
 using Discussion.Models;
+using System.Diagnostics.Metrics;
 
 namespace Discussion.Repositories.SQLRepositories
 {
@@ -11,7 +12,18 @@ namespace Discussion.Repositories.SQLRepositories
 
         public NoSQLNoteRepository()
         {
-            _cluster = Cluster.Builder().AddContactPoint("127.0.0.1").Build();
+            _cluster = Cluster.Builder().AddContactPoint("cassandra").Build();
+            try
+            {
+                _session = _cluster.Connect("distcomp");
+            } catch (InvalidQueryException )
+            {
+                using (var session = _cluster.Connect())
+                {
+                    session.Execute("CREATE KEYSPACE IF NOT EXISTS distcomp WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '1'}");
+                    session.Execute("CREATE TABLE IF NOT EXISTS distcomp.tbl_note (country text,newsId int,id int,content text,PRIMARY KEY ((country), newsId, id))");
+                }
+            }
             _session = _cluster.Connect("distcomp");
         }
 

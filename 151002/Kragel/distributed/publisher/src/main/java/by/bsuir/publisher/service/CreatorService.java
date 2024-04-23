@@ -7,6 +7,9 @@ import by.bsuir.publisher.model.Creator;
 import by.bsuir.publisher.repository.CreatorRepository;
 import by.bsuir.publisher.service.mapper.CreatorMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class CreatorService {
         return creatorMapper.toDto(creatorRepository.findAll());
     }
 
+    @CacheEvict(value = "creator", key = "#id")
     public void deleteById(Long id) {
         Creator entity = creatorRepository
                 .findById(id)
@@ -32,12 +36,14 @@ public class CreatorService {
         creatorRepository.delete(entity);
     }
 
+    @CachePut(value = "creator", key = "#result.id()")
     public CreatorResponseDto create(CreatorRequestDto dto) {
         Creator newEntity = creatorMapper.toEntity(dto);
         return creatorMapper.toDto(creatorRepository.save(newEntity));
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "creator", key = "#id")
     public CreatorResponseDto getById(Long id) {
         Creator entity = creatorRepository
                 .findById(id)
@@ -45,6 +51,7 @@ public class CreatorService {
         return creatorMapper.toDto(entity);
     }
 
+    @CachePut(value = "creator", key = "#result.id()")
     public CreatorResponseDto update(CreatorRequestDto dto) {
         Creator entity = creatorRepository
                 .findById(dto.id())

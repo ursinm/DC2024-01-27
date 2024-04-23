@@ -7,6 +7,9 @@ import by.bsuir.publisher.model.Tweet;
 import by.bsuir.publisher.repository.TweetRepository;
 import by.bsuir.publisher.service.mapper.TweetMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ public class TweetService {
         return tweetMapper.toDto(tweetRepository.findAll());
     }
 
+    @CacheEvict(value = "tweet", key = "#id")
     public void deleteById(Long id) {
         Tweet entity = tweetRepository
                 .findById(id)
@@ -31,12 +35,14 @@ public class TweetService {
         tweetRepository.delete(entity);
     }
 
+    @CachePut(value = "tweet", key = "#result.id()")
     public TweetResponseDto create(TweetRequestDto dto) {
         Tweet newEntity = tweetMapper.toEntity(dto);
         return tweetMapper.toDto(tweetRepository.save(newEntity));
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "tweet", key = "#id")
     public TweetResponseDto getById(Long id) {
         Tweet entity = tweetRepository
                 .findById(id)
@@ -44,6 +50,7 @@ public class TweetService {
         return tweetMapper.toDto(entity);
     }
 
+    @CachePut(value = "tweet", key = "#result.id()")
     public TweetResponseDto update(TweetRequestDto dto) {
         Tweet entity = tweetRepository
                 .findById(dto.id())

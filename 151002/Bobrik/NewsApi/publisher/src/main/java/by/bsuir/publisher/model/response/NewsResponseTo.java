@@ -1,5 +1,6 @@
 package by.bsuir.publisher.model.response;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 public record NewsResponseTo(
@@ -7,6 +8,6 @@ public record NewsResponseTo(
         Long editorId,
         String title,
         String content,
-        LocalDateTime created,
-        LocalDateTime modified
+        Date created,
+        Date modified
 ) {}
