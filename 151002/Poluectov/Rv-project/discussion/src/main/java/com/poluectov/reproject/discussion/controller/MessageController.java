@@ -48,7 +48,6 @@ public class MessageController {
 
         Optional<MessageResponseTo> response = service.create(request);
 
-
         EntityModel<MessageResponseTo> entityModel =  assembler.apply(response.orElse(null));
 
         return ResponseEntity

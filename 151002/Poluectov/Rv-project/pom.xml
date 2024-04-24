@@ -27,7 +27,7 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <java.version>20</java.version>
+        <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 

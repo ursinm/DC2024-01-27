@@ -1,25 +1,19 @@
-package com.poluectov.rvproject.filter;
+package com.poluectov.reproject.discussion.filter;
 
-import com.poluectov.rvproject.model.RestError;
-import com.poluectov.rvproject.repository.exception.EntityNotFoundException;
-import com.poluectov.rvproject.repository.exception.ValidationError;
+
+import com.poluectov.reproject.discussion.model.RestError;
+import com.poluectov.reproject.discussion.repository.exception.EntityNotFoundException;
+import com.poluectov.reproject.discussion.repository.exception.ValidationError;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 

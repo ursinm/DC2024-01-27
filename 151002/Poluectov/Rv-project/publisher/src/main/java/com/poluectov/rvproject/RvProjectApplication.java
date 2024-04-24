@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.Locale;
 
 @SpringBootApplication
+
 public class RvProjectApplication {
 
     public static void main(String[] args) {

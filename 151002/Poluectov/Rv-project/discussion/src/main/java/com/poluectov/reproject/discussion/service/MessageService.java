@@ -26,8 +26,6 @@ public class MessageService extends CommonRestService {
 
     @Override
     public Optional<MessageResponseTo> create(MessageRequestTo messageRequestTo) {
-        messageRequestTo.setId(getId());
-
         return super.create(messageRequestTo);
     }
 
@@ -44,15 +42,5 @@ public class MessageService extends CommonRestService {
     void update(Message one, Message found) {
         one.setIssueId(found.getIssueId());
         one.setContent(found.getContent());
-    }
-
-    private Long getId (){
-        int currentSecond = (int) (System.currentTimeMillis() / 1000);
-
-        int shiftedTime = currentSecond << 10;
-
-        int randomBits = new Random().nextInt(1 << 10);
-
-        return (long) Math.abs(shiftedTime | randomBits);
     }
 }

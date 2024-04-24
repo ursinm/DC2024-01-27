@@ -14,7 +14,7 @@ import java.util.Optional;
 public class MessageService extends CommonRestService<Message, MessageRequestTo, MessageResponseTo, Long> {
 
     public MessageService(
-            @Qualifier("httpMessageRepository") MessageRepository repository,
+            @Qualifier("kafkaMessageRepository") MessageRepository repository,
             MessageRequestDtoConverter messageRequestDtoConverter) {
         super(repository, messageRequestDtoConverter);
     }
