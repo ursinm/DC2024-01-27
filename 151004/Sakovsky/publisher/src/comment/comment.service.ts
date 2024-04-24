@@ -1,56 +1,106 @@
-import { HttpException, Injectable, NotFoundException, } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CommentRequestToCreate } from '../dto/request/CommentRequestToCreate';
-import { CommentRequestToUpdate } from '../dto/request/CommentRequestToUpdate';
-import { Comment } from '../entities/Comment';
-import { Repository } from 'typeorm';
-import axios from 'axios';
-
-const DISCUSSION_URL = 'http://localhost:24130/api/v1.0/comments'
+import {
+    HttpException,
+    Injectable,
+    NotFoundException
+} from "@nestjs/common";
+import { Client, ClientKafka, Transport } from "@nestjs/microservices";
+import { firstValueFrom } from "rxjs";
+import { ADD_NEW_COMMENT, DELETE_COMMENT_BY_ID, GET_COMMENT_BY_ID, GET_COMMENT_LIST, UPDATE_COMMENT } from "src/constants/constants";
+import { CommentRequestToCreate } from "../dto/request/CommentRequestToCreate";
+import { CommentRequestToUpdate } from "../dto/request/CommentRequestToUpdate";
+import { Comment } from "../entities/Comment";
 
 @Injectable()
 export class CommentService {
-    async getAll(): Promise<Comment[]>{
-        const response = axios.get<Comment[]>(DISCUSSION_URL);
-        return (await response).data;
+
+    @Client({
+        transport: Transport.KAFKA,
+        options: {
+            client: {
+                clientId: "comment",
+                brokers: ["localhost:9092"],
+            },
+            consumer: {
+                groupId: "comment-consumer",
+            },
+        },
+    })
+    private client: ClientKafka;
+
+    async onModuleInit() {
+        this.client.subscribeToResponseOf(ADD_NEW_COMMENT);
+        this.client.subscribeToResponseOf(GET_COMMENT_LIST);
+        this.client.subscribeToResponseOf(GET_COMMENT_BY_ID);
+        this.client.subscribeToResponseOf(UPDATE_COMMENT);
+        this.client.subscribeToResponseOf(DELETE_COMMENT_BY_ID);
+
+        await this.client.connect();
     }
 
-    async createComment(commentDto: CommentRequestToCreate): Promise<Comment>{
-        let comment = new Comment()
+    async getAll() {
+        const response = this.client.send<Comment[], any>(
+            "get.comment.list",
+            "",
+        );
+        return response;
+    }
+
+    async createComment(commentDto: CommentRequestToCreate) {
+        let comment = new Comment();
         try {
             commentDto.id = Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
-            comment = (await axios.post<Comment>(DISCUSSION_URL,commentDto )).data;
+            comment = await firstValueFrom(
+                this.client.send<Comment, CommentRequestToCreate>(
+                    "add.new.comment",
+                    commentDto,
+                ),
+            );
         } catch (error) {
-            throw new HttpException(`Tweet с id "${commentDto.tweetId} уже существует" `, 403)
+            throw new HttpException(
+                `Tweet с id "${commentDto.tweetId} уже существует" `,
+                403,
+            );
         }
-        return comment
+        return comment;
     }
 
-    async getById(id: number): Promise<Comment>{
-        let comment = new Comment()
+    async getById(id: number) {
         try {
-            comment = (await axios.get<Comment>(DISCUSSION_URL+`/${id}`,)).data;
+            return await firstValueFrom(
+                this.client.send<Comment>("get.comment.byId", {
+                    commentId: id,
+                }),
+            );
         } catch (error) {
             throw new HttpException(`Tweet с id "${id} не существует" `, 403);
         }
-        return comment;
     }
 
-    async deleteById(id: number): Promise<void>{
+    async deleteById(id: number) {
         try {
-            await axios.delete(DISCUSSION_URL+`/${id}`);
+            const response = await firstValueFrom(
+                this.client.send<boolean, any>("delete.comment.byId", {
+                    commentId: id,
+                }),
+            );
+            return response;
         } catch (error) {
-            throw new NotFoundException(`Comment with id: ${id} not found`)
+            throw new NotFoundException(`Comment with id: ${id} not found`);
         }
     }
 
-    async updateComment(commentDto: CommentRequestToUpdate): Promise<Comment>{
-        let comment = new Comment();
+    async updateComment(commentDto: CommentRequestToUpdate): Promise<Comment> {
         try {
-            comment = (await axios.put<Comment>(DISCUSSION_URL, commentDto)).data;
+            return await firstValueFrom(
+                this.client.send<Comment, CommentRequestToUpdate>(
+                    "update.comment",
+                    commentDto,
+                ),
+            );
         } catch (error) {
-            throw new NotFoundException(`Comment with id: ${commentDto.id} not found`);
+            throw new NotFoundException(
+                `Comment with id: ${commentDto.id} not found`,
+            );
         }
-        return comment;
     }
 }

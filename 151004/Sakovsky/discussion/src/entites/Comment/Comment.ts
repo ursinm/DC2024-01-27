@@ -1,5 +1,3 @@
-import { Entity, PrimaryColumn } from "typeorm";
-
 export class Comment {
     country: string;
 

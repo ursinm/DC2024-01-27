@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthorRequestToCreate } from '../dto/request/AuthorRequestToCreate';
 import { AuthorResponseTo } from '../dto/response/AuthorResponseTo';
 import { AuthorService } from './author.service';
 import { AuthorRequestToUpdate } from '../dto/request/AuthorRequestToUpdate';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { Author } from 'src/entities/Author';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('authors')
 export class AuthorController {
     constructor(private readonly authorService: AuthorService ){}
@@ -26,46 +29,26 @@ export class AuthorController {
     }
 
     @Get(':id')
-    async getById(@Param('id', ParseIntPipe) id: number): Promise<AuthorResponseTo>{
+    async getById(@Param('id', ParseIntPipe) id: number): Promise<Author>{
         const author = await this.authorService.getById(id);
         if(!author){
             throw new NotFoundException('User not found')
         }
-        const authorDto = new AuthorResponseTo();
-        authorDto.id = author.id;
-        authorDto.firstname = author.firstname;
-        authorDto.lastname = author.lastname;
-        authorDto.login = author.login;
-        authorDto.password = author.password;
-        return authorDto;
+        return author;
     }
 
     @UsePipes(new ValidationPipe())
     @Post()
-    async createAuthor(@Body() dto: AuthorRequestToCreate): Promise<AuthorResponseTo>{
+    async createAuthor(@Body() dto: AuthorRequestToCreate): Promise<Author>{
         const author = await this.authorService.createAuthor(dto);
-
-        const authorDto = new AuthorResponseTo();
-        authorDto.id = author.id;
-        authorDto.firstname = author.firstname;
-        authorDto.lastname = author.lastname;
-        authorDto.login = author.login;
-        authorDto.password = author.password;
-        return authorDto;
+        return author;
     }
 
     @UsePipes(new ValidationPipe())
     @Put()
-    async updateAuthor( @Body() authorReqDto: AuthorRequestToUpdate): Promise<AuthorResponseTo>{
+    async updateAuthor( @Body() authorReqDto: AuthorRequestToUpdate): Promise<Author>{
         const author = await this.authorService.updateAuthor(authorReqDto);
-        const authorDto = new AuthorResponseTo();
-        authorDto.id = author.id;
-        authorDto.firstname = author.firstname;
-        authorDto.lastname = author.lastname;
-        authorDto.login = author.login;
-        authorDto.password = author.password;
-        return authorDto;
-
+        return author;
     }
 
     @HttpCode(204)

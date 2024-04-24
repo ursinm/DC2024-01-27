@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Tweet } from 'src/entities/Tweet';
 import { TweetRequestToCreate } from '../dto/request/TweetRequestToCreate';
 import { TweetRequestToUpdate } from '../dto/request/TweetRequestToUpdate';
 import { TweetResponseTo } from '../dto/response/TweetResponseTo';
 import { TweetService } from './tweet.service';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('tweets')
 export class TweetController {
     constructor(private readonly tweetService: TweetService ){}
@@ -26,48 +29,26 @@ export class TweetController {
     }
 
     @Get(':id')
-    async getById(@Param('id', ParseIntPipe) id: number): Promise<TweetResponseTo>{
-        const tweetDto = new TweetResponseTo();
+    async getById(@Param('id', ParseIntPipe) id: number): Promise<Tweet>{
         const tweet = await this.tweetService.getById(id);
         if(!tweet){
             throw new NotFoundException('Tweet not found')
         }
-        tweetDto.id = tweet.id;
-        tweetDto.authorId = tweet.authorId;
-        tweetDto.content = tweet.content;
-        tweetDto.title = tweet.title;
-        tweetDto.created = tweet.created;
-        tweetDto.modified = tweet.modified;
-        return tweetDto;
+        return tweet;
     }
 
     @UsePipes(new ValidationPipe())
     @Post()
-    async createTweet(@Body() tweetReqDto: TweetRequestToCreate): Promise<TweetResponseTo>{
-        const tweetRespDto = new TweetResponseTo();
+    async createTweet(@Body() tweetReqDto: TweetRequestToCreate): Promise<Tweet>{
         const tweet = await this.tweetService.createTweet(tweetReqDto);
-        tweetRespDto.id = tweet.id;
-        tweetRespDto.authorId = tweet.authorId;
-        tweetRespDto.content = tweet.content;
-        tweetRespDto.title = tweet.title;
-        tweetRespDto.created = tweet.created;
-        tweetRespDto.modified = tweet.modified;
-        return tweetRespDto;
+        return tweet;
     }
 
     @UsePipes(new ValidationPipe())
     @Put()
-    async updateTweet(@Body() tweetReqDto: TweetRequestToUpdate): Promise<TweetResponseTo>{
+    async updateTweet(@Body() tweetReqDto: TweetRequestToUpdate): Promise<Tweet>{
         const tweet = await this.tweetService.updateTweet( tweetReqDto);
-
-        const tweetRespDto = new TweetResponseTo();
-        tweetRespDto.id = tweet.id;
-        tweetRespDto.authorId = tweet.authorId;
-        tweetRespDto.content = tweet.content;
-        tweetRespDto.title = tweet.title;
-        tweetRespDto.created = tweet.created;
-        tweetRespDto.modified = tweet.modified;
-        return tweetRespDto;
+        return tweet;
     }
 
     @HttpCode(204)

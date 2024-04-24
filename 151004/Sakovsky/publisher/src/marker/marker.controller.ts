@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { MarkerRequestToCreate } from '../dto/request/MarkerRequestToCreate';
 import { MarkerResponseTo } from '../dto/response/MarkerResponseTo';
 import { MarkerService } from './marker.service';
 import { MarkerRequestToUpdate } from '../dto/request/MarkerRequestToUpdate';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { Marker } from 'src/entities/Marker';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('markers')
 export class MarkerController {
     constructor(private readonly markerService: MarkerService ){}
@@ -22,35 +25,26 @@ export class MarkerController {
     }
 
     @Get(':id')
-    async getById(@Param('id', ParseIntPipe) id: number): Promise<MarkerResponseTo>{
-        const markerDto = new MarkerResponseTo();
+    async getById(@Param('id', ParseIntPipe) id: number): Promise<Marker>{
         const marker = await this.markerService.getById(id);
         if(!marker){
             throw new NotFoundException('Marker not found');
         }
-        markerDto.name = marker.name;
-        markerDto.id = marker.id;
-        return markerDto;
+        return marker;
     }
 
     @UsePipes(new ValidationPipe())
     @Post()
-    async createMarker(@Body() dto: MarkerRequestToCreate): Promise<MarkerResponseTo>{
-        const markerDto = new MarkerResponseTo();
+    async createMarker(@Body() dto: MarkerRequestToCreate): Promise<Marker>{
         const marker =  await this.markerService.createMarker(dto);
-        markerDto.name = marker.name;
-        markerDto.id = marker.id;
-        return markerDto;
+        return marker;
     }
 
     @UsePipes(new ValidationPipe())
     @Put()
-    async updateMarker(@Body() authorDto: MarkerRequestToUpdate): Promise<MarkerResponseTo>{
-        const markerDto = new MarkerResponseTo();
-        const marker =  await this.markerService.updateMarker(authorDto);
-        markerDto.name = marker.name;
-        markerDto.id = marker.id;
-        return markerDto;
+    async updateMarker(@Body() markerDto: MarkerRequestToUpdate): Promise<Marker>{
+        const marker =  await this.markerService.updateMarker(markerDto);
+        return marker;
     }
 
     @HttpCode(204)

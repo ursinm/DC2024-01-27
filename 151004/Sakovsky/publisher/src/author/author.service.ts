@@ -1,48 +1,60 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AuthorRequestToUpdate } from '../dto/request/AuthorRequestToUpdate';
-import { Author } from '../entities/Author';
-import { Repository } from 'typeorm';
-import { AuthorRequestToCreate } from 'src/dto/request/AuthorRequestToCreate';
+import {
+    HttpException,
+    Injectable,
+    NotFoundException
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { AuthorRequestToCreate } from "src/dto/request/AuthorRequestToCreate";
+import { Repository } from "typeorm";
+import { AuthorRequestToUpdate } from "../dto/request/AuthorRequestToUpdate";
+import { Author } from "../entities/Author";
 
 @Injectable()
 export class AuthorService {
-    constructor(@InjectRepository(Author) 
-        private authorRepositoty: Repository<Author>){}
+    constructor(
+        @InjectRepository(Author)
+        private authorRepositoty: Repository<Author>,
+    ) {}
 
-    getAll(): Promise<Author[]>{
+    getAll(): Promise<Author[]> {
         return this.authorRepositoty.find();
     }
 
-    async createAuthor(authorDto: AuthorRequestToCreate): Promise<Author>{
-        let author = new Author()
+    async createAuthor(authorDto: AuthorRequestToCreate): Promise<Author> {
+        let author = new Author();
         try {
             author = await this.authorRepositoty.save(authorDto);
         } catch (error) {
-            throw new HttpException(`Пользователь с login "${authorDto.login}" уже существует`, 403);
+            throw new HttpException(
+                `Пользователь с login "${authorDto.login}" уже существует`,
+                403,
+            );
         }
-        return author
-        
+        return author;
     }
 
-    getById(id: number): Promise<Author>{
-        return this.authorRepositoty.findOneBy({id});
+    getById(id: number): Promise<Author> {
+        return this.authorRepositoty.findOneBy({ id });
     }
 
-    async deleteById(id: number): Promise<void>{
+    async deleteById(id: number): Promise<void> {
         try {
-            await this.authorRepositoty.findOneByOrFail({id});
+            await this.authorRepositoty.findOneByOrFail({ id });
         } catch (error) {
-            throw new NotFoundException(`Author with id: ${id} not found`)
+            throw new NotFoundException(`Author with id: ${id} not found`);
         }
-    
+
         await this.authorRepositoty.delete(id);
     }
 
-    async updateAuthor(authorDto: AuthorRequestToUpdate): Promise<Author>{
-        const author = await this.authorRepositoty.findOneBy({id: authorDto.id})
-        if (!author){
-            throw new NotFoundException(`Author with id: ${authorDto.id} not found`)
+    async updateAuthor(authorDto: AuthorRequestToUpdate): Promise<Author> {
+        const author = await this.authorRepositoty.findOneBy({
+            id: authorDto.id,
+        });
+        if (!author) {
+            throw new NotFoundException(
+                `Author with id: ${authorDto.id} not found`,
+            );
         }
         author.firstname = authorDto.firstname;
         author.lastname = authorDto.lastname;

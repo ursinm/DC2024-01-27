@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
-import { Cassandra } from 'src/cassandra/cassandra';
 import { CassandraModule } from 'src/cassandra/cassandra.module';
 
 @Module({
