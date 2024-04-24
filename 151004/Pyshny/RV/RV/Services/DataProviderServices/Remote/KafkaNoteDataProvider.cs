@@ -11,7 +11,7 @@ namespace RV.Services.DataProviderServices.Remote
     {
         private ConsumerConfig config = new ConsumerConfig
         {
-            BootstrapServers = "localhost:9092",
+            BootstrapServers = "kafka:9092",
             GroupId = "foo",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
