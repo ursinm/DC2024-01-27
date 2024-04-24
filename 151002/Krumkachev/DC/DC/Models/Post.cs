@@ -1,13 +1,11 @@
 ﻿namespace DC.Models
 {
-	public class Post
+	public class Post : BaseModel
 	{
-		public long Id { get; set; }
-
 		public long IssueId { get; set; }
 
-		public Issue Issue { get; set; }
+		public Issue Issue { get; set; } = null!;
 
-		public string Content { get; set; }
+		public string Content { get; set; } = string.Empty;
 	}
 }
