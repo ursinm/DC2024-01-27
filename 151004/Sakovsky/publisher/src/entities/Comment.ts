@@ -14,8 +14,12 @@ export class Comment {
     @Column()
     content: string;
 
+    @Column()
+    country: string;
+
     setComment(dto: CommentRequestToCreate){
         this.content = dto.content;
         this.tweetId = dto.tweetId;
+        this.country = 'Belarus';
     }
 }

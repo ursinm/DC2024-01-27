@@ -1,16 +1,18 @@
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Marker } from 'src/entities/Marker';
+import { markerCacheKeys } from 'src/utils/redis/globalRedis';
 import { MarkerRequestToCreate } from '../dto/request/MarkerRequestToCreate';
+import { MarkerRequestToUpdate } from '../dto/request/MarkerRequestToUpdate';
 import { MarkerResponseTo } from '../dto/response/MarkerResponseTo';
 import { MarkerService } from './marker.service';
-import { MarkerRequestToUpdate } from '../dto/request/MarkerRequestToUpdate';
-import { CacheInterceptor } from '@nestjs/cache-manager';
-import { Marker } from 'src/entities/Marker';
 
 @UseInterceptors(CacheInterceptor)
 @Controller('markers')
 export class MarkerController {
     constructor(private readonly markerService: MarkerService ){}
 
+    @CacheKey(markerCacheKeys.markers)
     @Get()
     async getAll(): Promise<MarkerResponseTo[]>{
         const result: MarkerResponseTo[] = [];

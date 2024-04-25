@@ -1,16 +1,18 @@
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Tweet } from 'src/entities/Tweet';
 import { TweetRequestToCreate } from '../dto/request/TweetRequestToCreate';
 import { TweetRequestToUpdate } from '../dto/request/TweetRequestToUpdate';
 import { TweetResponseTo } from '../dto/response/TweetResponseTo';
 import { TweetService } from './tweet.service';
+import { tweetCacheKeys } from 'src/utils/redis/globalRedis';
 
 @UseInterceptors(CacheInterceptor)
 @Controller('tweets')
 export class TweetController {
     constructor(private readonly tweetService: TweetService ){}
 
+    @CacheKey(tweetCacheKeys.tweets)
     @Get()
     async getAll(): Promise<TweetResponseTo[]>{
         const tweetsDto: TweetResponseTo[]= [];
@@ -28,6 +30,7 @@ export class TweetController {
         return tweetsDto
     }
 
+    
     @Get(':id')
     async getById(@Param('id', ParseIntPipe) id: number): Promise<Tweet>{
         const tweet = await this.tweetService.getById(id);

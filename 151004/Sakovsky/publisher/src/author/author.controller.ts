@@ -3,14 +3,16 @@ import { AuthorRequestToCreate } from '../dto/request/AuthorRequestToCreate';
 import { AuthorResponseTo } from '../dto/response/AuthorResponseTo';
 import { AuthorService } from './author.service';
 import { AuthorRequestToUpdate } from '../dto/request/AuthorRequestToUpdate';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 import { Author } from 'src/entities/Author';
+import { authorCacheKeys } from 'src/utils/redis/globalRedis';
 
 @UseInterceptors(CacheInterceptor)
 @Controller('authors')
 export class AuthorController {
     constructor(private readonly authorService: AuthorService ){}
 
+    @CacheKey(authorCacheKeys.authors)
     @Get()
     async getAll(): Promise<AuthorResponseTo[]>{
         const authorsDto: AuthorResponseTo[]= [];

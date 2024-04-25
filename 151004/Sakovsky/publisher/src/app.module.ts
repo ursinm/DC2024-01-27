@@ -15,6 +15,7 @@ import { Tweet } from "./entities/Tweet";
 import { MarkerModule } from "./marker/marker.module";
 import redisConfig from "./redisConfig";
 import { TweetModule } from "./tweet/tweet.module";
+import { TTL } from "./utils/redis/globalRedis";
 
 @Module({
     imports: [
@@ -47,7 +48,7 @@ import { TweetModule } from "./tweet/tweet.module";
                         host: config.get("redis.host"),
                         port: config.get("redis.port"),
                     },
-                    ttl: 10 * 1000,//10 seconds
+                    ttl: TTL,
                 });
                 return {store}
             },

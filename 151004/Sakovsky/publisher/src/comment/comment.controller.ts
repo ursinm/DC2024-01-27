@@ -1,4 +1,4 @@
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CacheInterceptor, CacheKey } from "@nestjs/cache-manager";
 import {
     Body,
     Controller,
@@ -19,12 +19,14 @@ import { CommentRequestToCreate } from "../dto/request/CommentRequestToCreate";
 import { CommentRequestToUpdate } from "../dto/request/CommentRequestToUpdate";
 import { CommentResponseTo } from "../dto/response/CommentResponseTo";
 import { CommentService } from "./comment.service";
+import { commentCacheKeys } from "src/utils/redis/globalRedis";
 
 @UseInterceptors(CacheInterceptor)
 @Controller("comments")
 export class CommentController {
     constructor(private readonly commentService: CommentService) {}
 
+    @CacheKey(commentCacheKeys.comments)
     @Get()
     getAll() {
         const comments = this.commentService.getAll();

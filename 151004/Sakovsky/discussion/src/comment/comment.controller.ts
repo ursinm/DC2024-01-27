@@ -29,17 +29,8 @@ export class CommentController {
     
     @MessagePattern(GET_COMMENT_LIST)
     async getAll(): Promise<Comment[]> {
-        const commentsDto: Comment[] = [];
         const comments = await this.commentService.getAll();
-        for (const comment of comments) {
-            const commetnDto = new Comment();
-            commetnDto.content = comment.content;
-            commetnDto.id = comment.id;
-            commetnDto.tweetId = comment.tweetId;
-            commentsDto.push(commetnDto);
-        }
-
-        return commentsDto;
+        return comments;
     }
     @Get()
     async getAllRest(){
