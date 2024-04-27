@@ -10,11 +10,10 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "generate": "drizzle-kit generate:pg",
-    "migrate": "tsx migrate.ts",
-    "docker:start": "docker run -d --name=dist-comp-postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:16",
-    "docker:stop": "docker rm -f dist-comp-postgres"
+    "migrate": "tsx migrate.ts"
   },
   "dependencies": {
+    "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.1",
     "@nestjs/core": "^10.0.0",
@@ -22,6 +21,8 @@
     "@nestjs/microservices": "^10.3.7",
     "@nestjs/platform-express": "^10.0.0",
     "axios": "^1.6.8",
+    "cache-manager": "^5.5.1",
+    "cache-manager-redis-yet": "^5.0.0",
     "drizzle-orm": "^0.30.7",
     "nestjs-zod": "^3.0.0",
     "pg": "^8.11.5",
@@ -33,6 +34,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
+    "@types/cache-manager": "^4.0.6",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",

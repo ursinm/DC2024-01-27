@@ -1,10 +1,10 @@
-import 'dotenv/config';
-import type { Config } from 'drizzle-kit';
+import "dotenv/config";
+import type { Config } from "drizzle-kit";
 
 export default {
-  schema: './src/schemas',
-  out: './drizzle',
-  driver: 'pg',
+  schema: "./src/schemas",
+  out: "./drizzle",
+  driver: "pg",
   dbCredentials: {
     host: process.env.DB_HOST as string,
     user: process.env.DB_USER as string,

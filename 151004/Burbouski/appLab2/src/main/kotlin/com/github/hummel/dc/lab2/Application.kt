@@ -1,12 +1,14 @@
 package com.github.hummel.dc.lab2
 
 import com.github.hummel.dc.lab2.controller.configureRouting
-import com.github.hummel.dc.lab2.controller.configureSerialization
 import com.github.hummel.dc.lab2.module.appModule
 import com.github.hummel.dc.lab2.module.dataModule
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.doublereceive.*
 import org.koin.ktor.plugin.Koin
 import java.sql.Connection
 import java.sql.DriverManager
@@ -16,23 +18,16 @@ fun main() {
 }
 
 fun Application.module() {
+	install(DoubleReceive)
 	install(Koin) {
-		dataModule.single<Connection> { connectToPostgres(embedded = true) }
+		dataModule.single<Connection> {
+			Class.forName("org.postgresql.Driver")
+			DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+		}
 		modules(dataModule, appModule)
 	}
-	configureSerialization()
-	configureRouting()}
-
-fun Application.connectToPostgres(embedded: Boolean): Connection {
-	Class.forName("org.postgresql.Driver")
-
-	if (embedded) {
-		return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
+	install(ContentNegotiation) {
+		json()
 	}
-
-	val url = environment.config.property("postgres.url").getString()
-	val user = environment.config.property("postgres.user").getString()
-	val password = environment.config.property("postgres.password").getString()
-
-	return DriverManager.getConnection(url, user, password)
+	configureRouting()
 }
