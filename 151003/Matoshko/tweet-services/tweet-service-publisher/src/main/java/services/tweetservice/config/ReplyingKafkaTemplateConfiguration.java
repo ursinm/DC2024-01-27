@@ -42,7 +42,9 @@ public class ReplyingKafkaTemplateConfiguration {
     // Default Producer Factory to be used in ReplyingKafkaTemplate
     @Bean
     public ProducerFactory<String, MessageActionDto> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
+        DefaultKafkaProducerFactory<String, MessageActionDto> producerFactory = new DefaultKafkaProducerFactory<>(producerConfigs());
+        //producerFactory.setTransactionIdPrefix("tx-");
+        return producerFactory;
     }
 
     // Standard KafkaProducer settings - specifying broker and serializer

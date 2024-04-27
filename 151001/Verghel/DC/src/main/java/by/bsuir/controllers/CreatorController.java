@@ -14,32 +14,41 @@ import java.util.List;
 @RequestMapping("/api/v1.0/creators")
 public class CreatorController {
     @Autowired
-    CreatorService CreatorService;
+    CreatorService creatorService;
 
     @GetMapping
-    public ResponseEntity<List<CreatorResponseTo>> getCreators() {
-        return ResponseEntity.status(200).body(CreatorService.getCreators());
+    public ResponseEntity<List<CreatorResponseTo>> getCreators(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(creatorService.getCreators(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CreatorResponseTo> getCreator(@PathVariable Long id) {
-        return ResponseEntity.status(200).body(CreatorService.getCreatorById(id));
+        return ResponseEntity.status(200).body(creatorService.getCreatorById(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCreator(@PathVariable Long id) {
-        CreatorService.deleteCreator(id);
+        creatorService.deleteCreator(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping
     public ResponseEntity<CreatorResponseTo> saveCreator(@RequestBody CreatorRequestTo Creator) {
-        CreatorResponseTo savedCreator = CreatorService.saveCreator(Creator);
+        CreatorResponseTo savedCreator = creatorService.saveCreator(Creator);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCreator);
     }
 
     @PutMapping
     public ResponseEntity<CreatorResponseTo> updateCreator(@RequestBody CreatorRequestTo Creator) {
-        return ResponseEntity.status(HttpStatus.OK).body(CreatorService.updateCreator(Creator));
+        return ResponseEntity.status(HttpStatus.OK).body(creatorService.updateCreator(Creator));
+    }
+
+    @GetMapping("/byIssue/{id}")
+    public ResponseEntity<CreatorResponseTo> getCreatorByIssueId(@PathVariable Long id){
+        return ResponseEntity.status(200).body(creatorService.getCreatorByIssueId(id));
     }
 }

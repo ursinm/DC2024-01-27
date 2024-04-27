@@ -1,14 +1,20 @@
 package by.bsuir.discussion.controller;
 
-import by.bsuir.discussion.model.request.CommentRequestTo;
 import by.bsuir.discussion.model.response.CommentResponseTo;
-import by.bsuir.discussion.service.CommentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.client.RestClient;
+import by.bsuir.discussion.model.request.CommentRequestTo;
+import by.bsuir.discussion.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1.0/comments")
@@ -17,27 +23,25 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<CommentResponseTo> findAll() {
-        return commentService.findAll();
+    public ResponseEntity<List<CommentResponseTo>> getAll() {
+        return ResponseEntity.ok(commentService.findAll());
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CommentResponseTo create(@Valid @RequestBody CommentRequestTo dto) {
-        return commentService.create(dto);
+    public ResponseEntity<CommentResponseTo> create(@Valid @RequestBody CommentRequestTo dto,
+                                                    HttpServletRequest request) {
+        final Locale locale = request.getLocale();
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(dto, locale));
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public CommentResponseTo get(@Valid @PathVariable("id") Long id) {
-        return commentService.findById(id);
+    public ResponseEntity<CommentResponseTo> get(@Valid @PathVariable("id") Long id) {
+        return ResponseEntity.ok(commentService.findById(id));
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.OK)
-    public CommentResponseTo update(@Valid @RequestBody CommentRequestTo dto) {
-        return commentService.update(dto);
+    public ResponseEntity<CommentResponseTo> update(@Valid @RequestBody CommentRequestTo dto) {
+        return ResponseEntity.ok(commentService.update(dto));
     }
 
     @DeleteMapping("/{id}")

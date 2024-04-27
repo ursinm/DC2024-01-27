@@ -8,12 +8,15 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import services.tweetservice.domain.entity.Message;
 import services.tweetservice.domain.entity.ValidationMarker;
+import services.tweetservice.domain.mapper.MessageMapper;
 import services.tweetservice.domain.request.MessageRequestTo;
 import services.tweetservice.domain.response.MessageResponseTo;
 import services.tweetservice.exceptions.ErrorResponseTo;
@@ -22,6 +25,7 @@ import services.tweetservice.exceptions.NoSuchTweetException;
 import services.tweetservice.exceptions.ServiceException;
 import services.tweetservice.kafkadto.MessageActionDto;
 import services.tweetservice.kafkadto.MessageActionTypeDto;
+import services.tweetservice.repositories.MessageCacheRepository;
 import services.tweetservice.serivces.MessageServicePublisher;
 import services.tweetservice.serivces.TweetService;
 
@@ -37,12 +41,29 @@ public class MessageServicePublisherImplPublisher implements MessageServicePubli
     private final ObjectMapper objectMapper;
     private final ReplyingKafkaTemplate<String, MessageActionDto, MessageActionDto> replyingKafkaTemplate;
     private final TweetService tweetService;
+    private final MessageMapper messageMapper;
+    private final MessageCacheRepository messageCacheRepository;
 
     @Value("${topic.inTopic}")
     private String inTopic;
 
     @Value("${topic.outTopic}")
     private String outTopic;
+
+    @KafkaListener(topics = "${topic.messageChangeTopic}")
+    protected void receiveMessageChange(MessageActionDto messageActionDto) {
+        switch (messageActionDto.getAction()) {
+            case CREATE, UPDATE -> {
+                MessageResponseTo messageResponseTo = objectMapper.
+                        convertValue(messageActionDto.getData(), MessageResponseTo.class);
+                messageCacheRepository.save(messageMapper.toMessage(messageResponseTo));
+            }
+            case DELETE -> {
+                Long id = Long.valueOf((String) messageActionDto.getData());
+                messageCacheRepository.deleteById(id);
+            }
+        }
+    }
 
     protected MessageActionDto sendMessageAction(MessageActionDto messageActionDto) {
 
@@ -68,6 +89,7 @@ public class MessageServicePublisherImplPublisher implements MessageServicePubli
         if (ObjectUtils.allNull(response.id(), response.tweetId(), response.content())) {
             throw new ServiceException(objectMapper.convertValue(action.getData(), ErrorResponseTo.class));
         }
+        messageCacheRepository.save(messageMapper.toMessage(response));
         return response;
     }
 
@@ -93,6 +115,7 @@ public class MessageServicePublisherImplPublisher implements MessageServicePubli
         if (ObjectUtils.allNull(response.id(), response.content(), response.tweetId())) {
             throw new ServiceException(objectMapper.convertValue(action.getData(), ErrorResponseTo.class));
         }
+        messageCacheRepository.save(messageMapper.toMessage(response));
         return response;
     }
 
@@ -103,6 +126,7 @@ public class MessageServicePublisherImplPublisher implements MessageServicePubli
                 data(String.valueOf(id)).
                 build());
         try {
+            messageCacheRepository.deleteById(id);
             return Long.valueOf((Integer) action.getData());
         } catch (ClassCastException e) {
             throw new ServiceException(objectMapper.convertValue(action.getData(), ErrorResponseTo.class));
@@ -110,12 +134,13 @@ public class MessageServicePublisherImplPublisher implements MessageServicePubli
     }
 
     @Override
-    public MessageResponseTo findMessageById(Long id) {
-        MessageActionDto action = sendMessageAction(MessageActionDto.builder().
-                action(MessageActionTypeDto.READ).
-                data(String.valueOf(id)).
-                build());
-        MessageResponseTo response = objectMapper.convertValue(action.getData(), MessageResponseTo.class);
-        return Optional.ofNullable(response).orElseThrow(() -> new NoSuchMessageException(id));
+    public Optional<MessageResponseTo> findMessageById(Long id) {
+        return Optional.ofNullable(messageCacheRepository.findById(id).map(messageMapper::toMessageResponseTo).orElseGet(() -> {
+            MessageActionDto action = sendMessageAction(MessageActionDto.builder().
+                    action(MessageActionTypeDto.READ).
+                    data(String.valueOf(id)).
+                    build());
+            return objectMapper.convertValue(action.getData(), MessageResponseTo.class);
+        }));
     }
 }

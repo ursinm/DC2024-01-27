@@ -1,10 +1,10 @@
 package com.github.hummel.dc.lab1.controller.routing
 
-import com.github.hummel.dc.lab1.util.Response
 import com.github.hummel.dc.lab1.controller.respond
 import com.github.hummel.dc.lab1.dto.request.MessageRequestTo
 import com.github.hummel.dc.lab1.dto.request.MessageRequestToId
 import com.github.hummel.dc.lab1.service.MessageService
+import com.github.hummel.dc.lab1.util.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -32,9 +32,13 @@ private fun Route.checkMessages(messagesService: MessageService) {
 		respond(isCorrect = {
 			messages.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, messages)
+			call.respond(
+				status = HttpStatusCode.OK, messages
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 	}
 }
@@ -52,7 +56,9 @@ private fun Route.createMessage(messagesService: MessageService) {
 		respond(isCorrect = {
 			message != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, message ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, message ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -72,7 +78,9 @@ private fun Route.getMessage(messagesService: MessageService) {
 		respond(isCorrect = {
 			message != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, message ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, message ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -116,7 +124,9 @@ private fun Route.updateMessage(messagesService: MessageService) {
 		respond(isCorrect = {
 			message != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, message ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, message ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
