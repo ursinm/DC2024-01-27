@@ -1,6 +1,6 @@
-package com.example.rv.impl.editor;
+package com.example.rv.impl.creator;
 
-public record EditorResponseTo(
+public record CreatorResponseTo(
         Long id,
         String login,
         String firstname,

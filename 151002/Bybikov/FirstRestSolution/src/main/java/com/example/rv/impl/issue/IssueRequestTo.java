@@ -1,8 +1,8 @@
-package com.example.rv.impl.tweet;
+package com.example.rv.impl.issue;
 
-public record TweetRequestTo (
+public record IssueRequestTo(
         Long id,
-        Long editorId,
+        Long creatorId,
         String title,
         String content,
         String created,

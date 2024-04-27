@@ -1,4 +1,4 @@
-package com.example.rv.impl.tweet;
+package com.example.rv.impl.issue;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Tweet {
+public class Issue {
     Long id;
-    Long editorId;
+    Long creatorId;
     String title;
     String content;
     String created;

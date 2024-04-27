@@ -1,6 +1,6 @@
-package com.example.rv.impl.editor;
+package com.example.rv.impl.creator;
 
-public record EditorRequestTo(
+public record CreatorRequestTo(
     Long id,
     String login,
     String password,

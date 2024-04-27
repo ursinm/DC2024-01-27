@@ -13,7 +13,7 @@ public class NoteMapperImpl implements NoteMapper {
     public NoteRequestTo noteToRequestTo(Note note) {
         return new NoteRequestTo(
                 note.getId(),
-                note.getTweetId(),
+                note.getIssueId(),
                 note.getContent()
         );
     }
@@ -29,7 +29,7 @@ public class NoteMapperImpl implements NoteMapper {
     public Note dtoToEntity(NoteRequestTo noteRequestTo) {
         return new Note(
                 noteRequestTo.id(),
-                noteRequestTo.tweetId(),
+                noteRequestTo.issueId(),
                 noteRequestTo.content()
         );
     }
@@ -45,7 +45,7 @@ public class NoteMapperImpl implements NoteMapper {
     public NoteResponseTo noteToResponseTo(Note note) {
         return new NoteResponseTo(
                 note.getId(),
-                note.getTweetId(),
+                note.getIssueId(),
                 note.getContent());
     }
 

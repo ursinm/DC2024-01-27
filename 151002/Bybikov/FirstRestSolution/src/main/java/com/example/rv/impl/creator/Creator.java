@@ -1,4 +1,4 @@
-package com.example.rv.impl.editor;
+package com.example.rv.impl.creator;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Editor {
+public class Creator {
     Long id;
     String login;
     String password;

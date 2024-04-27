@@ -1,4 +1,4 @@
-package com.example.rv.impl.tweet;
+package com.example.rv.impl.issue;
 
 import com.example.rv.api.repository.CrudRepository;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class TweetService {
-    public final CrudRepository<Tweet, Long> tweetCrudRepository;
-    public final TweetMapperImpl tweetMapper;
+public class IssueService {
+    public final CrudRepository<Issue, Long> tweetCrudRepository;
+    public final IssueMapperImpl tweetMapper;
 }
