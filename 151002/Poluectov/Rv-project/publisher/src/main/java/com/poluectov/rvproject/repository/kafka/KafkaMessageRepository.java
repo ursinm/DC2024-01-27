@@ -2,13 +2,12 @@ package com.poluectov.rvproject.repository.kafka;
 
 import com.poluectov.rvproject.dto.KafkaMessageRequestTo;
 import com.poluectov.rvproject.dto.KafkaMessageResponseTo;
-import com.poluectov.rvproject.kafkacontroller.Sender;
+import com.poluectov.rvproject.controller.kafka.Sender;
 import com.poluectov.rvproject.model.Message;
 import com.poluectov.rvproject.model.RestError;
 import com.poluectov.rvproject.repository.MessageRepository;
 import com.poluectov.rvproject.repository.exception.EntityNotFoundException;
 import jakarta.validation.ValidationException;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

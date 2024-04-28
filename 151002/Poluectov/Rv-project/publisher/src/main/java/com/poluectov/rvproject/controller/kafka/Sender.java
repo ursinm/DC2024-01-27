@@ -1,16 +1,13 @@
-package com.poluectov.rvproject.kafkacontroller;
+package com.poluectov.rvproject.controller.kafka;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poluectov.rvproject.config.KafkaConfig;
 import com.poluectov.rvproject.dto.KafkaMessageRequestTo;
 import com.poluectov.rvproject.dto.KafkaMessageResponseTo;
-import com.poluectov.rvproject.model.RestError;
 import com.poluectov.rvproject.service.kafka.KafkaSendReceiver;
 import com.poluectov.rvproject.service.kafka.KafkaSendReceiverMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -44,7 +41,7 @@ public class Sender {
 
         UUID id = message.getId();
 
-        log.info("Sending message: {}", message);
+        log.info("KAFKA: Sending message: {}", message);
         var msg = MessageBuilder.withPayload(message)
                 .setHeader(KafkaHeaders.TOPIC, topic);
         if (id != null) {

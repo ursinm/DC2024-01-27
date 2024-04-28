@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/messages")
 public class MessageController extends CommonRESTController<Message, MessageRequestTo, MessageResponseTo> {
-    public MessageController(@Qualifier("cachedMessageService") MessageService service,
+    public MessageController(@Qualifier("messageService") MessageService service,
                              MessageModelAssembler assembler) {
         super(service, assembler::toModel);
     }
