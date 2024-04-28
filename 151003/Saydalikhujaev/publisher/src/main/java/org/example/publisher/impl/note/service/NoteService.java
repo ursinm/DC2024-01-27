@@ -46,7 +46,12 @@ public class NoteService {
     }
 
     public NoteResponseTo getNoteById(BigInteger id) throws EntityNotFoundException, InterruptedException {
-        return noteProducer.sendNote("get", id.toString(), true);
+	try {
+            return noteProducer.sendNote("get", id.toString(), true);
+        } catch (RuntimeException e)
+        {
+            throw new EntityNotFoundException("note", id);
+        }
     }
 
     public NoteAddedResponseTo saveNote(NoteRequestTo noteTO) throws EntityNotFoundException, DuplicateEntityException, InterruptedException {
@@ -81,6 +86,13 @@ public class NoteService {
     }
 
     public void deleteNote(BigInteger id) throws EntityNotFoundException, InterruptedException {
+	try {
+            noteProducer.sendNote("get", id.toString(), true);
+        } catch (RuntimeException e)
+        {
+            throw new EntityNotFoundException("note", id);
+        }
+
         noteProducer.sendNote("delete", id.toString(), false);
     }
 
