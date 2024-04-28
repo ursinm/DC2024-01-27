@@ -19,8 +19,6 @@ namespace Discussion.Services.DataProviderServices.SQL
         {
             Note n = _mapper.Map<Note>(item);
             n.country = "Belarus";
-            Random rand = new Random();
-            n.id = rand.Next();
             _repository.Create(n);
             return _mapper.Map<NoteDTO>(n);
         }

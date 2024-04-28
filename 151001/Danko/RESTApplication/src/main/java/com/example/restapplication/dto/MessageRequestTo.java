@@ -14,4 +14,6 @@ public class MessageRequestTo {
     @NotBlank
     @Size(min = 2, max = 32)
     private String content;
+    private String country;
+    private String method;
 }

@@ -1,10 +1,10 @@
 package com.github.hummel.dc.lab2.controller.routing
 
-import com.github.hummel.dc.lab2.util.Response
 import com.github.hummel.dc.lab2.controller.respond
 import com.github.hummel.dc.lab2.dto.request.IssueRequestTo
 import com.github.hummel.dc.lab2.dto.request.IssueRequestToId
 import com.github.hummel.dc.lab2.service.IssueService
+import com.github.hummel.dc.lab2.util.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -32,9 +32,13 @@ private fun Route.checkIssues(issuesService: IssueService) {
 		respond(isCorrect = {
 			issues.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issues)
+			call.respond(
+				status = HttpStatusCode.OK, issues
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 	}
 }
@@ -52,7 +56,9 @@ private fun Route.createIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.Forbidden, Response(HttpStatusCode.Forbidden.value)
@@ -72,7 +78,9 @@ private fun Route.getIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -116,7 +124,9 @@ private fun Route.updateIssue(issuesService: IssueService) {
 		respond(isCorrect = {
 			issue != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, issue ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, issue ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
