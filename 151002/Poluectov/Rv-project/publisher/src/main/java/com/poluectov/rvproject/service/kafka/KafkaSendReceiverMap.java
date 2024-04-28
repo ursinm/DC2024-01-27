@@ -9,20 +9,21 @@ import java.util.concurrent.*;
 public class KafkaSendReceiverMap<ID> {
 
     private final ConcurrentMap<ID, KafkaSendReceiver<?>> sendReceiverConcurrentMap;
-    Executor executorService;
+    ExecutorService executorService;
 
     public KafkaSendReceiverMap() {
         this.sendReceiverConcurrentMap = new ConcurrentHashMap<>();
-        this.executorService = Executors.newCachedThreadPool();
+        this.executorService = Executors.newFixedThreadPool(10);
     }
 
-    public Thread add(ID id, Long timeout) {
+    public Future<KafkaSendReceiver<?>> add(ID id, Long timeout) {
         KafkaSendReceiver<?> responseWait = new KafkaSendReceiver<>(timeout);
         sendReceiverConcurrentMap.put(id, responseWait);
-        Runnable task = responseWait::receive;
-        return new Thread(task);
+        return executorService.submit(()->{
+            responseWait.receive();
+            return responseWait;
+        });
     }
-
     public KafkaSendReceiver<?> get(ID id) {
         return sendReceiverConcurrentMap.get(id);
     }

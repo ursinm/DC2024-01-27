@@ -5,6 +5,7 @@ import com.poluectov.rvproject.config.KafkaConfig;
 import com.poluectov.rvproject.dto.KafkaMessageRequestTo;
 import com.poluectov.rvproject.dto.KafkaMessageResponseTo;
 import com.poluectov.rvproject.model.RestError;
+import com.poluectov.rvproject.service.kafka.KafkaSendReceiver;
 import com.poluectov.rvproject.service.kafka.KafkaSendReceiverMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,8 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 @Component
@@ -69,18 +72,15 @@ public class Sender {
 
         this.send(topic, message);
 
-        Thread thread = sendReceiverMap.add(requestId, timeout);
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Future<KafkaSendReceiver<?>> future = sendReceiverMap.add(requestId, timeout);
+
         KafkaMessageResponseTo response;
         try {
-            response = (KafkaMessageResponseTo) sendReceiverMap.get(requestId).getMessage();
+            response = (KafkaMessageResponseTo) future.get().getMessage();
         }catch (TimeoutException e) {
-            throw e;
+            throw new TimeoutException("Timeout: " + e);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException("Failed to send message: " + e);
         } finally {
             sendReceiverMap.remove(requestId);
         }
