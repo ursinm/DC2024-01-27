@@ -7,8 +7,8 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface CreatorMapper {
-    Creator CreatorRequestToCreator(CreatorRequestTo CreatorRequestTo);
+    Creator creatorRequestToCreator(CreatorRequestTo creatorRequestTo);
 
-    CreatorResponseTo CreatorToCreatorResponse(Creator Creator);
+    CreatorResponseTo creatorToCreatorResponse(Creator creator);
 }
 

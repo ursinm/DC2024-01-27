@@ -12,4 +12,8 @@ public interface MessageMapper {
 
     MessageResponseTo modelToResponse(Message model);
 
+    MessageRequestTo modelToRequest(Message message);
+
+    MessageRequestTo responseToRequest(MessageResponseTo response);
+
 }

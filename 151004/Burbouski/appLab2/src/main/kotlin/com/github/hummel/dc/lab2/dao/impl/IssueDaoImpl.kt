@@ -46,7 +46,7 @@ class IssueDaoImpl(private val connection: Connection) : IssueDao {
 		return@withContext try {
 			statement.executeUpdate()
 		} catch (e: Exception) {
-			throw Exception("Can not delete item record")
+			throw Exception("Can not delete item record.")
 		}
 	}
 
@@ -99,7 +99,7 @@ class IssueDaoImpl(private val connection: Connection) : IssueDao {
 		return@withContext try {
 			statement.executeUpdate()
 		} catch (e: Exception) {
-			throw Exception("Can not modify item record")
+			throw Exception("Can not modify item record.")
 		}
 	}
 }

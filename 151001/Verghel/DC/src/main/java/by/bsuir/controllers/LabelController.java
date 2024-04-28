@@ -1,5 +1,6 @@
 package by.bsuir.controllers;
 
+import by.bsuir.dto.MessageResponseTo;
 import by.bsuir.dto.LabelRequestTo;
 import by.bsuir.dto.LabelResponseTo;
 import by.bsuir.services.LabelService;
@@ -17,8 +18,12 @@ public class LabelController {
     LabelService labelService;
 
     @GetMapping
-    public ResponseEntity<List<LabelResponseTo>> getLabels() {
-        return ResponseEntity.status(200).body(labelService.getLabels());
+    public ResponseEntity<List<LabelResponseTo>> getLabels(
+            @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
+        return ResponseEntity.status(200).body(labelService.getLabels(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")
@@ -41,5 +46,10 @@ public class LabelController {
     @PutMapping()
     public ResponseEntity<LabelResponseTo> updateLabel(@RequestBody LabelRequestTo label) {
         return ResponseEntity.status(HttpStatus.OK).body(labelService.updateLabel(label));
+    }
+
+    @GetMapping("/byIssue/{id}")
+    public ResponseEntity<List<LabelResponseTo>> getCreatorByIssueId(@PathVariable Long id){
+        return ResponseEntity.status(200).body(labelService.getLabelByIssueId(id));
     }
 }
