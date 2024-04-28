@@ -21,7 +21,7 @@ public class UserService extends CommonRestService<User, UserRequestTo, UserResp
         super(userRepository, dtoConverter);
     }
     @Override
-    Optional<UserResponseTo> mapResponseTo(User user) {
+    protected Optional<UserResponseTo> mapResponseTo(User user) {
         return Optional.ofNullable(UserResponseTo.builder()
                 .id(user.getId())
                 .login(user.getLogin())
@@ -32,7 +32,7 @@ public class UserService extends CommonRestService<User, UserRequestTo, UserResp
     }
 
     @Override
-    void update(User u1, User u2) {
+    protected void update(User u1, User u2) {
         u1.setFirstName(u2.getFirstName());
         u1.setLastName(u2.getLastName());
         u1.setLogin(u2.getLogin());

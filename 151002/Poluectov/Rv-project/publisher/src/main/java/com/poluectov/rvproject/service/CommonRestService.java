@@ -29,9 +29,9 @@ public abstract class CommonRestService<Entity extends IdentifiedEntity, Request
         this.dtoConverter = dtoConverter;
     }
 
-    abstract Optional<Response> mapResponseTo(Entity entity);
+    protected abstract Optional<Response> mapResponseTo(Entity entity);
 
-    abstract void update(Entity one, Entity found);
+    protected abstract void update(Entity one, Entity found);
 
     public List<Response> all() {
         List<Response> all = new ArrayList<>();

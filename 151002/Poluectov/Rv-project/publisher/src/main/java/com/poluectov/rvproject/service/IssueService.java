@@ -26,7 +26,7 @@ public class IssueService extends CommonRestService<Issue, IssueRequestTo, Issue
     }
 
     @Override
-    Optional<IssueResponseTo> mapResponseTo(Issue message) {
+    protected Optional<IssueResponseTo> mapResponseTo(Issue message) {
         List<Marker> markerList = message.getMarkers();
         List<Long> markers = null;
         if (markerList != null) {
@@ -44,7 +44,7 @@ public class IssueService extends CommonRestService<Issue, IssueRequestTo, Issue
     }
 
     @Override
-    void update(Issue one, Issue found) {
+    protected void update(Issue one, Issue found) {
         one.setUser(found.getUser());
 
         one.setTitle(found.getTitle());

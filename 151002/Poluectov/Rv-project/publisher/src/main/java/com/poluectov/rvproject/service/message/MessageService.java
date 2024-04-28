@@ -1,9 +1,10 @@
-package com.poluectov.rvproject.service;
+package com.poluectov.rvproject.service.message;
 
 import com.poluectov.rvproject.dto.message.MessageRequestTo;
 import com.poluectov.rvproject.dto.message.MessageResponseTo;
 import com.poluectov.rvproject.model.Message;
 import com.poluectov.rvproject.repository.MessageRepository;
+import com.poluectov.rvproject.service.CommonRestService;
 import com.poluectov.rvproject.utils.dtoconverter.MessageRequestDtoConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class MessageService extends CommonRestService<Message, MessageRequestTo,
         super(repository, messageRequestDtoConverter);
     }
 
-    Optional<MessageResponseTo> mapResponseTo(Message message) {
+    protected Optional<MessageResponseTo> mapResponseTo(Message message) {
         return Optional.ofNullable(MessageResponseTo.builder()
                 .id(message.getId())
                 .issueId(message.getIssueId())
@@ -28,7 +29,7 @@ public class MessageService extends CommonRestService<Message, MessageRequestTo,
     }
 
     @Override
-    void update(Message one, Message found) {
+    protected void update(Message one, Message found) {
         one.setIssueId(found.getIssueId());
         one.setContent(found.getContent());
     }

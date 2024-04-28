@@ -23,7 +23,7 @@ public class MarkerService extends CommonRestService<Marker, MarkerRequestTo, Ma
     }
 
     @Override
-    Optional<MarkerResponseTo> mapResponseTo(Marker marker) {
+    protected Optional<MarkerResponseTo> mapResponseTo(Marker marker) {
         if (marker == null) {
             return Optional.empty();
         }
@@ -34,7 +34,7 @@ public class MarkerService extends CommonRestService<Marker, MarkerRequestTo, Ma
     }
 
     @Override
-    void update(Marker one, Marker found) {
+    protected void update(Marker one, Marker found) {
         one.setName(found.getName());
     }
 }
