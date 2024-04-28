@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Npgsql;
 using RV.Models;
 using RV.Services.DataProviderServices;
@@ -13,10 +15,12 @@ namespace RV.Controllers
     public class StickersController : ControllerBase
     {
         private readonly IDataProvider _context;
+        private readonly IDistributedCache _cache;
 
-        public StickersController(IDataProvider context)
+        public StickersController(IDataProvider context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -28,6 +32,9 @@ namespace RV.Controllers
         [HttpGet("{id}")]
         public IActionResult GetSticker(int id)
         {
+            var res = _cache.GetString("sticker_" + id.ToString());
+            if (res != null)
+                return StatusCode(200, JsonConvert.DeserializeObject<StickerDTO>(res));
             return StatusCode(200, _context.GetSticker(id));
         }
 
@@ -36,7 +43,12 @@ namespace RV.Controllers
         {
             try
             {
-                return StatusCode(200, _context.UpdateSticker(sticker));
+                var newSticker = _context.UpdateSticker(sticker);
+                _cache.SetString("sticker_" + newSticker.id.ToString(), JsonConvert.SerializeObject(newSticker), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+                return StatusCode(200, newSticker);
             }
             catch (DbUpdateException ex)
             {
@@ -87,7 +99,10 @@ namespace RV.Controllers
             if (res == 0)
                 return StatusCode(400);
             else
+            {
+                _cache.Remove("sticker_" + id.ToString());
                 return StatusCode(204);
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import services.tweetservice.domain.request.MessageRequestTo;
 import services.tweetservice.domain.response.MessageResponseTo;
+import services.tweetservice.exceptions.NoSuchMessageException;
 import services.tweetservice.exceptions.ServiceException;
 import services.tweetservice.serivces.MessageServicePublisher;
 
@@ -35,7 +36,7 @@ public class MessageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponseTo> findMessageById(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(messageServicePublisher.findMessageById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(messageServicePublisher.findMessageById(id).orElseThrow(() -> new NoSuchMessageException(id)));
     }
 
     @GetMapping
