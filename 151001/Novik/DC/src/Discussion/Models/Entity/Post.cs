@@ -12,6 +12,6 @@ public class Post
     
     public String? content { get; set; }
     
-    public String country { get; set; }
+    public String? country { get; set; }
     
 }
