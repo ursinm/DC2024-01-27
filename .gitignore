@@ -466,6 +466,7 @@ FodyWeavers.xsd
 *.sln.iml
 /151002/Haiduk/RV/RV/Lab3/data/data
 
-# exe & dll
+# exe & dll & bin/
 *.exe
 *.dll
+bin/
