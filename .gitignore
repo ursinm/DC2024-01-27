@@ -465,3 +465,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /151002/Haiduk/RV/RV/Lab3/data/data
+
+# exe & dll
+*.exe
+*.dll
