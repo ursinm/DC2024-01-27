@@ -1,11 +1,14 @@
 using Confluent.Kafka;
 using Microsoft.EntityFrameworkCore;
+using Publisher.Infrastructure.Redis.Implementations;
+using Publisher.Infrastructure.Redis.Interfaces;
 using Publisher.Mapper;
 using Publisher.Models.Entity;
 using Publisher.Repositories.Db;
 using Publisher.Repositories.interfaces;
 using Publisher.Services;
 using Publisher.Services.interfaces;
+
 namespace Publisher;
 public class Program
 {
@@ -20,6 +23,13 @@ public class Program
         builder.Services.Configure<ProducerConfig>(builder.Configuration.GetRequiredSection("Kafka:Producer"));
         builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetRequiredSection("Kafka:Consumer"));
         
+        
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            var connection = builder.Configuration.GetConnectionString("Redis");
+            options.Configuration = connection;
+        });
+        builder.Services.AddSingleton<ICacheService, CacheService>();
 // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddAutoMapper(typeof(LabelMapper));

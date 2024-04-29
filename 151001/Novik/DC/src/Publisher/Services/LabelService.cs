@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Publisher.Infrastructure.Redis.Interfaces;
 using Publisher.Models.DTOs.Requests;
 using Publisher.Models.DTOs.Responses;
 using Publisher.Models.Entity;
@@ -11,54 +12,64 @@ public class LabelService : ILabelService
 {
     private readonly ILabelRepository _labelRepository;
     private readonly IMapper _labelMapper;
-
-    public LabelService(ILabelRepository labelRepository,IMapper labelMapper)
+    private readonly ICacheService _cacheService;
+    
+    private const string Prefix = "label-";
+    public LabelService(ILabelRepository labelRepository,IMapper labelMapper, ICacheService cacheService)
     {
         _labelMapper = labelMapper;
         _labelRepository = labelRepository;
+        _cacheService = cacheService;
     }
     public async Task<IEnumerable<LabelResponseTo>> GetAllAsync()
     {
-        var labelEntities = await _labelRepository.GetAllAsync();
-        return _labelMapper.Map<IEnumerable<LabelResponseTo>>(labelEntities);
+        var labels = (await _labelRepository.GetAllAsync()).ToList();
+        var result = new List<LabelResponseTo>(labels.Count);
+
+        foreach (var label in labels)
+        {
+            await _cacheService.SetAsync(Prefix + label.id, label);
+            result.Add(_labelMapper.Map<LabelResponseTo>(label));
+        }
+
+        return result;
     }
 
     public async Task<LabelResponseTo?>? GetByIdAsync(long id)
     {
-        var labelEntity = await _labelRepository.GetByIdAsync(id);
-        if (labelEntity == null)
-        {
-            throw new KeyNotFoundException($"News with ID {id} not found.");
-        }
-        return _labelMapper.Map<LabelResponseTo>(labelEntity);
+        var foundEditor = await _cacheService.GetAsync(Prefix + id,
+            async () => await _labelRepository.GetByIdAsync(id));
+
+        return _labelMapper.Map<LabelResponseTo>(foundEditor);
     }
 
     public async Task<LabelResponseTo> AddAsync(LabelRequestTo labelRequest)
     {
         var labelEntity = _labelMapper.Map<Label>(labelRequest);
         labelEntity = await _labelRepository.AddAsync(labelEntity);
+        await _cacheService.SetAsync(Prefix + labelEntity.id, labelEntity);
         return _labelMapper.Map<LabelResponseTo>(labelEntity);
     }
 
     public async Task<LabelResponseTo> UpdateAsync(LabelRequestTo labelRequest)
     {
-        var existingLabel = await _labelRepository.Exists(labelRequest.id);
-        if (!existingLabel)
-        {
-            throw new KeyNotFoundException($"User with ID {labelRequest.id} not found.");
-        }
+        if (labelRequest == null) throw new ArgumentNullException(nameof(labelRequest));
+        var label = _labelMapper.Map<Label>(labelRequest);
 
-        var updatedLabel = _labelMapper.Map<Label>(labelRequest);
-        var result = await _labelRepository.UpdateAsync(updatedLabel);
-        return _labelMapper.Map <LabelResponseTo>(result);
+
+        var updatedEditor = await _labelRepository.UpdateAsync(label);
+
+        await _cacheService.SetAsync(Prefix + updatedEditor.id, updatedEditor);
+
+        return _labelMapper.Map<LabelResponseTo>(updatedEditor);
     }
 
     public async Task DeleteAsync(long id)
     {
-        var existingLabel = await _labelRepository.Exists(id);
-        if (!existingLabel)
+        await _cacheService.RemoveAsync(Prefix + id);
+        if (!await _labelRepository.Exists(id))
         {
-            throw new KeyNotFoundException($"User with ID {id} not found.");
+            throw new KeyNotFoundException("");
         }
         await _labelRepository.DeleteAsync(id);
     }

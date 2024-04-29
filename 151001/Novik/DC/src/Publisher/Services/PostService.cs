@@ -3,6 +3,7 @@ using Confluent.Kafka.SyncOverAsync;
 using Discussion.Models.DTOs.Requests;
 using Discussion.Models.DTOs.Responses;
 using Microsoft.Extensions.Options;
+using Publisher.Infrastructure.Redis.Interfaces;
 using Publisher.Models.DTOs.Requests;
 using Publisher.Models.DTOs.Responses;
 using Publisher.Serializers;
@@ -18,12 +19,14 @@ public class PostService : IPostService, IDisposable
     //Key is GUID
     private readonly IProducer<string, KafkaRequestDto> _producer;
     private readonly IConsumer<string, KafkaResponseDto> _consumer;
-    
+    private readonly ICacheService _cacheService;
+    private const string Prefix = "post-";
     
     public PostService(IOptions<ProducerConfig> producerConfig,
         IOptions<ConsumerConfig> consumerConfig,
-        IConfiguration configuration)
+        IConfiguration configuration, ICacheService cacheService)
     {
+        _cacheService = cacheService;
         _producerTopic = configuration["Kafka:Producer:Topic"] ??
                          throw new InvalidOperationException(
                              "configuration[\"Kafka:Producer:Topic\"] doesn't exist");
@@ -54,7 +57,9 @@ public class PostService : IPostService, IDisposable
         {
             throw new KafkaException(response.Error.ErrorCode / 100, response.Error);
         }
-
+        
+        await _cacheService.SetAsync(Prefix + response.Response!.id, response.Response);
+        
         return response.Response!;
     }
 
@@ -62,21 +67,24 @@ public class PostService : IPostService, IDisposable
 
     public async Task<PostResponseTo> GetByIdAsync(long id)
     {
-        var guid = Guid.NewGuid();
-        await _producer.ProduceAsync(_producerTopic,
-            new Message<string, KafkaRequestDto>
-                { Key = guid.ToString(), Value = new KafkaRequestDto { Method = HttpMethod.Get, Id = id } });
-
-        CancellationToken cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(100)).Token;
-
-        var response = Consume(guid, cancellationToken);
-
-        if (response.Error is not null)
+        return await _cacheService.GetAsync(Prefix + id, async () =>
         {
-            throw new KafkaException(response.Error.ErrorCode / 100, response.Error);
-        }
+            var guid = Guid.NewGuid();
+            await _producer.ProduceAsync(_producerTopic,
+                new Message<string, KafkaRequestDto>
+                    { Key = guid.ToString(), Value = new KafkaRequestDto { Method = HttpMethod.Get, Id = id } });
 
-        return response.Response!;
+            CancellationToken cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
+
+            var response = Consume(guid, cancellationToken);
+
+            if (response.Error is not null)
+            {
+                throw new KafkaException(response.Error.ErrorCode / 100, response.Error);
+            }
+
+            return response.Response!;
+        });
     }
 
     public async Task<IEnumerable<PostResponseTo>> GetAllAsync()
@@ -94,6 +102,13 @@ public class PostService : IPostService, IDisposable
         {
             throw new KafkaException(response.Error.ErrorCode / 100, response.Error);
         }
+        
+        async void UpdateCache(PostResponseTo post)
+        {
+            await _cacheService.SetAsync(Prefix + post.id, post);
+        }   
+
+        response.ResponseList?.ForEach(UpdateCache);
 
         return response.ResponseList!;
     }
@@ -116,7 +131,9 @@ public class PostService : IPostService, IDisposable
         {
             throw new KafkaException(response.Error.ErrorCode / 100, response.Error);
         }
-
+        
+        await _cacheService.SetAsync(Prefix + response.Response!.id, response.Response);
+        
         return response.Response!;
     }
 
@@ -130,11 +147,13 @@ public class PostService : IPostService, IDisposable
         CancellationToken cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(100)).Token;
 
         var response = Consume(guid, cancellationToken);
-
+        
         if (response.Error is not null)
         {
             throw new KafkaException(response.Error.ErrorCode / 100, response.Error);
         }
+        
+        await _cacheService.RemoveAsync(Prefix + id);
     }
 
     private KafkaResponseDto Consume(Guid guid, CancellationToken cancellationToken)
