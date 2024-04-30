@@ -1,11 +1,13 @@
 ﻿using Discussion.Services.DataProviderServices;
 using Discussion.Views.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Discussion.Controllers
 {
     [Route("api/v1.0/notes")]
     [ApiController]
+    [Authorize]
     public class NotesController : ControllerBase
     {
         private readonly IDataProvider _context;
@@ -26,6 +28,8 @@ namespace Discussion.Controllers
         public IActionResult GetNote(int id)
         {
             var res = _context.GetNote(id);
+            if (res == null)
+                return StatusCode(400);
             return StatusCode(200, res);
         }
 

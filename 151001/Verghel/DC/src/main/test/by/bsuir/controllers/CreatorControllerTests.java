@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class CreatorControllerTests {
@@ -19,7 +20,7 @@ public class CreatorControllerTests {
     }
 
     @Test
-    public void testGetcreators() {
+    public void testGetCreators() {
         given()
                 .when()
                 .get("/api/v1.0/creators")
@@ -31,37 +32,23 @@ public class CreatorControllerTests {
     public void testGetCreatorById() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"login\": \"Creator2019\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
+                .body("{ \"login\": \"newCreator12\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
                 .when()
                 .post("/api/v1.0/creators")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        long CreatorId = response.jsonPath().getLong("id");
+        long creatorId = response.jsonPath().getLong("id");
         given()
-                .pathParam("id", CreatorId)
+                .pathParam("id", creatorId)
                 .when()
                 .get("/api/v1.0/creators/{id}")
                 .then()
                 .statusCode(200);
-    }
-
-    @Test
-    public void testDeleteCreator() {
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body("{ \"login\": \"Creator2019\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
-                .when()
-                .post("/api/v1.0/creators")
-                .then()
-                .statusCode(201)
-                .extract().response();
-
-        long CreatorId = response.jsonPath().getLong("id");
 
         given()
-                .pathParam("id", CreatorId)
+                .pathParam("id", creatorId)
                 .when()
                 .delete("/api/v1.0/creators/{id}")
                 .then()
@@ -69,30 +56,40 @@ public class CreatorControllerTests {
     }
 
     @Test
-    public void testSaveCreator() {
-        given()
-                .contentType(ContentType.JSON)
-                .body("{ \"login\": \"Creator2019\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
-                .when()
-                .post("/api/v1.0/creators")
-                .then()
-                .statusCode(201);
-    }
-
-    @Test
-    public void testUpdateCreator() {
+    public void testDeleteCreator() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"login\": \"Creator2019\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
+                .body("{ \"login\": \"newCreator1111\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
                 .when()
                 .post("/api/v1.0/creators")
                 .then()
                 .statusCode(201)
                 .extract().response();
 
-        long CreatorId = response.jsonPath().getLong("id");
+        long creatorId = response.jsonPath().getLong("id");
 
-        String body = "{ \"id\": " + CreatorId + ", \"login\": \"updatedCreator109\", \"password\": \"updatedPass5907\", \"firstname\": \"updatedFirstname7007\", \"lastname\": \"updatedLastname3768\" }";
+        given()
+                .pathParam("id", creatorId)
+                .when()
+                .delete("/api/v1.0/creators/{id}")
+                .then()
+                .statusCode(204);
+    }
+
+    @Test
+    public void testUpdateCreator() {
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"login\": \"newCreator111\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }")
+                .when()
+                .post("/api/v1.0/creators")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        long creatorId = response.jsonPath().getLong("id");
+
+        String body = "{ \"id\": " + creatorId + ", \"login\": \"updatedCreator1091\", \"password\": \"updatedPass5907\", \"firstname\": \"updatedFirstname7007\", \"lastname\": \"updatedLastname3768\" }";
 
         given()
                 .contentType(ContentType.JSON)
@@ -101,7 +98,14 @@ public class CreatorControllerTests {
                 .put("/api/v1.0/creators")
                 .then()
                 .statusCode(200)
-                .body("login", equalTo("updatedCreator109"));
+                .body("login", equalTo("updatedCreator1091"));
+
+        given()
+                .pathParam("id", creatorId)
+                .when()
+                .delete("/api/v1.0/creators/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
@@ -124,8 +128,8 @@ public class CreatorControllerTests {
                 .delete("/api/v1.0/creators/{id}")
                 .then()
                 .statusCode(400)
-                .body("errorMessage", equalTo("The Creator has not been deleted"))
-                .body("errorCode", equalTo(40003));
+                .body("errorMessage", equalTo("Creator not found!"))
+                .body("errorCode", equalTo(40004));
     }
 
     @Test
@@ -137,5 +141,57 @@ public class CreatorControllerTests {
                 .post("/api/v1.0/creators")
                 .then()
                 .statusCode(400);
+    }
+
+    @Test
+    public void testFindAllOrderById(){
+        String body = "{ \"login\": \"111\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }";
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/creators")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer creatorId1 = response.jsonPath().getInt("id");
+
+        body = "{ \"login\": \"zzzzz-is-very-very-very-very-very-very-long-more-than-64-symbols\", \"password\": \"pass6459\", \"firstname\": \"firstname4155\", \"lastname\": \"lastname7290\" }";
+        response = given()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .post("/api/v1.0/creators")
+                .then()
+                .statusCode(201)
+                .extract().response();
+
+        Integer creatorId2 = response.jsonPath().getInt("id");
+        String uri = "/api/v1.0/creators?pageNumber=0&pageSize=10&sortBy=id&sortOrder=desc";
+        Integer content = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get(uri)
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("[0].id");
+
+        assertEquals(creatorId2, content);
+
+        given()
+                .pathParam("id", creatorId1)
+                .when()
+                .delete("/api/v1.0/creators/{id}")
+                .then()
+                .statusCode(204);
+
+        given()
+                .pathParam("id", creatorId2)
+                .when()
+                .delete("/api/v1.0/creators/{id}")
+                .then()
+                .statusCode(204);
     }
 }
