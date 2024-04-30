@@ -1,5 +1,7 @@
 using Cassandra;
 using Cassandra.Mapping;
+using Confluent.Kafka;
+using Discussion.Infrastructure.Kafka;
 using Discussion.Mapper;
 using Discussion.Models.DTOs.Configurations;
 using Discussion.Repositories.implementations;
@@ -14,7 +16,10 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.Services.Configure<ProducerConfig>(builder.Configuration.GetRequiredSection("Kafka:Producer"));
+        builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetRequiredSection("Kafka:Consumer"));
+        builder.Services.AddSingleton<MessageProcessor>();
+        builder.Services.AddHostedService<ConsumerService>();
         var mappingConfig = new MappingConfiguration().Define(new CassandraMappings());
 
 // Создание кластера Cassandra с использованием объекта конфигурации маппинга
@@ -29,15 +34,16 @@ public class Program
 // Создание объекта маппера с использованием сессии и конфигурации маппинга
         var mapper = new Cassandra.Mapping.Mapper(session, mappingConfig);
 
+        
 
 
 // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddAutoMapper(typeof(PostMapper));
 
-        builder.Services.AddSingleton<IPostRepository, PostRepository>();
+        builder.Services.AddTransient<IPostRepository, PostRepository>();
 
-        builder.Services.AddScoped<IPostService,PostService>();
+        builder.Services.AddTransient<IPostService,PostService>();
 
         builder.Services.AddSingleton<IMapper>(mapper);
 

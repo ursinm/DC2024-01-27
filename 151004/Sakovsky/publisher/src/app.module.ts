@@ -16,6 +16,7 @@ import { MarkerModule } from "./marker/marker.module";
 import redisConfig from "./redisConfig";
 import { TweetModule } from "./tweet/tweet.module";
 import { TTL } from "./utils/redis/globalRedis";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import { TTL } from "./utils/redis/globalRedis";
             database: "dc",
             schema: "distcomp",
             entities: [Author, Tweet, Comment, Marker],
-            synchronize: true,
+            synchronize: false,
         }),
         AuthorModule,
         TweetModule,
@@ -53,6 +54,7 @@ import { TTL } from "./utils/redis/globalRedis";
                 return {store}
             },
         }),
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],
