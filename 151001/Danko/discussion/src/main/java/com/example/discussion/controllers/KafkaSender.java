@@ -1,4 +1,4 @@
-package com.example.discussion;
+package com.example.discussion.controllers;
 
 
 import com.example.discussion.dto.MessageResponseTo;
@@ -12,7 +12,7 @@ public class KafkaSender {
     @Autowired
     private KafkaTemplate<String, MessageResponseTo> kafkaTemplate;
 
-    public void sendMessage(MessageResponseTo messageResponseTo, String topicName) {
+    void sendMessage(MessageResponseTo messageResponseTo, String topicName) {
         kafkaTemplate.send(topicName, messageResponseTo);
     }
 }
