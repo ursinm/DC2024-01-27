@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = "/api/v1.0/tweets")
+@RequestMapping(value = "/api/v1.0/issues")
 @RequiredArgsConstructor
 public class TweetController {
 

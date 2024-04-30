@@ -12,7 +12,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1.0/editors")
+@RequestMapping(value = "/api/v1.0/creators")
 public class EditorController {
 
     private final EditorService editorService;
