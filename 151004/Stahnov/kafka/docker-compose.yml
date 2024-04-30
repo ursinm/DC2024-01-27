@@ -62,14 +62,37 @@ services:
       - kafka
       - zookeeper
 
-  cache:
+  redis:
     image: "redis"
     ports:
       - "6379:6379"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+      - PASSWORD = redis
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
 
+  discussion:
+    build:
+      context: ./discussion
+      dockerfile: Dockerfile
+    ports:
+      - "24130:24130"
+    depends_on:
+      cassandra:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  publicator:
+    build:
+      context: ./publicator
+      dockerfile: Dockerfile
+
+    ports:
+      - "24110:24110"
+    depends_on:
+      - postgres
+      - kafka
 
 #  discussion:
 #    image: discussion
