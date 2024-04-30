@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  cassandra1:
+    image: 'bitnami/cassandra:latest'
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_USER=admin
+      - CASSANDRA_PASSWORD=admin
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+
+volumes:
+  cassandra-data:
