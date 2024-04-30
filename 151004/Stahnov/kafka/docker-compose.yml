@@ -10,6 +10,7 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+
   cassandra:
     image: cassandra
     volumes:
@@ -19,6 +20,11 @@ services:
       - CQLSH_PORT=9042
     ports:
       - "9042:9042"
+    healthcheck:
+      test: [ "CMD-SHELL", "[ $$(nodetool statusgossip) = running ]" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -63,3 +69,23 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+
+
+#  discussion:
+#    image: discussion
+#    ports:
+#      - "24130:24130"
+#    depends_on:
+#      cassandra:
+#        condition: service_healthy
+#      kafka:
+#        condition: service_started
+#
+#  publicator:
+#    image: publicator
+#    ports:
+#      - "24110:24110"
+#    depends_on:
+#      - postgres
+#      - kafka
+
