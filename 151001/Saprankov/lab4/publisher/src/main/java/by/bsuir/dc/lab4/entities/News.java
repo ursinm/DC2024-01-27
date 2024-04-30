@@ -13,7 +13,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="news",schema = "distcomp")
+@Table(name="tbl_news",schema = "public")
 public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
