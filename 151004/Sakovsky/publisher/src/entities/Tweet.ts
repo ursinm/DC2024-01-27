@@ -1,5 +1,5 @@
 import { TweetRequestToCreate } from "src/dto/request/TweetRequestToCreate";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, TableForeignKey } from "typeorm";
 import { Author } from "./Author";
 
 @Entity({name: 'tbl_tweets'})
@@ -11,13 +11,16 @@ export class Tweet {
     @ManyToOne(() => Author, (author) => author.id)
     authorId: number;
 
+    @ManyToOne(() => Author, author => author.id)
+    author: Author
+
     @Column({unique: true})
     title: string;
 
     @Column()
     content: string;
 
-    @Column({nullable: false, default: new Date().toISOString().slice(0, 19).replace("T", " ")})
+    @Column({nullable: false, default: new Date()})
     created: Date;
 
     @Column({nullable: true, default: null})

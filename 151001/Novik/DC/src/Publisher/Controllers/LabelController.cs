@@ -33,6 +33,10 @@ public class LabelsController : ControllerBase
     public async Task<ActionResult<LabelResponseTo>> GetById([FromRoute]int id)
     {
         var user = await _labelService.GetByIdAsync(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
         return Ok(user);
         /*try
         {
