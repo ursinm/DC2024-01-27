@@ -11,6 +11,6 @@ public class PostRequestTo
     [StringLength(2048, MinimumLength = 2)]
     public String? content { get; set; }
     
-    public string? country { get; set; }
+    public String? country { get; set; }
 
 }

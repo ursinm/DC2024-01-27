@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Publisher.Infrastructure.Redis.Interfaces;
 using Publisher.Models.DTOs.Requests;
 using Publisher.Models.DTOs.Responses;
 using Publisher.Models.Entity;
@@ -11,55 +12,61 @@ public class NewsService : INewsService
 {
     private readonly INewsRepository _newsRepository;
     private readonly IMapper _newsMapper;
-
-    public NewsService(INewsRepository newsRepository,IMapper newsMapper)
+    private readonly ICacheService _cacheService;
+    
+    private const string Prefix = "news-";
+    public NewsService(INewsRepository newsRepository,IMapper newsMapper, ICacheService cacheService)
     {
         _newsMapper = newsMapper;
         _newsRepository = newsRepository;
+        _cacheService = cacheService;
     }
-    
     public async Task<IEnumerable<NewsResponseTo>> GetAllAsync()
     {
-        var newsEntities = await _newsRepository.GetAllAsync();
-        return _newsMapper.Map<IEnumerable<NewsResponseTo>>(newsEntities);
+        var newss = (await _newsRepository.GetAllAsync()).ToList();
+        var result = new List<NewsResponseTo>(newss.Count);
+
+        foreach (var news in newss)
+        {
+            await _cacheService.SetAsync(Prefix + news.id, news);
+            result.Add(_newsMapper.Map<NewsResponseTo>(news));
+        }
+
+        return result;
     }
 
     public async Task<NewsResponseTo?>? GetByIdAsync(long id)
     {
-        var newsEntity = await _newsRepository.GetByIdAsync(id);
-        if (newsEntity == null)
-        {
-            throw new KeyNotFoundException($"User with ID {id} not found.");
-        }
-        return _newsMapper.Map<NewsResponseTo>(newsEntity);
+        var foundEditor = await _cacheService.GetAsync(Prefix + id,
+            async () => await _newsRepository.GetByIdAsync(id));
+
+        return _newsMapper.Map<NewsResponseTo>(foundEditor);
     }
 
     public async Task<NewsResponseTo> AddAsync(NewsRequestTo newsRequest)
     {
         var newsEntity = _newsMapper.Map<News>(newsRequest);
         newsEntity = await _newsRepository.AddAsync(newsEntity);
+        await _cacheService.SetAsync(Prefix + newsEntity.id, newsEntity);
         return _newsMapper.Map<NewsResponseTo>(newsEntity);
     }
 
     public async Task<NewsResponseTo> UpdateAsync(NewsRequestTo newsRequest)
     {
-        var existingNews = await _newsRepository.Exists(newsRequest.id);
-        if (!existingNews)
-        {
-            throw new KeyNotFoundException($"User with ID {newsRequest.id} not found.");
-        }
+        if (newsRequest == null) throw new ArgumentNullException(nameof(newsRequest));
+        var news = _newsMapper.Map<News>(newsRequest);
 
-        var updatedNews = _newsMapper.Map<News>(newsRequest);
-        return _newsMapper.Map<NewsResponseTo>(await _newsRepository.UpdateAsync(updatedNews));
+
+        var updatedEditor = await _newsRepository.UpdateAsync(news);
+
+        await _cacheService.SetAsync(Prefix + updatedEditor.id, updatedEditor);
+
+        return _newsMapper.Map<NewsResponseTo>(updatedEditor);
     }
 
     public async Task DeleteAsync(long id)
     {
-        var existingNews = await _newsRepository.Exists(id);
-        if (!existingNews)
-        {
-            throw new KeyNotFoundException($"User with ID {id} not found.");
-        }
+        await _cacheService.RemoveAsync(Prefix + id);
         await _newsRepository.DeleteAsync(id);
     }
     
