@@ -17,6 +17,11 @@ public class ApiException extends IOException {
         this.errorMessage = errorMessage;
     }
 
+    public ApiException(ErrorInfo errorInfo) {
+        statusCode = errorInfo.code();
+        errorMessage = errorInfo.message();
+    }
+
     public int getHttpStatusCode() {
         return statusCode/100;
     }
