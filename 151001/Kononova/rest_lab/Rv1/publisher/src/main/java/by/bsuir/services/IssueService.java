@@ -14,6 +14,7 @@ import by.bsuir.repository.UserRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @Validated
+@CacheConfig(cacheNames = "issueCache")
 public class IssueService {
 
     @Autowired
@@ -37,11 +39,13 @@ public class IssueService {
     @Autowired
     UserRepository userRepository;
 
+    @Cacheable(value = "issues", key = "#id", unless = "#result == null")
     public IssueResponseTo getIssueById(@Min(0) Long id) throws NotFoundException{
         Optional<Issue> issue = issueDao.findById(id);
         return issue.map(value -> issueMapper.issueToIssueResponse(value)).orElseThrow(() -> new NotFoundException("Issue not found!", 40004L));
     }
 
+    @Cacheable(cacheNames = "issues")
     public List<IssueResponseTo> getIssues(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
         if (sortOrder!=null && sortOrder.equals("asc")){
@@ -53,6 +57,7 @@ public class IssueService {
         return issueListMapper.toIssueResponseList(issues.toList());
     }
 
+    @CacheEvict(cacheNames = "issues", allEntries = true)
     public IssueResponseTo saveIssue(@Valid IssueRequestTo issue) throws DuplicationException {
         Issue issueToSave = issueMapper.issueRequestToIssue(issue);
         if (issueDao.existsByTitle(issueToSave.getTitle())) {
@@ -64,6 +69,7 @@ public class IssueService {
         return issueMapper.issueToIssueResponse(issueDao.save(issueToSave));
     }
 
+    @CacheEvict(cacheNames = "issues", allEntries = true)
     public IssueResponseTo updateIssue(@Valid IssueRequestTo issue) throws UpdateException {
         Issue issueToUpdate = issueMapper.issueRequestToIssue(issue);
         if (!issueDao.existsById(issue.getId())) {
@@ -80,6 +86,8 @@ public class IssueService {
         return issueListMapper.toIssueResponseList(issueDao.findIssuesByParams( userLogin, title, content));
     }
 
+    @Caching(evict = { @CacheEvict(cacheNames = "issues", key = "#id"),
+            @CacheEvict(cacheNames = "issues", allEntries = true) })
     public void deleteIssue(@Min(0) Long id) throws DeleteException {
         if (!issueDao.existsById(id)) {
             throw new DeleteException("Issue not found!", 40004L);

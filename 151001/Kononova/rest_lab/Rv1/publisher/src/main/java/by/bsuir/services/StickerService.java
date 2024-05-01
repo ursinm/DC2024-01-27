@@ -12,6 +12,10 @@ import by.bsuir.repository.StickerRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +28,7 @@ import java.util.Optional;
 
 @Service
 @Validated
+@CacheConfig(cacheNames = "stickerCache")
 public class StickerService {
 
     @Autowired
@@ -33,11 +38,13 @@ public class StickerService {
     @Autowired
     StickerListMapper StickerListMapper;
 
+    @Cacheable(cacheNames = "stickers", key = "#id", unless = "#result == null")
     public StickerResponseTo getStickerById(@Min(0) Long id) throws NotFoundException {
         Optional<Sticker> Sticker = stickerDao.findById(id);
         return Sticker.map(value -> StickerMapper.StickerToStickerResponse(value)).orElseThrow(() -> new NotFoundException("Sticker not found!", 40004L));
     }
 
+    @Cacheable(cacheNames = "stickers")
     public List<StickerResponseTo> getStickers(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Pageable pageable;
         if (sortOrder!=null && sortOrder.equals("asc")){
@@ -49,11 +56,13 @@ public class StickerService {
         return StickerListMapper.toStickerResponseList(stickers.toList());
     }
 
+    @CacheEvict(cacheNames = "stickers", allEntries = true)
     public StickerResponseTo saveSticker(@Valid StickerRequestTo Sticker) {
         Sticker stickerToSave = StickerMapper.StickerRequestToSticker(Sticker);
         return StickerMapper.StickerToStickerResponse(stickerDao.save(stickerToSave));
     }
 
+    @CacheEvict(cacheNames = "stickers", allEntries = true)
     public StickerResponseTo updateSticker(@Valid StickerRequestTo Sticker) throws UpdateException {
         Sticker stickerToUpdate = StickerMapper.StickerRequestToSticker(Sticker);
         if (!stickerDao.existsById(stickerToUpdate.getId())){
@@ -68,6 +77,8 @@ public class StickerService {
         return StickerListMapper.toStickerResponseList(sticker);
     }
 
+    @Caching(evict = { @CacheEvict(cacheNames = "stickers", key = "#id"),
+            @CacheEvict(cacheNames = "stickers", allEntries = true) })
     public void deleteSticker(@Min(0) Long id) throws DeleteException {
         if (!stickerDao.existsById(id)) {
             throw new DeleteException("Sticker not found!", 40004L);
