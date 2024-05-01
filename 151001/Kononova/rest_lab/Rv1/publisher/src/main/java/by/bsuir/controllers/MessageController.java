@@ -2,6 +2,10 @@ package by.bsuir.controllers;
 
 import by.bsuir.dto.MessageRequestTo;
 import by.bsuir.dto.MessageResponseTo;
+import by.bsuir.exceptions.NotFoundException;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +13,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -17,12 +22,21 @@ public class MessageController {
 
     @Autowired
     private RestClient restClient;
+
+    @Autowired
+    private KafkaConsumer<String, MessageResponseTo> kafkaConsumer;
+    @Autowired
+    private KafkaSender kafkaSender;
+    private String inTopic = "InTopic";
+    private String outTopic = "OutTopic";
+
     private String uriBase = "http://localhost:24130/api/v1.0/messages";
 
     private static final int SUCCESS_CODE = 200;
 
     @GetMapping
-    public ResponseEntity<List<?>> getMessages(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<List<?>> getComments() {
+        //kafkaSender.sendCustomMessage();
         return ResponseEntity.status(SUCCESS_CODE).body(restClient.get()
                 .uri(uriBase)
                 .retrieve()
@@ -30,35 +44,29 @@ public class MessageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MessageResponseTo> getMessage(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
-        return ResponseEntity.status(SUCCESS_CODE).body(restClient.get()
-                .uri(uriBase + "/" + id)
-                .retrieve()
-                .body(MessageResponseTo.class));
+    public ResponseEntity<MessageResponseTo> getMessage(@PathVariable Long id) throws NotFoundException {
+        MessageRequestTo messageRequestTo = new MessageRequestTo();
+        messageRequestTo.setMethod("GET");
+        messageRequestTo.setId(id);
+        kafkaSender.sendCustomMessage(messageRequestTo, inTopic);
+
+        return ResponseEntity.status(200).body(listenKafka());
     }
 
     @PostMapping
-    public ResponseEntity<MessageResponseTo> saveMessage(@RequestHeader HttpHeaders headers, @RequestBody MessageRequestTo comment) {
-        return ResponseEntity.status(201).body(restClient.post()
-                .uri(uriBase)
-                .contentType(MediaType.APPLICATION_JSON)
-                .contentLength(49)
-                .body(comment)
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
-                .retrieve()
-                .body(MessageResponseTo.class));
+    public ResponseEntity<MessageResponseTo> saveMessage(@RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguageHeader, @RequestBody MessageRequestTo message) throws NotFoundException {
+        message.setCountry(acceptLanguageHeader);
+        message.setMethod("POST");
+        kafkaSender.sendCustomMessage(message, inTopic);
+        return ResponseEntity.status(201).body(listenKafka());
     }
 
     @PutMapping
-    public ResponseEntity<MessageResponseTo> updateMessage(@RequestHeader HttpHeaders headers, @RequestBody MessageRequestTo comment) {
-        return ResponseEntity.status(SUCCESS_CODE).body(restClient.put()
-                .uri(uriBase)
-                .contentType(MediaType.APPLICATION_JSON)
-                .contentLength(62)
-                .body(comment)
-                .headers(httpHeaders -> httpHeaders.addAll(headers))
-                .retrieve()
-                .body(MessageResponseTo.class));
+    public ResponseEntity<MessageResponseTo> updateMessage(@RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguageHeader, @RequestBody MessageRequestTo message) throws NotFoundException {
+        message.setCountry(acceptLanguageHeader);
+        message.setMethod("PUT");
+        kafkaSender.sendCustomMessage(message, inTopic);
+        return ResponseEntity.status(200).body(listenKafka());
     }
 
     @GetMapping("/byIssue/{id}")
@@ -71,10 +79,31 @@ public class MessageController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMessage(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(restClient.delete()
-                .uri(uriBase + "/" + id)
-                .retrieve()
-                .toBodilessEntity().getBody());
+    public ResponseEntity<Void> deleteMessage(@PathVariable Long id) throws NotFoundException {
+        MessageRequestTo messageRequestTo = new MessageRequestTo();
+        messageRequestTo.setMethod("DELETE");
+        messageRequestTo.setId(id);
+        kafkaSender.sendCustomMessage(messageRequestTo, inTopic);
+        listenKafka();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    private MessageResponseTo listenKafka() throws NotFoundException {
+        ConsumerRecords<String, MessageResponseTo> records = kafkaConsumer.poll(Duration.ofMillis(50000));
+        for (ConsumerRecord<String, MessageResponseTo> record : records) {
+
+            String key = record.key();
+            MessageResponseTo value = record.value();
+            if (value == null) {
+                throw new NotFoundException("Not found", 40400L);
+            }
+            long offset = record.offset();
+            int partition = record.partition();
+            System.out.println("Received message: key = " + key + ", value = " + value +
+                    ", offset = " + offset + ", partition = " + partition);
+
+            return value;
+        }
+        return null;
     }
 }
