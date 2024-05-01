@@ -7,6 +7,9 @@ import by.bsuir.publisher.model.Sticker;
 import by.bsuir.publisher.repository.StickerRepository;
 import by.bsuir.publisher.service.mapper.StickerMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class StickerService {
         return stickerMapper.toDto(stickerRepository.findAll());
     }
 
+    @CacheEvict(value = "sticker", key = "#id")
     public void deleteById(Long id) {
         Sticker entity = stickerRepository
                 .findById(id)
@@ -32,12 +36,14 @@ public class StickerService {
         stickerRepository.delete(entity);
     }
 
+    @CachePut(value = "sticker", key = "#result.id()")
     public StickerResponseDto create(StickerRequestDto dto) {
         Sticker newEntity = stickerMapper.toEntity(dto);
         return stickerMapper.toDto(stickerRepository.save(newEntity));
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "sticker", key = "#id")
     public StickerResponseDto getById(Long id) {
         Sticker entity = stickerRepository
                 .findById(id)
@@ -45,6 +51,7 @@ public class StickerService {
         return stickerMapper.toDto(entity);
     }
 
+    @CachePut(value = "sticker", key = "#result.id()")
     public StickerResponseDto update(StickerRequestDto dto) {
         Sticker entity = stickerRepository
                 .findById(dto.id())

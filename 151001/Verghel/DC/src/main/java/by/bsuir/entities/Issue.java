@@ -5,19 +5,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "tbl_issue", schema = "distcomp")
 public class Issue {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "title")
     private String title;
+    @Column(name = "content")
     private String content;
+    @Column(name = "created")
     private Timestamp created;
+    @Column(name = "modified")
     private Timestamp modified;
-    private Long creatorId;
-    private Long labelId;
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private Creator creator;
+
 }

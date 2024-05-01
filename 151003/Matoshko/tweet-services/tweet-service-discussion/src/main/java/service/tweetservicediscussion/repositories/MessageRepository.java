@@ -15,4 +15,7 @@ public interface MessageRepository extends CassandraRepository<Message, Long> {
 
     @AllowFiltering
     boolean existsById(@NonNull Long id);
+
+    @AllowFiltering
+    void deleteMessageByIdAndTweetId(@NonNull Long id, @NonNull Long tweetId);
 }

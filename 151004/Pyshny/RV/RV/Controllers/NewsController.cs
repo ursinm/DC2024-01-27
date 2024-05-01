@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using Npgsql;
 using RV.Models;
 using RV.Services.DataProviderServices;
@@ -18,10 +21,12 @@ namespace RV.Controllers
     public class NewsController : ControllerBase
     {
         private readonly IDataProvider _context;
+        private readonly IDistributedCache _cache;
 
-        public NewsController(IDataProvider context)
+        public NewsController(IDataProvider context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -33,6 +38,9 @@ namespace RV.Controllers
         [HttpGet("{id}")]
         public IActionResult GetNew(int id)
         {
+            var res = _cache.GetString("news_" + id.ToString());
+            if(res!= null)
+                return StatusCode(200, JsonConvert.DeserializeObject<NewsDTO>(res));
             return StatusCode(200, _context.GetNew(id));
         }
 
@@ -41,7 +49,12 @@ namespace RV.Controllers
         {
             try
             {
-                return StatusCode(200, _context.UpdateNews(news));
+                var newNews = _context.UpdateNews(news);
+                _cache.SetString("news_" + newNews.id.ToString(), JsonConvert.SerializeObject(newNews), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+                return StatusCode(200, newNews);
             }
             catch (DbUpdateException ex)
             {
@@ -62,7 +75,12 @@ namespace RV.Controllers
         {
             try
             {
-                return StatusCode(201, _context.CreateNews(news));
+                var newNews = _context.CreateNews(news);
+                _cache.SetString("news_" + newNews.id.ToString(), JsonConvert.SerializeObject(newNews), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+                return StatusCode(201, newNews);
             }
             catch (DbUpdateException ex)
             {
@@ -92,8 +110,10 @@ namespace RV.Controllers
             int res = _context.DeleteNews(id);
             if (res == 0)
                 return StatusCode(400);
-            else
+            else { 
+                _cache.Remove("news_" + id.ToString());
                 return StatusCode(204);
+            }
         }
     }
 }

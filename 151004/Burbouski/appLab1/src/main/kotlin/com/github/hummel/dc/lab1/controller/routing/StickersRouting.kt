@@ -1,10 +1,10 @@
 package com.github.hummel.dc.lab1.controller.routing
 
-import com.github.hummel.dc.lab1.util.Response
 import com.github.hummel.dc.lab1.controller.respond
 import com.github.hummel.dc.lab1.dto.request.StickerRequestTo
 import com.github.hummel.dc.lab1.dto.request.StickerRequestToId
 import com.github.hummel.dc.lab1.service.StickerService
+import com.github.hummel.dc.lab1.util.Response
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -32,9 +32,13 @@ private fun Route.checkStickers(stickersService: StickerService) {
 		respond(isCorrect = {
 			stickers.isNotEmpty()
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, stickers)
+			call.respond(
+				status = HttpStatusCode.OK, stickers
+			)
 		}, onIncorrect = {
-			call.respond(status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value))
+			call.respond(
+				status = HttpStatusCode.OK, Response(HttpStatusCode.OK.value)
+			)
 		})
 	}
 }
@@ -52,7 +56,9 @@ private fun Route.createSticker(stickersService: StickerService) {
 		respond(isCorrect = {
 			sticker != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.Created, sticker ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.Created, sticker ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -72,7 +78,9 @@ private fun Route.getSticker(stickersService: StickerService) {
 		respond(isCorrect = {
 			sticker != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, sticker ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, sticker ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)
@@ -116,7 +124,9 @@ private fun Route.updateSticker(stickersService: StickerService) {
 		respond(isCorrect = {
 			sticker != null
 		}, onCorrect = {
-			call.respond(status = HttpStatusCode.OK, sticker ?: return@respond)
+			call.respond(
+				status = HttpStatusCode.OK, sticker ?: return@respond
+			)
 		}, onIncorrect = {
 			call.respond(
 				status = HttpStatusCode.BadRequest, Response(HttpStatusCode.BadRequest.value)

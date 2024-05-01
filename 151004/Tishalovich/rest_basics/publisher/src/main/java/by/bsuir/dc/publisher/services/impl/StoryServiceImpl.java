@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -25,6 +24,8 @@ public class StoryServiceImpl implements StoryService {
     private final StoryDao dao;
 
     private final StoryMapper mapper;
+
+    private final RedisStoryService redisService;
 
     @Override
     public StoryResponseTo create(StoryRequestTo requestTo) throws ApiException {
@@ -39,20 +40,28 @@ public class StoryServiceImpl implements StoryService {
                     e.getMessage()
             );
         }
-        return mapper.modelToResponse(savingRes);
+
+        StoryResponseTo res = mapper.modelToResponse(savingRes);
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
     public List<StoryResponseTo> getAll() {
-        Iterable<Story> models = dao.findAll();
         return StreamSupport
-                .stream(models.spliterator(), false)
-                .map(mapper::modelToResponse)
-                .collect(Collectors.toList());
+                .stream(redisService.findAll().spliterator(), false)
+                .toList();
     }
 
     @Override
     public StoryResponseTo get(Long id) throws ApiException {
+        Optional<StoryResponseTo> cachedStory = redisService.findById(id);
+        if (cachedStory.isPresent()) {
+            return cachedStory.get();
+        }
+
         Optional<Story> author = dao.findById(id);
 
         if (author.isEmpty()) {
@@ -63,7 +72,11 @@ public class StoryServiceImpl implements StoryService {
             );
         }
 
-        return mapper.modelToResponse(author.get());
+        StoryResponseTo res = mapper.modelToResponse(author.get());
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
@@ -79,7 +92,11 @@ public class StoryServiceImpl implements StoryService {
         //    );
         //}
 
-        return mapper.modelToResponse(updateRes);
+        StoryResponseTo res = mapper.modelToResponse(updateRes);
+
+        redisService.save(res);
+
+        return res;
     }
 
     @Override
@@ -93,6 +110,8 @@ public class StoryServiceImpl implements StoryService {
         }
 
         dao.deleteById(id);
+
+        redisService.deleteById(id);
     }
 
 }
