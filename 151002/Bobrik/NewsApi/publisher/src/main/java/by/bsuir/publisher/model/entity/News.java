@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Getter
@@ -23,10 +24,10 @@ public class News {
     private String content;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    private Date created;
 
     @Column(name = "modified")
-    private LocalDateTime modified;
+    private Date modified;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "editor_id")

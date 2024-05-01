@@ -8,6 +8,7 @@ import services.tweetservice.domain.response.MessageResponseTo;
 import services.tweetservice.exceptions.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MessageServicePublisher {
     @Validated(ValidationMarker.OnCreate.class)
@@ -20,5 +21,5 @@ public interface MessageServicePublisher {
 
     Long delete(Long id) throws ServiceException;
 
-    MessageResponseTo findMessageById(Long id);
+    Optional<MessageResponseTo> findMessageById(Long id);
 }

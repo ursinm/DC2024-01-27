@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace RV.Models
 {
@@ -14,7 +15,12 @@ namespace RV.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=distcomp;Username=postgres;Password=postgres");
+            var masterConnectionString = new NpgsqlConnectionStringBuilder();
+            masterConnectionString.Host = "mypostgres";
+            masterConnectionString.Port = 5432;
+            masterConnectionString.Username = "postgres";
+            masterConnectionString.Password = "postgres";
+            optionsBuilder.UseNpgsql(masterConnectionString.ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
