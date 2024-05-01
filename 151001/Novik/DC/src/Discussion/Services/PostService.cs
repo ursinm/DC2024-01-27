@@ -26,13 +26,13 @@ public class PostService : IPostService
         return res;
     }
 
-    public async Task<PostResponseTo?>? GetByIdAsync(long id)
+    public async Task<PostResponseTo?> GetByIdAsync(long id)
     {
         var postEntity = await _postRepository.GetByIdAsync(id);
-        if (postEntity == null)
+        /*if (postEntity == null)
         {
             throw new KeyNotFoundException($"User with ID {id} not found.");
-        }
+        }*/
         return _postMapper.Map<PostResponseTo>(postEntity);
     }
 
@@ -50,10 +50,10 @@ public class PostService : IPostService
     public async Task<PostResponseTo> UpdateAsync(PostRequestTo postRequest, string country)
     {
         var existingpost = await _postRepository.Exists(postRequest.id);
-        if (!existingpost)
+        /*if (!existingpost)
         {
             throw new KeyNotFoundException($"User with ID {postRequest.id} not found.");
-        }
+        }*/
 
         var updatedpost = _postMapper.Map<Post>(postRequest);
         updatedpost.country = country;
@@ -63,10 +63,10 @@ public class PostService : IPostService
     public async Task DeleteAsync(long id)
     {
         var existingpost = await _postRepository.Exists(id);
-        if (!existingpost)
+        /*if (!existingpost)
         {
             throw new KeyNotFoundException($"User with ID {id} not found.");
-        }
+        }*/
         await _postRepository.DeleteAsync(id);
     }
 
