@@ -61,6 +61,7 @@ public class NoteService {
         }
     }
 
+    @CacheEvict(cacheNames = "notes", allEntries = true)
     public NoteAddedResponseTo saveNote(NoteRequestTo noteTO) throws EntityNotFoundException, DuplicateEntityException, InterruptedException {
         Optional<Tweet> tweet = tweetRepository.findById(noteTO.getIssueId());
         if (tweet.isEmpty()){

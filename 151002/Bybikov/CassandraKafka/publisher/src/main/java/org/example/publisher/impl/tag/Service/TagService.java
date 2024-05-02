@@ -11,6 +11,10 @@ import org.example.publisher.impl.tag.mapper.Impl.TagMapperImpl;
 import org.example.publisher.impl.tweet.Tweet;
 import org.example.publisher.impl.tweet.TweetRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@CacheConfig(cacheNames= "labelsCache")
 public class TagService {
 
     private final TagRepository tagRepository;
@@ -29,6 +34,7 @@ public class TagService {
     private final TagMapperImpl tagMapper;
     private final String ENTITY_NAME = "tag";
 
+    @Cacheable(cacheNames= "labels")
     public List<TagResponseTo> getTags() {
         List<Tag> tags = tagRepository.findAll();
         List<TagResponseTo> tagsTos = new ArrayList<>();
@@ -39,6 +45,7 @@ public class TagService {
     }
 
 
+    @Cacheable(cacheNames= "labels", key = "#id", unless = "#result == null")
     public TagResponseTo getTagById(BigInteger id) throws EntityNotFoundException {
         Optional<Tag> tag = tagRepository.findById(id);
         if (tag.isEmpty()) {
@@ -48,6 +55,7 @@ public class TagService {
     }
 
 
+    @CacheEvict(cacheNames= "labels", allEntries = true)
     public TagResponseTo saveTag(TagRequestTo tag) throws DuplicateEntityException {
         List<Tweet> tweets = new ArrayList<>();
         if (tag.getTweetIds() != null) {
@@ -63,6 +71,7 @@ public class TagService {
 
     }
 
+    @CacheEvict(cacheNames= "labels", allEntries = true)
     public TagResponseTo updateTag(TagRequestTo tagRequestTo) throws EntityNotFoundException, DuplicateEntityException {
         Optional<Tag> stickerEntity = tagRepository.findById(tagRequestTo.getId());
         if (stickerEntity.isEmpty()) {
@@ -80,6 +89,8 @@ public class TagService {
         }
     }
 
+    @Caching(evict = { @CacheEvict(cacheNames= "labels", key = "#id"),
+            @CacheEvict(cacheNames= "labels", allEntries = true) })
     public void deleteTagById(BigInteger id) throws EntityNotFoundException {
         if (tagRepository.findById(id).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, id);

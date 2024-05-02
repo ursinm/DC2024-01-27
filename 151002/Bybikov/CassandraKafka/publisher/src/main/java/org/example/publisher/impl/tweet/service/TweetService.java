@@ -10,6 +10,10 @@ import org.example.publisher.impl.tweet.dto.TweetRequestTo;
 import org.example.publisher.impl.tweet.dto.TweetResponseTo;
 import org.example.publisher.impl.tweet.mapper.Impl.TweetMapperImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames= "issuesCache")
 public class TweetService {
 
     private final TweetRepository tweetRepository;
@@ -33,6 +38,7 @@ public class TweetService {
 
     private final String ENTITY_NAME = "tweet";
 
+    @Cacheable(cacheNames= "issues")
     public List<TweetResponseTo> getTweets() {
         List<Tweet> tweets = tweetRepository.findAll();
         List<TweetResponseTo> tweetResponseTos = new ArrayList<>();
@@ -43,6 +49,7 @@ public class TweetService {
         return tweetResponseTos;
     }
 
+    @Cacheable(cacheNames= "issues", key = "#id", unless = "#result == null")
     public TweetResponseTo getTweetById(BigInteger id) throws EntityNotFoundException {
         Optional<Tweet> tweet = tweetRepository.findById(id);
         if (tweet.isEmpty()) {
@@ -51,6 +58,7 @@ public class TweetService {
         return tweetMapper.tweetToResponseTo(tweet.get());
     }
 
+    @CacheEvict(cacheNames= "issues", allEntries = true)
     public TweetResponseTo saveTweet(TweetRequestTo tweetRequestTo) throws EntityNotFoundException, DuplicateEntityException {
         Optional<Editor> editor = editorRepository.findById(tweetRequestTo.getCreatorId());
         if (editor.isEmpty()) {
@@ -76,6 +84,7 @@ public class TweetService {
         }
     }
 
+    @CacheEvict(cacheNames= "issues", allEntries = true)
     public TweetResponseTo updateIssue(TweetRequestTo tweetRequestTo) throws EntityNotFoundException, DuplicateEntityException {
         if (tweetRepository.findById(tweetRequestTo.getId()).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, tweetRequestTo.getId());
@@ -102,6 +111,8 @@ public class TweetService {
         }
     }
 
+    @Caching(evict = { @CacheEvict(cacheNames= "issues", key = "#id"),
+            @CacheEvict(cacheNames= "issues", allEntries = true) })
     public void deleteIssue(BigInteger id) throws EntityNotFoundException {
         if (tweetRepository.findById(id).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, id);

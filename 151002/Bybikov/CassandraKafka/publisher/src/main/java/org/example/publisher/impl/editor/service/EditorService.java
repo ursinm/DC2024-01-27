@@ -8,6 +8,10 @@ import org.example.publisher.impl.editor.dto.EditorRequestTo;
 import org.example.publisher.impl.editor.dto.EditorResponseTo;
 import org.example.publisher.impl.editor.mapper.Impl.EditorMapperImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "creatorsCache")
 public class EditorService {
 
     private final EditorRepository editorRepository;
@@ -24,11 +29,13 @@ public class EditorService {
     private final EditorMapperImpl editorMapper;
     private final String ENTITY_NAME = "editor";
 
+    @Cacheable(cacheNames = "creators")
     public List<EditorResponseTo> getEditors(){
         List<Editor> editors = editorRepository.findAll();
         return editorMapper.editorToResponseTo(editors);
     }
 
+    @Cacheable(cacheNames = "creators", key = "#id", unless = "#result == null")
     public EditorResponseTo getEditorById(BigInteger id) throws EntityNotFoundException{
         Optional<Editor> editor = editorRepository.findById(id);
         if (editor.isEmpty()){
@@ -37,6 +44,7 @@ public class EditorService {
         return editorMapper.editorToResponseTo(editor.get());
     }
 
+    @CacheEvict(cacheNames = "creators", allEntries = true)
     public EditorResponseTo createEditor(EditorRequestTo editor) throws DuplicateEntityException {
         try {
             Editor savedEditor = editorRepository.save(editorMapper.dtoToEntity(editor));
@@ -47,6 +55,7 @@ public class EditorService {
         }
     }
 
+    @CacheEvict(cacheNames = "creators", allEntries = true)
     public EditorResponseTo updateEditor(EditorRequestTo editor) throws EntityNotFoundException {
         if (editorRepository.findById(editor.getId()).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, editor.getId());
@@ -55,7 +64,8 @@ public class EditorService {
         return editorMapper.editorToResponseTo(savedEditor);
     }
 
-
+    @Caching(evict = { @CacheEvict(cacheNames = "creators", key = "#id"),
+            @CacheEvict(cacheNames = "creators", allEntries = true) })
     public void deleteEditor(BigInteger id) throws EntityNotFoundException {
         if (editorRepository.findById(id).isEmpty()) {
             throw new EntityNotFoundException(ENTITY_NAME, id);
