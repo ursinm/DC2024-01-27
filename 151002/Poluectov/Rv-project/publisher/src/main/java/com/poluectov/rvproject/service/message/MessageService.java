@@ -16,15 +16,10 @@ import java.util.Optional;
 
 @Component
 public class MessageService extends CommonRestService<Message, MessageRequestTo, MessageResponseTo, Long> {
-
-
-    IssueService issueService;
     public MessageService(
             @Qualifier("kafkaMessageRepository") MessageRepository repository,
-            MessageRequestDtoConverter messageRequestDtoConverter,
-            IssueService issueService) {
+            MessageRequestDtoConverter messageRequestDtoConverter) {
         super(repository, messageRequestDtoConverter);
-        this.issueService = issueService;
     }
 
     protected Optional<MessageResponseTo> mapResponseTo(Message message) {
@@ -49,17 +44,5 @@ public class MessageService extends CommonRestService<Message, MessageRequestTo,
         Message updated = messageRepository.update(this.dtoConverter.convert(messageRequestTo));
 
         return mapResponseTo(updated);
-    }
-
-    @Override
-    public Optional<MessageResponseTo> create(MessageRequestTo messageRequestTo) {
-
-        Optional<IssueResponseTo> issue = issueService.one(messageRequestTo.getIssueId());
-
-        if (issue.isEmpty()){
-            throw new EntityNotFoundException("Issue with id " + messageRequestTo.getIssueId() + " not found");
-        }
-
-        return super.create(messageRequestTo);
     }
 }

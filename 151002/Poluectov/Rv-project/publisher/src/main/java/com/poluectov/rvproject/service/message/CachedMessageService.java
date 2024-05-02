@@ -32,10 +32,9 @@ public class CachedMessageService extends MessageService {
             @Qualifier("kafkaMessageRepository") MessageRepository repository,
             MessageRequestDtoConverter messageRequestDtoConverter,
             RedisCacheService<Long, MessageResponseTo> redisCacheService,
-            @Value("${redis.threads.count}") Integer threadsCount,
-            IssueService issueService
+            @Value("${redis.threads.count}") Integer threadsCount
     ) {
-        super(repository, messageRequestDtoConverter, issueService);
+        super(repository, messageRequestDtoConverter);
         this.redisCacheService = redisCacheService;
         this.executorService = Executors.newFixedThreadPool(threadsCount);
     }

@@ -3,8 +3,10 @@ package com.poluectov.rvproject.repository.kafka;
 import com.poluectov.rvproject.dto.KafkaMessageRequestTo;
 import com.poluectov.rvproject.dto.KafkaMessageResponseTo;
 import com.poluectov.rvproject.controller.kafka.Sender;
+import com.poluectov.rvproject.model.Issue;
 import com.poluectov.rvproject.model.Message;
 import com.poluectov.rvproject.model.RestError;
+import com.poluectov.rvproject.repository.IssueRepository;
 import com.poluectov.rvproject.repository.MessageRepository;
 import com.poluectov.rvproject.repository.exception.EntityNotFoundException;
 import jakarta.validation.ValidationException;
@@ -26,12 +28,16 @@ public class KafkaMessageRepository implements MessageRepository {
 
     String requestTopic;
 
+    IssueRepository issueRepository;
+
     public KafkaMessageRepository(Sender sender,
                                   @Value("${kafka.topic.message.response}") String responseTopic,
-                                  @Value("${kafka.topic.message.request}") String requestTopic) {
+                                  @Value("${kafka.topic.message.request}") String requestTopic,
+                                  IssueRepository issueRepository) {
         this.sender = sender;
         this.responseTopic = responseTopic;
         this.requestTopic = requestTopic;
+        this.issueRepository = issueRepository;
     }
 
     @Override
@@ -53,13 +59,20 @@ public class KafkaMessageRepository implements MessageRepository {
 
     @Override
     public Message save(Message entity) throws EntityNotFoundException {
+        Long issueId = entity.getIssueId();
+        Optional<Issue> issue = issueRepository.findById(issueId);
+
+        if (issue.isEmpty()){
+            throw new EntityNotFoundException("Issue with id " + issueId + " not found");
+        }
+
         entity.setId(getId());
         KafkaMessageRequestTo kafkaMessageRequestTo = KafkaMessageRequestTo.builder()
                 .method(SAVE.getValue())
                 .body(entity)
                 .build();
 
-        sender.send("message-request", kafkaMessageRequestTo);
+        sender.send(requestTopic, kafkaMessageRequestTo);
 
         return entity;
     }
