@@ -1,10 +1,8 @@
 import { relations } from "drizzle-orm";
-import { integer, pgSchema, serial, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { stories } from "./stories.schema";
 
-const schema = pgSchema("distcomp");
-
-export const messages = schema.table("tbl_messages", {
+export const messages = pgTable("tbl_message", {
   id: serial("id").primaryKey(),
   storyId: integer("story_id")
     .references(() => stories.id)
