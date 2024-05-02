@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @Getter
 @Entity(name = "tbl_creator")
-public class Creator {
+public class Creator  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
