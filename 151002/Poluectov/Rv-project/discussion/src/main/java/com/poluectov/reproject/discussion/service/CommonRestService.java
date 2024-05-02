@@ -10,6 +10,7 @@ import com.poluectov.reproject.discussion.repository.exception.EntityNotFoundExc
 import com.poluectov.reproject.discussion.utils.dtoconverter.DtoConverter;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Validated
+@Slf4j
 public abstract class CommonRestService {
     MessageRepository repository;
     DtoConverter<MessageRequestTo, Message> dtoConverter;
@@ -35,10 +37,13 @@ public abstract class CommonRestService {
 
     public List<MessageResponseTo> all() {
         List<MessageResponseTo> all = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
         for (Message one : repository.findAll()) {
+            sb.append("{id: ").append(one.getId()).append(", country: ").append(one.getCountry()).append(", issueId: ").append(one.getIssueId()).append("}, ");
             Optional<MessageResponseTo> to = mapResponseTo(one);
             to.ifPresent(all::add);
         }
+        log.info("All " + getEntityName() + " : " + sb);
         return all;
     }
 
@@ -66,9 +71,8 @@ public abstract class CommonRestService {
         List<Message> found = repository.findById(id);
 
         if (found.isEmpty()) {
-            throw new EntityNotFoundException(getEntityName() + " with id " + id + " not found");
+            return Optional.empty();
         }
-
 
         Message one = found.get(0);
         repository.deleteById(one.getCountry(), one.getIssueId(), one.getId());

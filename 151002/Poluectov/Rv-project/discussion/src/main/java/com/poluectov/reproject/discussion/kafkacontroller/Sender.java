@@ -43,11 +43,17 @@ public class Sender {
 
         log.info("Sending message: {}", message);
 
+        String key = null;
+        if (message.getRequestId() != null) {
+            key = message.getRequestId().toString();
+        }
+
         Message<KafkaMessageResponseTo> msg = MessageBuilder
                 .withPayload(message)
                 .setHeader(KafkaHeaders.TOPIC, topic)
-                .setHeader(KafkaHeaders.KEY, message.getRequestId().toString())
+                .setHeader(KafkaHeaders.KEY, key)
                 .build();
+
         template.send(msg);
     }
 }
