@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,7 +40,7 @@ public class News implements EntityModel<Long> {
     private User user;
     @ManyToMany
     private List<Sticker> stickers;
-    @OneToMany
+    @Transient
     private List<Message> messages;
 
     @Override

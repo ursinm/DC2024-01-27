@@ -21,15 +21,12 @@ val dataModule: Module = module {
 	single<AuthorsRepository>(authorsRepositoryQualifier) {
 		AuthorsRepositoryImpl()
 	}
-
 	single<IssuesRepository>(issuesRepositoryQualifier) {
 		IssuesRepositoryImpl()
 	}
-
 	single<MessagesRepository>(messagesRepositoryQualifier) {
 		MessagesRepositoryImpl()
 	}
-
 	single<StickersRepository>(stickersRepositoryQualifier) {
 		StickersRepositoryImpl()
 	}
