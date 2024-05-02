@@ -4,9 +4,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
-public class CreatorRequestTo {
+public class CreatorRequestTo  {
     int id;
 
     @Size(min = 2, max = 64, message = "Incorrect login size")

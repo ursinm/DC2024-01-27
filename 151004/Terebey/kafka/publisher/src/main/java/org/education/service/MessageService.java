@@ -8,16 +8,10 @@ import org.education.bean.Message;
 import org.education.bean.dto.MessageRequest;
 import org.education.bean.dto.MessageResponse;
 import org.education.bean.dto.MessageRequestTo;
-import org.education.exception.AlreadyExists;
-import org.education.exception.IncorrectValuesException;
-import org.education.exception.NoSuchMessage;
-import org.education.exception.NoSuchIssue;
+import org.education.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,11 +107,10 @@ public class MessageService {
         }
     }
 
-    @CacheEvict(cacheNames = "messages", allEntries = true)
+    @Cacheable(cacheNames = "messages", key="#id")
     public Message create(MessageRequestTo message){
         if(!issueService.existsWithId(message.getIssueId())) throw new NoSuchIssue("No such issue with this id");
         message.setId(index.incrementAndGet());
-
         int ind = messageIndex.incrementAndGet();
         CompletableFuture<MessageResponse> resultTask = new CompletableFuture<>();
         taskMap.put(ind, resultTask);
@@ -136,7 +131,7 @@ public class MessageService {
         }
     }
 
-    @CacheEvict(cacheNames = "messages", allEntries = true)
+    @CachePut(cacheNames = "messages", key = "#id")
     public Message update(MessageRequestTo message){
         int ind = messageIndex.incrementAndGet();
         CompletableFuture<MessageResponse> resultTask = new CompletableFuture<>();
@@ -158,8 +153,7 @@ public class MessageService {
         }
     }
 
-    @Caching(evict = { @CacheEvict(cacheNames = "messages", key = "#id"),
-            @CacheEvict(cacheNames = "messages", allEntries = true) })
+    @CacheEvict(cacheNames = "messages", key = "#id")
     public void delete(int id){
         MessageRequestTo temp = new MessageRequestTo();
         temp.setId(id);
@@ -178,5 +172,10 @@ public class MessageService {
         } catch (TimeoutException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> exceptionHandler(NoSuchIssue exception){
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), 403),HttpStatus.valueOf(403));
     }
 }

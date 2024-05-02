@@ -59,9 +59,12 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=distcomp
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=md5
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=distcomp
+    restart: unless-stopped
 
   publisher:
     build:
@@ -72,9 +75,12 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/distcomp
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29091
       - SPRING_REDIS_HOST=cache
+    depends_on:
+      - postgres
+      - kafka
 
   discussion:
     build:
@@ -83,8 +89,5 @@ services:
     ports:
       - "24130:24130"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/distcomp
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29091
       - SPRING_REDIS_HOST=cache

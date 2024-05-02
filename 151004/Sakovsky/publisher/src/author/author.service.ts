@@ -7,7 +7,6 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cache } from "cache-manager";
-import { plainToInstance } from "class-transformer";
 import { AuthorRequestToCreate } from "src/dto/request/AuthorRequestToCreate";
 import { authorCacheKeys, TTL } from "src/utils/redis/globalRedis";
 import { Repository } from "typeorm";
@@ -42,8 +41,13 @@ export class AuthorService {
         return author;
     }
 
-    getById(id: number): Promise<Author> {
-        return this.authorRepositoty.findOneBy({ id });
+    async getById(id: number): Promise<Author> {
+        const response = await this.authorRepositoty.find({where: {id}, relations: ['tweets']});
+        return response[0];
+    }
+
+    getByLogin(login: string){
+        return this.authorRepositoty.findOneByOrFail({login})
     }
 
     async deleteById(id: number): Promise<void> {
@@ -62,7 +66,7 @@ export class AuthorService {
             this.cacheManager.set(authorCacheKeys.authors, allAuthors, TTL);
             this.cacheManager.del(authorCacheKeys.authors + id);
         } catch (error) {
-            throw new Error();
+            throw new Error("zz");
         }
     }
 

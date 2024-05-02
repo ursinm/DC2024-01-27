@@ -1,16 +1,15 @@
 package by.bsuir.poit.dc.rest.api.dto.response;
 
-import lombok.Builder;
+import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
+import lombok.*;
 
-import java.io.Serializable;
-
-/**
- * DTO for {@link by.bsuir.poit.dc.rest.model.Note}
- */
+@Data
 @Builder
-public record NoteDto(
-    long id,
-    String content,
-    long newsId
-) implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+@ProtobufClass
+public class NoteDto {
+    private long id;
+    private String content;
+    private long newsId;
 }

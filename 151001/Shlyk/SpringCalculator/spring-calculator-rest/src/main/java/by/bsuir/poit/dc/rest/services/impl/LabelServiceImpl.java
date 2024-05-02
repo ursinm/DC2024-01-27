@@ -1,7 +1,7 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
-import by.bsuir.poit.dc.rest.CatchLevel;
-import by.bsuir.poit.dc.rest.CatchThrows;
+import by.bsuir.poit.dc.context.CatchLevel;
+import by.bsuir.poit.dc.context.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.LabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;

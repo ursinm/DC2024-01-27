@@ -1,33 +1,32 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
-import by.bsuir.poit.dc.rest.CatchLevel;
-import by.bsuir.poit.dc.rest.CatchThrows;
+import by.bsuir.poit.dc.context.CatchLevel;
+import by.bsuir.poit.dc.context.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.LabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NewsLabelMapper;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NewsMapper;
 import by.bsuir.poit.dc.rest.api.dto.mappers.NoteMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsDto;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNewsLabelDto;
-import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NewsDto;
-import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.NewsLabelRepository;
 import by.bsuir.poit.dc.rest.dao.NewsRepository;
-import by.bsuir.poit.dc.rest.dao.NoteRepository;
 import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.News;
 import by.bsuir.poit.dc.rest.model.NewsLabel;
 import by.bsuir.poit.dc.rest.model.NewsLabelId;
-import by.bsuir.poit.dc.rest.model.Note;
 import by.bsuir.poit.dc.rest.services.NewsService;
 import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,10 +42,10 @@ import java.util.List;
 @Slf4j
 @Service
 @CatchLevel(DataAccessException.class)
+@CacheConfig(cacheNames = "newsCache")
 @RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
     //    private final LabelRepository labelRepository;
-    private final NoteRepository noteRepository;
     private final UserRepository userRepository;
     private final NewsLabelRepository newsLabelRepository;
     private final NewsRepository newsRepository;
@@ -69,6 +68,7 @@ public class NewsServiceImpl implements NewsService {
     @CatchThrows(
 	call = "newNewsModifyingException",
 	args = "newsId")
+    @Cacheable(key = "#newsId")
     public NewsDto update(long newsId, UpdateNewsDto dto) {
 	News entity = newsRepository
 			  .findById(newsId)
@@ -79,6 +79,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable
     public NewsDto getById(long newsId) {
 	return newsRepository
 		   .findById(newsId)
@@ -104,6 +105,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public PresenceDto existsById(long newsId) {
+	return PresenceDto.wrap(newsRepository.existsById(newsId));
+    }
+
+    @Override
     @Transactional
     @CatchThrows(
 	call = "newNewsModifyingException",
@@ -114,19 +120,6 @@ public class NewsServiceImpl implements NewsService {
 		   .ifPresent(() -> newsRepository.deleteById(newsId));
     }
 
-    @Override
-    @Transactional
-    @CatchThrows(
-	call = "newNoteCreationException",
-	args = "newsId")
-    public NoteDto createNote(long newsId, UpdateNoteDto dto) {
-	if (!newsRepository.existsById(newsId)) {
-	    throw newNewsNotFoundException(newsId);
-	}
-	Note noteEntity = noteMapper.toEntity(dto);
-	Note savedNote = noteRepository.save(noteEntity);
-	return noteMapper.toDto(savedNote);
-    }
 
     @Override
     @Transactional
@@ -164,21 +157,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    @Cacheable
     public List<NewsDto> getNewsByLabel(String label) {
 	List<NewsLabel> news = newsLabelRepository.findAllByLabelName(label);
 	return news.stream()
 		   .map(NewsLabel::getNews)
 		   .map(newsMapper::toDto)
-		   .toList();
-    }
-
-    @Override
-    public List<NoteDto> getNotesByNewsId(long newsId) {
-	News news = newsRepository
-			.findWithNotesById(newsId)
-			.orElseThrow(() -> newNewsNotFoundException(newsId));
-	return news.getNotes().stream()
-		   .map(noteMapper::toDto)
 		   .toList();
     }
 

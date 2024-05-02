@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Tweet } from "./Tweet";
 
 @Entity({name: 'tbl_authors'})
 export class Author {
@@ -16,4 +17,7 @@ export class Author {
 
     @Column()
     lastname: string;
+
+    @OneToMany(()=>Tweet, tweet => tweet.author)
+    tweets: Tweet[];
 }

@@ -20,7 +20,7 @@ builder.Services
     .AddServices()
     .AddRepositories()
     .AddInfrastructure()
-    /*.AddKafkaMessageBus()
+    .AddKafkaMessageBus()
     .AddKafkaProducer<string, KafkaMessage<NoteResponseDto>>(options =>
     {
         options.Topic = "OutTopic";
@@ -31,7 +31,7 @@ builder.Services
         options.Topic = "InTopic";
         options.GroupId = "notes-group";
         options.BootstrapServers = "localhost:9092";
-    })*/;
+    });
 
 var app = builder.Build();
 

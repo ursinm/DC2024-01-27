@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping(value = "/api/v1.0/tags")
+@RequestMapping(value = "/api/v1.0/labels")
 @RequiredArgsConstructor
 public class TagController {
     private final TagService tagService;

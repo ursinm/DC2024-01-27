@@ -20,14 +20,14 @@ builder.Services
     .AddServices()
     .AddRepositories()
     .AddInfrastructure()
-    /*.AddKafkaProducer<string, KafkaMessage<NoteResponseDto>>(options =>
+    .AddKafkaProducer<string, KafkaMessage<NoteResponseDto>>(options =>
     {
         options.Topic = "OutTopic";
     })
     .AddKafkaConsumer<string, KafkaMessage<NoteRequestDto>, InTopicHandler>(options =>
     {
         options.Topic = "InTopic";
-    })*/;
+    });
 
 var app = builder.Build();
 

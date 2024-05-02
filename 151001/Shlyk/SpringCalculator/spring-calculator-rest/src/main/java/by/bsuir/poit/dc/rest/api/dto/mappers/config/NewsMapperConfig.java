@@ -6,10 +6,14 @@ import by.bsuir.poit.dc.rest.dao.UserRepository;
 import by.bsuir.poit.dc.rest.model.Label;
 import by.bsuir.poit.dc.rest.model.News;
 import by.bsuir.poit.dc.rest.model.User;
+import liquibase.exception.DatabaseException;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.MapperConfig;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author Paval Shlyk
@@ -36,5 +40,10 @@ public class NewsMapperConfig {
     @Named("getLabelRef")
     public Label getLabelRef(long labelId) {
 	return labelRepository.getReferenceById(labelId);
+    }
+
+    @Named("mapDate")
+    public Date mapDate(Timestamp timestamp) {
+	return new Date(timestamp.getTime());
     }
 }

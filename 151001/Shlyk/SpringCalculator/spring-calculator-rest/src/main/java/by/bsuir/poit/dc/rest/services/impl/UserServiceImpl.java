@@ -1,10 +1,12 @@
 package by.bsuir.poit.dc.rest.services.impl;
 
-import by.bsuir.poit.dc.rest.CatchThrows;
+import by.bsuir.poit.dc.context.CatchLevel;
+import by.bsuir.poit.dc.context.CatchThrows;
 import by.bsuir.poit.dc.rest.api.dto.mappers.UserMapper;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateUserDto;
 import by.bsuir.poit.dc.rest.api.dto.response.PresenceDto;
 import by.bsuir.poit.dc.rest.api.dto.response.UserDto;
+import by.bsuir.poit.dc.rest.api.exceptions.ResourceBusyException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceModifyingException;
 import by.bsuir.poit.dc.rest.api.exceptions.ResourceNotFoundException;
 import by.bsuir.poit.dc.rest.dao.UserRepository;
@@ -13,6 +15,7 @@ import by.bsuir.poit.dc.rest.services.UserService;
 import com.google.errorprone.annotations.Keep;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +25,11 @@ import java.util.List;
  * @author Paval Shlyk
  * @since 31/01/2024
  */
-@Service
-@RequiredArgsConstructor
+
 @Slf4j
+@Service
+@CatchLevel(DataAccessException.class)
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -77,6 +82,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @CatchThrows(
+	call = "newUserModifyingException",
+	args = "userId")
     public PresenceDto deleteUser(long userId) {
 	return PresenceDto
 		   .wrap(userRepository.existsById(userId))
@@ -84,7 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Keep
-    public ResourceModifyingException newUserModifyingException(long userId, Throwable e) {
+    private static ResourceModifyingException newUserModifyingException(long userId, Throwable e) {
 	final String frontMsg = STR."Failed to modify user by id=\{userId}";
 	final String msg = STR."\{frontMsg} \{e.getMessage()}";
 	log.warn(msg);
@@ -92,7 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Keep
-    public ResourceModifyingException newUserAlreadyExistsException(Throwable e) {
+    private static ResourceModifyingException newUserAlreadyExistsException(Throwable e) {
 	final String msg = STR."Failed to create new user. Actual cause =\{e.getMessage()}";
 	log.warn(msg);
 	return new ResourceModifyingException(msg, 32);

@@ -9,7 +9,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Entity
-@Table(name = "tbl_tweet")
+@Table(name = "tbl_issue")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

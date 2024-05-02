@@ -23,7 +23,7 @@ builder.Services
     .AddRepositories()
     .AddDiscussionClient()
     .AddInfrastructure()
-    /*.AddKafkaMessageBus()
+    .AddKafkaMessageBus()
     .AddKafkaProducer<string, KafkaMessage<NoteRequestDto>>(options =>
     {
         options.Topic = "InTopic";
@@ -34,7 +34,7 @@ builder.Services
         options.Topic = "OutTopic";
         options.GroupId = "notes-group";
         options.BootstrapServers = "localhost:9092";
-    })*/;
+    });
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {

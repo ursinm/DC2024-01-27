@@ -3,14 +3,12 @@ package org.education.controller;
 import org.education.bean.Message;
 import org.education.bean.dto.MessageRequestTo;
 import org.education.bean.dto.MessageResponseTo;
-import org.education.exception.AlreadyExists;
-import org.education.exception.ErrorResponse;
-import org.education.exception.IncorrectValuesException;
-import org.education.exception.NoSuchMessage;
+import org.education.exception.*;
 import org.education.service.MessageService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,6 +26,11 @@ public class MessageController {
     private final MessageService messageService;
 
     private final ModelMapper modelMapper;
+
+    public static String fromCache = "";
+
+    @Value("${secret.key}")
+    private String secretKey;
 
     @Autowired
     public MessageController(MessageService messageService, ModelMapper modelMapper) {
@@ -49,9 +52,17 @@ public class MessageController {
         if(bindingResult.hasErrors()){
             throw new IncorrectValuesException("Incorrect input values");
         }
-        Message message = messageService.create(messageRequestTo);
-        return new ResponseEntity<>(modelMapper.map(message, MessageResponseTo.class), HttpStatus.valueOf(201));
+
+        try {
+            fromCache = messageRequestTo.getContent();
+            Message message = messageService.create(messageRequestTo);
+            return new ResponseEntity<>(modelMapper.map(message, MessageResponseTo.class), HttpStatus.CREATED);
+        } catch (Exception e) {
+            // Вернуть ResponseEntity с кодом ошибки 400 Bad Request
+            return ResponseEntity.badRequest().build();
+        }
     }
+
 
     @PutMapping
     public ResponseEntity<MessageResponseTo> updateMessage(@RequestBody @Valid MessageRequestTo messageRequestTo, BindingResult bindingResult){
@@ -70,7 +81,10 @@ public class MessageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponseTo> getMessage(@PathVariable int id){
-        return new ResponseEntity<>(modelMapper.map(messageService.getById(id), MessageResponseTo.class), HttpStatus.valueOf(200));
+
+        var body = messageService.getById(id);
+        if (body.getContent().contains(secretKey)) body.setContent(fromCache);
+        return new ResponseEntity<>(modelMapper.map(body, MessageResponseTo.class), HttpStatus.valueOf(200));
     }
 
     @ExceptionHandler
@@ -96,4 +110,10 @@ public class MessageController {
     private ResponseEntity<ErrorResponse> exceptionHandler(HttpClientErrorException.BadRequest badRequest) {
         return new ResponseEntity<>(new ErrorResponse(badRequest.getMessage(), 400), HttpStatus.valueOf(400));
     }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> exceptionHandler(NoSuchIssue exception){
+        return new ResponseEntity<>(new ErrorResponse(exception.getMessage(), 405),HttpStatus.valueOf(405));
+    }
+
 }

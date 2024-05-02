@@ -2,7 +2,6 @@ package com.example.rv.impl.note.service;
 
 import com.example.rv.api.exception.DuplicateEntityException;
 import com.example.rv.api.exception.EntityNotFoundException;
-import com.example.rv.api.repository.CrudRepository;
 import com.example.rv.impl.note.Note;
 import com.example.rv.impl.note.NoteRepository;
 import com.example.rv.impl.note.dto.NoteRequestTo;
@@ -10,7 +9,6 @@ import com.example.rv.impl.note.dto.NoteResponseTo;
 import com.example.rv.impl.note.mapper.Impl.NoteMapperImpl;
 import com.example.rv.impl.tweet.Tweet;
 import com.example.rv.impl.tweet.TweetRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -50,9 +48,9 @@ public class NoteService {
     }
 
     public NoteResponseTo saveNote(NoteRequestTo noteTO) throws EntityNotFoundException, DuplicateEntityException {
-        Optional<Tweet> tweet = tweetRepository.findById(noteTO.getTweetId());
+        Optional<Tweet> tweet = tweetRepository.findById(noteTO.getIssueId());
         if (tweet.isEmpty()){
-            throw new EntityNotFoundException("tweet", noteTO.getTweetId());
+            throw new EntityNotFoundException("tweet", noteTO.getIssueId());
         }
         try {
             Note note = noteRepository.save(noteMapper.dtoToEntity(noteTO, tweet.get()));
@@ -66,9 +64,9 @@ public class NoteService {
         if (noteRepository.findById(noteTO.getId()).isEmpty()){
             throw new EntityNotFoundException(ENTITY_NAME, noteTO.getId());
         }
-        Optional<Tweet> tweet = tweetRepository.findById(noteTO.getTweetId());
+        Optional<Tweet> tweet = tweetRepository.findById(noteTO.getIssueId());
         if (tweet.isEmpty()){
-            throw new EntityNotFoundException("tweet", noteTO.getTweetId());
+            throw new EntityNotFoundException("tweet", noteTO.getIssueId());
         }
         try {
             Note note = noteRepository.save(noteMapper.dtoToEntity(noteTO, tweet.get()));
