@@ -9,7 +9,7 @@ public class Converter {
         NoteDto noteDto = new NoteDto();
         noteDto.setId(note.getId());
         noteDto.setContent(note.getContent());
-        noteDto.setIssueId(note.getIssueId());
+        noteDto.setIssueId(note.getIssue_id());
         return noteDto;
     }
 
@@ -17,7 +17,7 @@ public class Converter {
         Note note = new Note();
         note.setId(noteDto.getId());
         note.setContent(noteDto.getContent());
-        note.setIssueId(noteDto.getIssueId());
+        note.setIssue_id(noteDto.getIssueId());
         return note;
     }
 }

@@ -57,8 +57,8 @@ public class PostgresNoteService implements NoteService {
     @Override
     public NoteDto update(NoteDto noteDto) {
         Note note = converter.convert(noteDto);
-        jdbcTemplate.update("update tbl_note set issueId=?, content=? where id=?",
-                new Object[]{note.getIssueId(), note.getContent(), note.getId()});
+        jdbcTemplate.update("update tbl_note set issue_id=?, content=? where id=?",
+                new Object[]{note.getIssue_id(), note.getContent(), note.getId()});
         return noteDto;
     }
 }

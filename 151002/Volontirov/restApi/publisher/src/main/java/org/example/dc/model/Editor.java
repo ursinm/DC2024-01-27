@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Editor {
-    private int editor_id;
+    private int id;
     private String login;
     private String password;
     private String firstname;

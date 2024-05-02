@@ -60,9 +60,9 @@ public class PostgresIssueService implements IssueService {
     public IssueDto update(IssueDto issueDto) {
         issueDto.setModified(new Date(System.currentTimeMillis()));
         Issue issue = converter.convert(issueDto);
-        jdbcTemplate.update("update tbl_issue set editorId=?, title=?, content=?," +
+        jdbcTemplate.update("update tbl_issue set editor_id=?, title=?, content=?," +
                 "created=?, modified=? where id=?",
-                new Object[]{issue.getEditorId(), issue.getTitle(), issue.getContent(), issue.getCreated(),
+                new Object[]{issue.getEditor_id(), issue.getTitle(), issue.getContent(), issue.getCreated(),
                         issue.getModified(), issue.getId()});
         return issueDto;
     }
