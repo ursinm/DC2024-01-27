@@ -1,4 +1,4 @@
-package by.bashlikovvv.util
+package util
 
 import io.ktor.server.application.*
 import java.sql.Connection
@@ -30,9 +30,9 @@ fun Application.connectToPostgres(embedded: Boolean): Connection {
     if (embedded) {
         return DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "root", "")
     } else {
-        val url = "jdbc:postgresql://localhost:5432/distcomp"
-        val user = "postgres"
-        val password = "postgres"
+        val url = environment.config.property("postgres.url").getString()
+        val user = environment.config.property("postgres.user").getString()
+        val password = environment.config.property("postgres.password").getString()
 
         return DriverManager.getConnection(url, user, password)
     }

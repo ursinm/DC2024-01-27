@@ -14,7 +14,7 @@ fun main(args: Array<String>) = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
     install(Koin) {
-        dataModule.single<Connection> { connectToPostgres(embedded = true) }
+        dataModule.single<Connection> { connectToPostgres(embedded = false) }
         modules(dataModule, appModule)
     }
     configureSerialization()
