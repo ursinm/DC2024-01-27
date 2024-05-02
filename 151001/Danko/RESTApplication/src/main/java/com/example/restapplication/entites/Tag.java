@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_tag", schema = "distcomp")
+@Table(name = "tbl_tag", schema = "public")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using Discussion.Services.DataProviderServices;
 using Discussion.Views.DTO;
 using Newtonsoft.Json;
@@ -11,13 +12,28 @@ namespace Discussion.Services.Kafka
         private INoteDataProvider _dataProvider;
         private ConsumerConfig config = new ConsumerConfig
         {
-            BootstrapServers = "localhost:9092",
+            BootstrapServers = "kafka:9092",
             GroupId = "foo",
         };
 
         public KafkaCore(INoteDataProvider dataProvider)
         { 
             _dataProvider = dataProvider;
+            using (var adminClient = new AdminClientBuilder(config).Build())
+            {
+                try
+                {
+                    adminClient.CreateTopicsAsync(new TopicSpecification[] { new TopicSpecification { Name = "InTopic" } }).Wait();
+                    Console.WriteLine("Created Topic");
+                }
+                catch (AggregateException e) { }
+                try
+                {
+                    adminClient.CreateTopicsAsync(new TopicSpecification[] { new TopicSpecification { Name = "OutTopic" } }).Wait();
+                    Console.WriteLine("Created Topic");
+                }
+                catch (AggregateException e) { }
+            }
         }
 
         public void StartConsuming()
