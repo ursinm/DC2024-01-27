@@ -1,6 +1,9 @@
-﻿using System.Text;
-
+﻿using System.Net;
+using System.Text;
+using Discussion.Models.DTOs.Requests;
+using Discussion.Models.DTOs.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Publisher.Services.interfaces;
 
 
 namespace Publisher.Controllers;
@@ -9,238 +12,78 @@ namespace Publisher.Controllers;
 [ApiController]
 public class PostsController : ControllerBase
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IConfiguration _configuration;
+    private readonly IPostService _postService;
 
-    public PostsController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public PostsController(IPostService postService)
     {
-        _httpClientFactory = httpClientFactory;
-        _configuration = configuration;
+        _postService = postService;
+    }
+    
+    private string GetCountryCode()
+    {
+        var languages = HttpContext.Request.Headers.AcceptLanguage.FirstOrDefault();
+
+        if (languages is null)
+        {
+            return "us";
+        }
+
+        var country = languages
+            .Split(",").First()
+            .Split(";").First()
+            .Split("-").Last();
+        return country.ToLower();
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(PostResponseTo), (int)HttpStatusCode.Created)]
+    public async Task<IActionResult> Create([FromBody] PostRequestTo dto)
+    {
+        dto.country = GetCountryCode();
+
+        var post = await _postService.AddAsync(dto);
+
+        return CreatedAtAction(null, post);
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(List<PostResponseTo>), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetAll()
     {
-        // Создание клиента HttpClient
-        var httpClient = _httpClientFactory.CreateClient();
+        var posts = await _postService.GetAllAsync();
 
-        // Формирование URL для перенаправления
-        var redirectUrl = _configuration["Discussion:Url"];
-        var newRequest = new HttpRequestMessage(HttpMethod.Get, redirectUrl);
-
-        var requestHeaders = Request.Headers;
-        foreach (var (key, value) in requestHeaders)
-        {
-            if (string.Equals(key, "Content-Length", StringComparison.OrdinalIgnoreCase))
-                continue;
-            // Пропускаем заголовок 'Content-Type', так как он будет добавлен к содержимому
-            if (string.Equals(key, "Content-Type", StringComparison.OrdinalIgnoreCase))
-                continue;
-            newRequest.Headers.Add(key, value.ToArray());
-        }
-        // Отправка запроса на новый адрес
-        var response = await httpClient.SendAsync(newRequest);
-
-        // Проверка статуса ответа и возврат результата
-        if (response.IsSuccessStatusCode)
-        {
-            // Получаем содержимое ответа
-            string responseBody = await response.Content.ReadAsStringAsync();
-            // Возвращаем ответ как результирующий контент
-            return Ok(responseBody);
-        }
-        else
-        {
-            // Если запрос неуспешен, возвращаем статус ответа и сообщение об ошибке
-            return StatusCode((int)response.StatusCode, $"Error: {response.StatusCode}");
-        }
-
+        return Ok(posts);
     }
-    
-    [HttpGet("{id}")]
-    public async Task<ActionResult> GetUserById([FromRoute]long id)
+
+    [HttpGet("{id:long}")]
+    [ProducesResponseType(typeof(PostResponseTo), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> GetById(long id)
     {
-        var httpClient = _httpClientFactory.CreateClient();
-
-        // Формирование URL для перенаправления
-        var redirectUrl = _configuration["Discussion:Url"] + "/"+id;
-
-        // Отправка запроса на новый адрес
-        var newRequest = new HttpRequestMessage(HttpMethod.Get, redirectUrl);
-
-        var requestHeaders = Request.Headers;
-        foreach (var (key, value) in requestHeaders)
+        var post = await _postService.GetByIdAsync(id);
+        if (post == null)
         {
-            if (string.Equals(key, "Content-Length", StringComparison.OrdinalIgnoreCase))
-                continue;
-            // Пропускаем заголовок 'Content-Type', так как он будет добавлен к содержимому
-            if (string.Equals(key, "Content-Type", StringComparison.OrdinalIgnoreCase))
-                continue;
-            newRequest.Headers.Add(key, value.ToArray());
+            return NotFound();
         }
-        // Отправка запроса на новый адрес
-        var response = await httpClient.SendAsync(newRequest);
-
-        // Проверка статуса ответа и возврат результата
-        if (response.IsSuccessStatusCode)
-        {
-            // Получаем содержимое ответа
-            string responseBody = await response.Content.ReadAsStringAsync();
-            // Возвращаем ответ как результирующий контент
-            return Ok(responseBody);
-        }
-        else
-        {
-            // Если запрос неуспешен, возвращаем статус ответа и сообщение об ошибке
-            return StatusCode((int)response.StatusCode, $"Error: {response.StatusCode}");
-        }
-
-
+        return Ok(post);
     }
 
-    // POST: api/v1.0/User
-    [HttpPost]
-    public async Task<ActionResult> CreatePost()
-    {
-        var httpClient = _httpClientFactory.CreateClient();
-    
-        // Получаем тело запроса
-        string requestBody;
-        using (StreamReader reader = new StreamReader(HttpContext.Request.Body, Encoding.UTF8))
-        {
-            requestBody = await reader.ReadToEndAsync();
-        }
-    
-        // Формирование URL для перенаправления
-        var redirectUrl = _configuration["Discussion:Url"];;
-        var newrequestBody = new StringContent(requestBody, Encoding.UTF8, "application/json");
-
-        // Создание нового запроса
-        var newRequest = new HttpRequestMessage(HttpMethod.Post, redirectUrl);
-        newRequest.Content = newrequestBody;
-
-        // Добавляем заголовки из исходного запроса в новый запрос
-        foreach (var (key, value) in Request.Headers)
-        {
-            if (string.Equals(key, "Content-Length", StringComparison.OrdinalIgnoreCase))
-                continue;
-            // Пропускаем заголовок 'Content-Type', так как он будет добавлен к содержимому
-            if (string.Equals(key, "Content-Type", StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            newRequest.Headers.Add(key, value.ToArray());
-        }
-
-        // Отправка запроса на новый адрес
-        var response = await httpClient.SendAsync(newRequest);
-
-        if (response.IsSuccessStatusCode)
-        {
-            // Получаем содержимое ответа
-            string responseBody = await response.Content.ReadAsStringAsync();
-            // Возвращаем ответ как результирующий контент
-            return StatusCode((int)response.StatusCode, responseBody);
-        }
-        else
-        {
-            // Если запрос неуспешен, возвращаем статус ответа и сообщение об ошибке
-            return StatusCode((int)response.StatusCode, $"Error: {response.StatusCode}");
-        }
-        // Проверка статуса ответа и возврат результата
-        
-    }
-
-    // PUT: api/v1.0/User/5
     [HttpPut]
-    public async Task<ActionResult> UpdatePost()
+    [ProducesResponseType(typeof(PostResponseTo), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> Update([FromBody] PostRequestTo dto)
     {
-        var httpClient = _httpClientFactory.CreateClient();
-    
-        // Получаем тело запроса
-        string requestBody;
-        using (StreamReader reader = new StreamReader(HttpContext.Request.Body, Encoding.UTF8))
-        {
-            requestBody = await reader.ReadToEndAsync();
-        }
-    
-        // Формирование URL для перенаправления
-        var redirectUrl = _configuration["Discussion:Url"];;
-        var newrequestBody = new StringContent(requestBody, Encoding.UTF8, "application/json");
-
-        // Создание нового запроса
-        var newRequest = new HttpRequestMessage(HttpMethod.Put, redirectUrl);
-        newRequest.Content = newrequestBody;
-
-        // Добавляем заголовки из исходного запроса в новый запрос
-        foreach (var (key, value) in Request.Headers)
-        {
-            if (string.Equals(key, "Content-Length", StringComparison.OrdinalIgnoreCase))
-                continue;
-            // Пропускаем заголовок 'Content-Type', так как он будет добавлен к содержимому
-            if (string.Equals(key, "Content-Type", StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            newRequest.Headers.Add(key, value.ToArray());
-        }
-
-        // Отправка запроса на новый адрес
-        var response = await httpClient.SendAsync(newRequest);
-
-        // Проверка статуса ответа и возврат результата
-        if (response.IsSuccessStatusCode)
-        {
-            // Получаем содержимое ответа
-            string responseBody = await response.Content.ReadAsStringAsync();
-            // Возвращаем ответ как результирующий контент
-            return StatusCode((int)response.StatusCode, responseBody);
-        }
-        else
-        {
-            // Если запрос неуспешен, возвращаем статус ответа и сообщение об ошибке
-            return StatusCode((int)response.StatusCode, $"Error: {response.StatusCode}");
-        }
-        
+        dto.country = GetCountryCode();
+        var post = await _postService.UpdateAsync(dto);
+        return Ok(post);
     }
 
-    // DELETE: api/v1.0/User/5
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeletePost(long id)
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> Delete(long id)
     {
-        var httpClient = _httpClientFactory.CreateClient();
-
-        // Формирование URL для перенаправления
-        var redirectUrl = _configuration["Discussion:Url"] + "/"+id;
-
-        // Отправка запроса на новый адрес
-        var newRequest = new HttpRequestMessage(HttpMethod.Delete, redirectUrl);
-
-        foreach (var (key, value) in Request.Headers)
-        {
-            if (string.Equals(key, "Content-Length", StringComparison.OrdinalIgnoreCase))
-                continue;
-            // Пропускаем заголовок 'Content-Type', так как он будет добавлен к содержимому
-            if (string.Equals(key, "Content-Type", StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            newRequest.Headers.Add(key, value.ToArray());
-        }
-        // Отправка запроса на новый адрес
-        var response = await httpClient.SendAsync(newRequest);
-
-        // Проверка статуса ответа и возврат результата
-        if (response.IsSuccessStatusCode)
-        {
-            // Получаем содержимое ответа
-            string responseBody = await response.Content.ReadAsStringAsync();
-            // Возвращаем ответ как результирующий контент
-            return StatusCode((int)response.StatusCode, responseBody);
-        }
-        else
-        {
-            // Если запрос неуспешен, возвращаем статус ответа и сообщение об ошибке
-            return StatusCode((int)response.StatusCode, $"Error: {response.StatusCode}");
-        }
-
-        
+        await _postService.DeleteAsync(id);
+        return NoContent();
     }
 }

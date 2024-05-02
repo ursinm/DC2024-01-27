@@ -1,33 +1,48 @@
 import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
-import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, ParseIntPipe, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Tweet } from 'src/entities/Tweet';
+import { tweetCacheKeys } from 'src/utils/redis/globalRedis';
 import { TweetRequestToCreate } from '../dto/request/TweetRequestToCreate';
 import { TweetRequestToUpdate } from '../dto/request/TweetRequestToUpdate';
 import { TweetResponseTo } from '../dto/response/TweetResponseTo';
 import { TweetService } from './tweet.service';
-import { tweetCacheKeys } from 'src/utils/redis/globalRedis';
+export type GetAllQuery = {
+    limit: number,
+    page: number,
+}
 
-@UseInterceptors(CacheInterceptor)
+// @UseInterceptors(CacheInterceptor)
 @Controller('tweets')
 export class TweetController {
     constructor(private readonly tweetService: TweetService ){}
 
     @CacheKey(tweetCacheKeys.tweets)
     @Get()
-    async getAll(): Promise<TweetResponseTo[]>{
+    async getAll(@Query() query: GetAllQuery){
         const tweetsDto: TweetResponseTo[]= [];
-        const tweets = await this.tweetService.getAll();
+        const [tweets, comments] = await this.tweetService.getAll(query);
         for (const tweet of tweets) {
             const tweetDto = new TweetResponseTo();
             tweetDto.id = tweet.id;
-            tweetDto.authorId = tweet.authorId;
+            const author = tweet.author;
+            delete author.password;
+            tweetDto.author = author;
             tweetDto.content = tweet.content;
             tweetDto.title = tweet.title;
             tweetDto.created = tweet.created;
             tweetDto.modified = tweet.modified;
+            tweetDto.comments = [];
+            for (const comment of comments) {
+                if(comment.tweetId === tweet.id){
+                    tweetDto.comments.push(comment);
+                }
+            }
             tweetsDto.push(tweetDto);
         }
-        return tweetsDto
+        const total = await this.tweetService.getCount();
+        return {tweets: tweetsDto,
+            total: total,
+        };
     }
 
     
