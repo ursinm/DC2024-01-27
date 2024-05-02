@@ -28,7 +28,7 @@ public class KafkaMessageRepository implements MessageRepository {
 
     public KafkaMessageRepository(Sender sender,
                                   @Value("${kafka.topic.message.response}") String responseTopic,
-                                  @Value("${kafka.topic.message.request}$") String requestTopic) {
+                                  @Value("${kafka.topic.message.request}") String requestTopic) {
         this.sender = sender;
         this.responseTopic = responseTopic;
         this.requestTopic = requestTopic;
@@ -43,7 +43,7 @@ public class KafkaMessageRepository implements MessageRepository {
 
         KafkaMessageResponseTo message = null;
         try {
-            message = sender.sendAndReceive("message-request", kafkaMessageRequestTo);
+            message = sender.sendAndReceive(requestTopic, kafkaMessageRequestTo);
         }catch (TimeoutException e){
             throw new RuntimeException("Response took too long");
         }
@@ -73,7 +73,7 @@ public class KafkaMessageRepository implements MessageRepository {
 
         KafkaMessageResponseTo message = null;
         try {
-            message = sender.sendAndReceive("message-request", kafkaMessageRequestTo);
+            message = sender.sendAndReceive(requestTopic, kafkaMessageRequestTo);
         }catch (TimeoutException e){
             throw new RuntimeException("Response took too long");
         }
@@ -91,7 +91,7 @@ public class KafkaMessageRepository implements MessageRepository {
 
         KafkaMessageResponseTo message = null;
         try {
-            message = sender.sendAndReceive("message-request", kafkaMessageRequestTo);
+            message = sender.sendAndReceive(requestTopic, kafkaMessageRequestTo);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -114,7 +114,7 @@ public class KafkaMessageRepository implements MessageRepository {
 
         KafkaMessageResponseTo kafkaMessageResponseTo = null;
         try {
-            kafkaMessageResponseTo = sender.sendAndReceive("message-request", kafkaMessageRequestTo);
+            kafkaMessageResponseTo = sender.sendAndReceive(requestTopic, kafkaMessageRequestTo);
         }catch (Exception e){
             e.printStackTrace();
         }
