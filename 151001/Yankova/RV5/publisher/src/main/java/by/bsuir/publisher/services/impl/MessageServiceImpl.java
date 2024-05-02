@@ -4,10 +4,12 @@ import by.bsuir.publisher.dto.MessageActionDto;
 import by.bsuir.publisher.dto.MessageActionTypeDto;
 import by.bsuir.publisher.dto.requests.MessageRequestDto;
 import by.bsuir.publisher.dto.responses.MessageResponseDto;
+import by.bsuir.publisher.dto.responses.NewsResponseDto;
 import by.bsuir.publisher.dto.responses.converters.MessageResponseConverter;
 import by.bsuir.publisher.exceptions.*;
 import by.bsuir.publisher.repositories.MessageCacheRepository;
 import by.bsuir.publisher.services.MessageService;
+import by.bsuir.publisher.services.NewsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class MessageServiceImpl implements MessageService {
     private final ObjectMapper objectMapper;
     private final MessageResponseConverter messageResponseConverter;
     private final MessageCacheRepository messageCacheRepository;
+    private final NewsService newsService;
     private final ReplyingKafkaTemplate<String, MessageActionDto, MessageActionDto> replyingKafkaTemplate;
 
     @Value("${topic.inTopic}")
@@ -73,8 +76,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageResponseDto create(@NonNull MessageRequestDto dto) throws ServiceException {
-        //Synchronous, as response in tests shall contain created message id, and if passed id is null,
-        //asynchronous messaging is not appropriate(we won't be able to obtain generated id)
+        Optional<NewsResponseDto> news = newsService.read(dto.getNewsId());
+        if (news.isEmpty()) {
+            return null;
+        }
         MessageActionDto action = sendMessageAction(MessageActionDto.builder().
                 action(MessageActionTypeDto.CREATE).
                 data(dto).
@@ -127,8 +132,9 @@ public class MessageServiceImpl implements MessageService {
                 data(String.valueOf(uuid)).
                 build());
         try {
-            messageCacheRepository.deleteById(uuid);
-            return Long.valueOf((Integer) action.getData());
+            Long id = Long.valueOf((Integer) action.getData());
+            if (id != -1) messageCacheRepository.deleteById(uuid);
+            return id;
         } catch (ClassCastException e) {
             throw new ServiceException(objectMapper.convertValue(action.getData(), ErrorDto.class));
         }
