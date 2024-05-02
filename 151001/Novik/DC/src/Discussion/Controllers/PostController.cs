@@ -1,4 +1,5 @@
-﻿using Discussion.Models.DTOs.Requests;
+﻿using System.Net;
+using Discussion.Models.DTOs.Requests;
 using Discussion.Models.DTOs.Responses;
 using Discussion.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -8,110 +9,73 @@ namespace Discussion.Controllers;
 
 [ApiController]
 [Route("api/v1.0/[controller]")]
-public class PostsController : ControllerBase
+public class PostsController(IPostService postService) : ControllerBase
 {
-    private readonly IPostService _postService;
+    private string GetCountryCode()
+    {
+        var languages = HttpContext.Request.Headers.AcceptLanguage.FirstOrDefault();
 
-    public PostsController(IPostService postService)
-    {
-        _postService = postService;
-    }
-    // GET: api/v1.0/User
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<PostResponseTo>>> GetAllPosts()
-    {
-        var posts = await _postService.GetAllAsync();
-        /*if (!users.Any())
+        if (languages is null)
         {
-            return NotFound(new { Error = "Entity not found" });
-        }*/
-        return Ok(posts);
-    }
-
-    // GET: api/v1.0/User/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<PostResponseTo>> GetPostById([FromRoute]long id)
-    {
-        var posts = await _postService.GetByIdAsync(id);
-        return Ok(posts);
-        /*try
-        {
-            var user = await _userService.GetUserByIdAsync(id);
-            return Ok(user);
+            return "us";
         }
-        catch (Exception ex)
-        {
-            return NotFound(new { Error = "Entity not found" });
-            return Ok();
-        }*/
 
-
+        var country = languages
+            .Split(",").First()
+            .Split(";").First()
+            .Split("-").Last();
+        return country.ToLower();
     }
 
-    // POST: api/v1.0/User
     [HttpPost]
-    public async Task<ActionResult<PostResponseTo>> CreatePost([FromBody]PostRequestTo post)
+    [ProducesResponseType(typeof(PostResponseTo), (int)HttpStatusCode.Created)]
+    public async Task<IActionResult> Create([FromBody] PostRequestTo dto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        dto.country = GetCountryCode();
+        var post = await postService.AddAsync(dto,dto.country);
 
-        try
-        {
-            var acceptLanguage = Request.Headers["Accept-Language"];
-            var firstLanguage = acceptLanguage.ToString().Split(',').FirstOrDefault();
-            var postAdded = await _postService.AddAsync(post, firstLanguage);
-            return CreatedAtAction(nameof(GetPostById), new { id =postAdded.id  }, postAdded);
-        }
-        /*catch (DbUpdateException ex)
-        {
-            return StatusCode(403,new { Error = "IDK" });
-        }*/
-        catch (Exception e)
-        {
-            return BadRequest();
-        }
-           
+        return CreatedAtAction(null, post);
     }
 
-    // PUT: api/v1.0/User/5
+    [HttpGet]
+    [ProducesResponseType(typeof(List<PostResponseTo>), (int)HttpStatusCode.OK)]
+    public async Task<IActionResult> GetAll()
+    {
+        var posts = await postService.GetAllAsync();
+
+        return Ok(posts);
+    }
+
+    [HttpGet("{id:long}")]
+    [ProducesResponseType(typeof(PostResponseTo), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> GetById(long id)
+    {
+        var post = await postService.GetByIdAsync(id);
+        if (post == null)
+        {
+            return NotFound();
+        }
+        return Ok(post);
+    }
+
     [HttpPut]
-    public async Task<ActionResult<PostResponseTo>> UpdatePost(PostRequestTo post)
+    [ProducesResponseType(typeof(PostResponseTo), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> Update([FromBody] PostRequestTo dto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var acceptLanguage = Request.Headers["Accept-Language"];
-            var firstLanguage = acceptLanguage.ToString().Split(',').FirstOrDefault();
-     
-            var postUpdate = await _postService.UpdateAsync(post, firstLanguage);
-            return Ok(postUpdate);
-        }
-        catch (Exception ex)
-        {
-            // Обработка ошибок, если обновление не удалось
-            return NotFound(new { Error = "Entity not found" });
-        }
-        
+        dto.country = GetCountryCode();
+        var post = await postService.UpdateAsync(dto,dto.country);
+
+        return Ok(post);
     }
 
-    // DELETE: api/v1.0/User/5
-    [HttpDelete("{id}")]
-    public async Task<ActionResult<PostResponseTo>> DeletePost(long id)
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<IActionResult> Delete(long id)
     {
-        try
-        {
-            await _postService.DeleteAsync(id);
-            return NoContent();
-        }
-        catch (System.Exception e)
-        {
-            return NotFound(new { Error = "Entity not found" });
-        }
-        
+        await postService.DeleteAsync(id);
+        return NoContent();
     }
 }

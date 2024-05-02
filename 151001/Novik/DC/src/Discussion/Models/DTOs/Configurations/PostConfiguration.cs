@@ -1,8 +1,9 @@
-﻿using Discussion.Models.Entity;
+﻿using Cassandra.Mapping;
+using Discussion.Models.Entity;
 
 namespace Discussion.Models.DTOs.Configurations;
 
-public class CassandraMappings : Cassandra.Mapping.Mappings
+public class CassandraMappings : Mappings
 {
     public CassandraMappings()
     {
