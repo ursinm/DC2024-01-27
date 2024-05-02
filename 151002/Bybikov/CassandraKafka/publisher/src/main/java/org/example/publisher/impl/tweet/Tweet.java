@@ -9,7 +9,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Entity
-@Table(name = "tbl_tweet")
+@Table(name = "tbl_issue")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class Tweet {
     @Column(name = "id")
     BigInteger id;
 
-    @JoinColumn(name = "editor")
+    @JoinColumn(name = "creator_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Editor editor;
 

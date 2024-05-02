@@ -46,7 +46,7 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteNote(@PathVariable BigInteger id) throws EntityNotFoundException {
+    public void deleteNote(@PathVariable BigInteger id) throws EntityNotFoundException, InterruptedException {
         noteService.deleteNote(id);
     }
 }

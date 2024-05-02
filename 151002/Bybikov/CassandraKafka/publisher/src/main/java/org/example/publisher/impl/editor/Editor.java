@@ -6,7 +6,7 @@ import lombok.*;
 import java.math.BigInteger;
 
 @Entity
-@Table(name = "tbl_editor")
+@Table(name = "tbl_creator")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

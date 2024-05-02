@@ -8,14 +8,14 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_tag")
+@Table(name = "tbl_label")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    BigInteger tg_id;
+    BigInteger id;
 
     @Column(name = "name")
     private String name;
