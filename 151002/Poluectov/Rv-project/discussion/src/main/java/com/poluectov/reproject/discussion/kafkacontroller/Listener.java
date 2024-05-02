@@ -137,9 +137,9 @@ public class Listener {
 
         if (message.isEmpty()){
             RestError error = RestError.builder()
-                            .status(HttpStatus.NOT_FOUND)
-                                    .message("message not found")
-                                            .build();
+                    .status(HttpStatus.NOT_FOUND)
+                    .message("message not found")
+                    .build();
 
             log.info("message not found");
             response.setError(error);
