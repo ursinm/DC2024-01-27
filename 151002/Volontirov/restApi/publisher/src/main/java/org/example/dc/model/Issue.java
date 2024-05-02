@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class Issue {
     private int id;
-    private int editorId;
+    private int editor_id;
     @Length(min = 2, max = 64)
     private String title;
     @Length(min = 4, max = 2048)

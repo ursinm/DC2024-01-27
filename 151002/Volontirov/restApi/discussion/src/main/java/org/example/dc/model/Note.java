@@ -12,7 +12,7 @@ import org.springframework.data.cassandra.core.mapping.Table;
 @AllArgsConstructor
 public class Note {
     @PrimaryKey
-    private int note_id;
-    private int issueId;
+    private int id;
+    private int issue_id;
     private String content;
 }

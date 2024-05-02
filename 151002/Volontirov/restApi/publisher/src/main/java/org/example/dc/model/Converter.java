@@ -16,7 +16,7 @@ public class Converter {
 
     public Editor convert(EditorDto editorDto) {
         Editor editor = new Editor();
-        editor.setId(editor.getId());
+        editor.setId(editorDto.getId());
         editor.setLastname(editorDto.getLastname());
         editor.setFirstname(editorDto.getFirstname());
         editor.setLogin(editorDto.getLogin());
@@ -27,7 +27,7 @@ public class Converter {
     public Issue convert(IssueDto issueDto) {
         Issue issue = new Issue();
         issue.setTitle(issueDto.getTitle());
-        issue.setEditorId(issueDto.getEditorId());
+        issue.setEditor_id(issueDto.getEditorId());
         issue.setContent(issueDto.getContent());
         issue.setCreated(issueDto.getCreated());
         issue.setModified(issueDto.getModified());
@@ -38,7 +38,7 @@ public class Converter {
     public IssueDto convert(Issue issue) {
         IssueDto issueDto = new IssueDto();
         issueDto.setTitle(issue.getTitle());
-        issueDto.setEditorId(issue.getEditorId());
+        issueDto.setEditorId(issue.getEditor_id());
         issueDto.setContent(issue.getContent());
         issueDto.setCreated(issue.getCreated());
         issueDto.setModified(issue.getModified());
@@ -50,7 +50,7 @@ public class Converter {
         NoteDto noteDto = new NoteDto();
         noteDto.setId(note.getId());
         noteDto.setContent(note.getContent());
-        noteDto.setIssueId(note.getIssueId());
+        noteDto.setIssueId(note.getIssue_id());
         return noteDto;
     }
 
@@ -58,7 +58,7 @@ public class Converter {
         Note note = new Note();
         note.setId(noteDto.getId());
         note.setContent(noteDto.getContent());
-        note.setIssueId(noteDto.getIssueId());
+        note.setIssue_id(noteDto.getIssueId());
         return note;
     }
 

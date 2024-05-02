@@ -10,6 +10,6 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 public class Note {
     private int id;
-    private int issueId;
+    private int issue_id;
     private String content;
 }
