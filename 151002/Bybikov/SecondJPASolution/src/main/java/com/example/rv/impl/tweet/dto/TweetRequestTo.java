@@ -9,7 +9,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class TweetRequestTo {
         BigInteger id;
-        BigInteger editorId;
+        BigInteger creatorId;
 
         @Size(min = 2, max = 64)
         String title;

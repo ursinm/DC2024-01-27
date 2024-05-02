@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 public record NoteResponseTo(
         BigInteger id,
-        BigInteger tweetId,
+        BigInteger issueId,
         String content
 ) {
 }

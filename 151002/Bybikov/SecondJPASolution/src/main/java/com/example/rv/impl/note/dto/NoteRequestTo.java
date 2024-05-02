@@ -10,7 +10,7 @@ import java.math.BigInteger;
 @AllArgsConstructor
 public class NoteRequestTo {
     private BigInteger id;
-    private BigInteger tweetId;
+    private BigInteger issueId;
     @Size(min = 2, max = 2048)
     String content;
 }

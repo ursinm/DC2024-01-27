@@ -5,7 +5,7 @@ import java.util.Date;
 
 public record TweetResponseTo (
         BigInteger id,
-        BigInteger editorId,
+        BigInteger creatorId,
         String title,
         String content,
         Date created,
