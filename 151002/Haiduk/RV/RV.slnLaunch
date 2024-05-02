@@ -3,14 +3,12 @@
     "Name": "New Profile",
     "Projects": [
       {
-        "Name": "RV\\Lab3\\Lab3.Publisher\\Lab3.Publisher.csproj",
-        "Action": "Start",
-        "DebugTarget": ""
+        "Name": "RV\\Lab5\\Lab5.Discussion\\Lab5.Discussion.csproj",
+        "Action": "Start"
       },
       {
-        "Name": "RV\\Lab3\\Lab3.Discussion\\Lab3.Discussion.csproj",
-        "Action": "Start",
-        "DebugTarget": ""
+        "Name": "RV\\Lab5\\Lab5.Publisher\\Lab5.Publisher.csproj",
+        "Action": "Start"
       }
     ]
   }
