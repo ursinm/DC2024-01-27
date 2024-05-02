@@ -29,8 +29,10 @@ public class User extends IdentifiedEntity {
     @Size(min = 8, max = 128)
     private String password;
     @Size(min = 2, max = 64)
+    @Column(name = "firstname")
     private String firstName;
     @Size(min = 2, max = 64)
+    @Column(name = "lastname")
     private String lastName;
 
 }

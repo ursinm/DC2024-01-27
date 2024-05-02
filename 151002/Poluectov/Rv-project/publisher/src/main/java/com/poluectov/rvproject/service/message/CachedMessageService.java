@@ -5,6 +5,7 @@ import com.poluectov.rvproject.dto.message.MessageResponseTo;
 import com.poluectov.rvproject.model.Message;
 import com.poluectov.rvproject.repository.MessageRepository;
 import com.poluectov.rvproject.repository.exception.EntityNotFoundException;
+import com.poluectov.rvproject.service.IssueService;
 import com.poluectov.rvproject.service.redis.RedisCacheService;
 import com.poluectov.rvproject.utils.dtoconverter.MessageRequestDtoConverter;
 import lombok.extern.slf4j.Slf4j;
