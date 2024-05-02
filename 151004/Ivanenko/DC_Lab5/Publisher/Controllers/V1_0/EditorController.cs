@@ -9,7 +9,7 @@ using System.Net;
 
 namespace Publisher.Controllers.V1_0
 {
-    [Route("api/v1.0/authors")]
+    [Route("api/v1.0/editors")]
     [ApiController]
     public class EditorController(IEditorService AuthorService,  IMapper Mapper) :
         AbstractController<Editor, EditorRequestTO, EditorResponseTO>(AuthorService, Mapper)
