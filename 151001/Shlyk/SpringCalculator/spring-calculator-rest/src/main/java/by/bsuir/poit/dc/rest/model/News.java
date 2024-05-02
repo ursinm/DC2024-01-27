@@ -53,18 +53,12 @@ public class News {
 
     @OneToMany(mappedBy = "news", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @Builder.Default
-    private List<Note> notes = new ArrayList<>();
-    @OneToMany(mappedBy = "news", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @Builder.Default
     private List<NewsLabel> labels = new ArrayList<>();
 
     public void addLabel(NewsLabel label) {
 	labels.add(label);
     }
 
-    public void addNote(Note note) {
-	notes.add(note);
-    }
 
     @PrePersist
     public void beforeInsert() {
