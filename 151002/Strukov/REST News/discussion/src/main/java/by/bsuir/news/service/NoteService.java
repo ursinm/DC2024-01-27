@@ -5,6 +5,7 @@ import by.bsuir.news.dto.response.NoteResponseTo;
 import by.bsuir.news.entity.Note;
 import by.bsuir.news.exception.ClientException;
 import by.bsuir.news.repository.NoteRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class NoteService {
     private NoteRepository noteRepository;
     private static final AtomicLong ids = new AtomicLong(1);
 
-    public NoteResponseTo create(NoteRequestTo request) {
+    public NoteResponseTo create(@Valid NoteRequestTo request) {
         Note note = NoteRequestTo.fromRequest(request);
         note.getKey().setId(ids.getAndIncrement());
         return NoteResponseTo.toResponse(noteRepository.save(note));
@@ -38,7 +39,7 @@ public class NoteService {
         throw new ClientException("Note not found");
     }
 
-    public NoteResponseTo update(NoteRequestTo request) throws ClientException {
+    public NoteResponseTo update(@Valid NoteRequestTo request) throws ClientException {
         if(noteRepository.findByKeyId(request.getId()).isEmpty()) {
             throw new ClientException("Note doesn't exist");
         }

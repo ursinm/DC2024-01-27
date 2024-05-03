@@ -40,7 +40,7 @@ public class NewsService {
             throw new ClientException("Editor with specified id doesn't exist");
         }
         News news = NewsRequestTo.fromRequest(request);
-        news.setEdit(editor.get());
+        news.setEditorId(editor.get());
         news.setCreated(Date.valueOf(LocalDate.now()));
         news.setModified(Date.valueOf(LocalDate.now()));
         return NewsResponseTo.toResponse(newsRepository.save(news));
@@ -72,7 +72,7 @@ public class NewsService {
             throw new ClientException("Editor with the specified id doesn't exist");
         }
         News news = NewsRequestTo.fromRequest(request);
-        news.setEdit(editor.get());
+        news.setEditorId(editor.get());
         news.setCreated(currNews.get().getCreated());
         news.setModified(Date.valueOf(LocalDate.now()));
         return NewsResponseTo.toResponse(newsRepository.save(news));

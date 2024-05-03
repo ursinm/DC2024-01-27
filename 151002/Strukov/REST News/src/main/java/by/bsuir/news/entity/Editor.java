@@ -20,7 +20,7 @@ public class Editor implements IEntity {
     private String firstname;
     @Size(min = 2, max = 64)
     private String lastname;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "edit")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "editorId")
     private List<News> news;
 
     public Editor() {

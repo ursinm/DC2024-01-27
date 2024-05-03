@@ -6,6 +6,7 @@ import by.bsuir.news.entity.Note;
 import by.bsuir.news.exception.ClientException;
 import by.bsuir.news.service.GenericService;
 import by.bsuir.news.service.NoteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,22 +55,22 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity<NoteResponseTo> saveNote(@RequestHeader HttpHeaders headers, @RequestBody NoteRequestTo note) {
+    public ResponseEntity<NoteResponseTo> saveNote(@RequestHeader HttpHeaders headers, @Valid @RequestBody NoteRequestTo note) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(noteService.create(note));
         }
         catch(ClientException ce) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new NoteResponseTo());
         }
     }
 
     @PutMapping
-    public ResponseEntity<NoteResponseTo> updateNote(@RequestHeader HttpHeaders headers, @RequestBody NoteRequestTo note) {
+    public ResponseEntity<NoteResponseTo> updateNote(@RequestHeader HttpHeaders headers, @Valid @RequestBody NoteRequestTo note) {
         try {
             return ResponseEntity.ok(noteService.update(note));
         }
         catch(ClientException ce) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new NoteResponseTo());
         }
     }
 

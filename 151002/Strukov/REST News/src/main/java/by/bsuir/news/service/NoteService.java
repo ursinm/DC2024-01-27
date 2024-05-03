@@ -10,6 +10,7 @@ import by.bsuir.news.event.OutTopicMessage;
 import by.bsuir.news.exception.ClientException;
 import by.bsuir.news.repository.NewsRepository;
 import by.bsuir.news.repository.NoteRepository;
+import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class NoteService {
     }
 
     @CacheEvict(cacheNames = "notes", allEntries = true)
-    public NoteResponseTo create(NoteRequestTo request) throws ClientException {
+    public NoteResponseTo create(@Valid NoteRequestTo request) throws ClientException {
         Long newsId = request.getNewsId();
         if(!newsRepository.existsById(newsId)) {
             throw new ClientException("news with id=" + newsId + " doesn't exist");
@@ -87,7 +88,7 @@ public class NoteService {
     }
 
     @CacheEvict(cacheNames = "notes", allEntries = true)
-    public NoteResponseTo update(NoteRequestTo request) throws ClientException {
+    public NoteResponseTo update(@Valid NoteRequestTo request) throws ClientException {
         Long newsId = request.getNewsId();
         if(!newsRepository.existsById(newsId)) {
             throw new ClientException("news with id=" + newsId + " doesn't exist");
