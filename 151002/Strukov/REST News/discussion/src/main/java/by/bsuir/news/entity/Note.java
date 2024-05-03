@@ -1,4 +1,4 @@
-package by.bsuir.news.discussion.entity;
+package by.bsuir.news.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

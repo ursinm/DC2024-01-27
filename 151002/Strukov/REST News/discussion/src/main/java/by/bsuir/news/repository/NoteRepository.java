@@ -1,6 +1,6 @@
-package by.bsuir.news.discussion.repository;
+package by.bsuir.news.repository;
 
-import by.bsuir.news.discussion.entity.Note;
+import by.bsuir.news.entity.Note;
 import org.springframework.data.cassandra.repository.CassandraRepository;
 import org.springframework.data.cassandra.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,10 +1,10 @@
-package by.bsuir.news.discussion.service;
+package by.bsuir.news.service;
 
-import by.bsuir.news.discussion.dto.request.NoteRequestTo;
-import by.bsuir.news.discussion.dto.response.NoteResponseTo;
-import by.bsuir.news.discussion.entity.Note;
-import by.bsuir.news.discussion.exception.ClientException;
-import by.bsuir.news.discussion.repository.NoteRepository;
+import by.bsuir.news.dto.request.NoteRequestTo;
+import by.bsuir.news.dto.response.NoteResponseTo;
+import by.bsuir.news.entity.Note;
+import by.bsuir.news.exception.ClientException;
+import by.bsuir.news.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class NoteService {
         return notes.stream().map(NoteResponseTo::toResponse).collect(Collectors.toList());
     }
 
-    public NoteResponseTo getById(Long id) throws ClientException{
+    public NoteResponseTo getById(Long id) throws ClientException {
         Optional<Note> note = noteRepository.findByKeyId(id);
         if(note.isPresent()) {
             return NoteResponseTo.toResponse(note.get());

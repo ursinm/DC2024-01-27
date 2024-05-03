@@ -1,8 +1,8 @@
-package by.bsuir.news.discussion.controller;
+package by.bsuir.news.controller;
 
-import by.bsuir.news.discussion.dto.request.NoteRequestTo;
-import by.bsuir.news.discussion.dto.response.NoteResponseTo;
-import by.bsuir.news.discussion.service.NoteService;
+import by.bsuir.news.dto.request.NoteRequestTo;
+import by.bsuir.news.dto.response.NoteResponseTo;
+import by.bsuir.news.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

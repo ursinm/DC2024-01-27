@@ -1,8 +1,8 @@
-package by.bsuir.news.discussion.dto.request;
+package by.bsuir.news.dto.request;
 
 
-import by.bsuir.news.discussion.entity.Note;
-import by.bsuir.news.discussion.entity.NoteKey;
+import by.bsuir.news.entity.Note;
+import by.bsuir.news.entity.NoteKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

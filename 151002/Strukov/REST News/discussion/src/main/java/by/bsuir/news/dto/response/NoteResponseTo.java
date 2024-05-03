@@ -1,6 +1,6 @@
-package by.bsuir.news.discussion.dto.response;
+package by.bsuir.news.dto.response;
 
-import by.bsuir.news.discussion.entity.Note;
+import by.bsuir.news.entity.Note;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package by.bsuir.news.discussion.entity.converter;
+package by.bsuir.news.entity.converter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
