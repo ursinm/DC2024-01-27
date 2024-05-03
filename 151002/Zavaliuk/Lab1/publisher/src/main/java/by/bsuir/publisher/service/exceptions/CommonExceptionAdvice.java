@@ -35,26 +35,6 @@ public class CommonExceptionAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorOf(t));
     }
 
-    @ExceptionHandler(NoteExchangeTimeoutException.class)
-    public ResponseEntity<ErrorResponseTo> handleNoteExchangeTimeoutException(
-            final NoteExchangeTimeoutException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseTo(
-                40453,
-                ex.getMessage(),
-                null
-        ));
-    }
-
-    @ExceptionHandler(NoteExchangeFailedException.class)
-    public ResponseEntity<ErrorResponseTo> handleNoteExchangeFailedException(
-            final NoteExchangeFailedException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseTo(
-                40455,
-                ex.getMessage(),
-                null
-        ));
-    }
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseTo> catchDataIntegrityViolationException(DataIntegrityViolationException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponseTo(

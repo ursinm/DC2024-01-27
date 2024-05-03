@@ -2,41 +2,24 @@ package by.bsuir.discussion.service;
 
 import by.bsuir.discussion.dao.NoteRepository;
 import by.bsuir.discussion.model.entity.Note;
-import by.bsuir.discussion.model.entity.NoteState;
 import by.bsuir.discussion.model.request.NoteRequestTo;
 import by.bsuir.discussion.model.response.NoteResponseTo;
 import by.bsuir.discussion.service.exceptions.ResourceNotFoundException;
 import by.bsuir.discussion.service.mapper.NoteMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
 public class NoteService implements RestService<NoteRequestTo, NoteResponseTo> {
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;
-    private static final SecureRandom random;
-
-    static {
-        SecureRandom randomInstance;
-        try {
-            randomInstance = SecureRandom.getInstance("NativePRNG");
-        } catch (NoSuchAlgorithmException ex) {
-            randomInstance = new SecureRandom();
-        }
-        random = randomInstance;
-    }
-
-    private static Long getTimeBasedId(){
-        return (((System.currentTimeMillis() << 16) | (random.nextLong() & 0xFFFF)));
-    }
+    private static final AtomicLong ids = new AtomicLong(1);
 
     @Override
     public List<NoteResponseTo> findAll() {
@@ -55,16 +38,15 @@ public class NoteService implements RestService<NoteRequestTo, NoteResponseTo> {
         return create(noteTo, Locale.ENGLISH);
     }
 
-    public NoteResponseTo create(@Valid NoteRequestTo noteTo, Locale locale) {
+    public NoteResponseTo create(NoteRequestTo noteTo, Locale locale) {
         Note newNote = noteMapper.getNote(noteTo);
         newNote.getKey().setCountry(locale);
-        newNote.getKey().setId(getTimeBasedId());
-        newNote.setState(NoteState.APPROVE);
+        newNote.getKey().setId(ids.getAndIncrement());
         return noteMapper.getResponseTo(noteRepository.save(newNote));
     }
 
     @Override
-    public NoteResponseTo update(@Valid NoteRequestTo noteTo) {
+    public NoteResponseTo update(NoteRequestTo noteTo) {
         Note note = noteRepository
                 .findByKeyId(noteTo.id())
                 .orElseThrow(() -> noteNotFoundException(noteTo.id()));

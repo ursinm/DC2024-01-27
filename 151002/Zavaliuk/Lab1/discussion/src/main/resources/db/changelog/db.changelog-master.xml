@@ -7,5 +7,4 @@
 
 
     <include file="/db/changelog/2024/04/07-04-changelog.sql"/>
-    <include file="/db/changelog/2024/04/10-04-changelog.sql"/>
 </databaseChangeLog>

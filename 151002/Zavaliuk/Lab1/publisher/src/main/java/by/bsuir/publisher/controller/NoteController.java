@@ -1,48 +1,72 @@
 package by.bsuir.publisher.controller;
 
-import by.bsuir.publisher.model.response.NoteResponseTo;
+import by.bsuir.publisher.util.HeadersUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import by.bsuir.publisher.model.request.NoteRequestTo;
-import by.bsuir.publisher.service.NoteService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Locale;
+import org.springframework.web.client.RestClient;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1.0/notes")
 @RequiredArgsConstructor
 public class NoteController {
-    private final NoteService noteService;
+    @Value("${app.notes-path}")
+    private String notesPath;
+    private final RestClient restClient;
 
     @GetMapping
-    public ResponseEntity<List<NoteResponseTo>> getAll() {
-        return ResponseEntity.ok(noteService.getAll());
+    public ResponseEntity<?> getAll(@RequestHeader HttpHeaders headers) {
+        return restClient.get()
+                .uri(notesPath)
+                .headers(httpHeaders -> HeadersUtil.AddHeadersWithoutLength(httpHeaders, headers))
+                .retrieve()
+                .toEntity(String.class);
     }
 
     @PostMapping
-    public ResponseEntity<NoteResponseTo> create(@Valid @RequestBody NoteRequestTo dto,
-                                                 HttpServletRequest request) {
-        final Locale locale = request.getLocale();
-        return ResponseEntity.status(HttpStatus.CREATED).body(noteService.create(dto, locale));
+    public ResponseEntity<?> create(@RequestHeader HttpHeaders headers,
+                                    @RequestBody Object o) {
+
+        return restClient.post()
+                .uri(notesPath)
+                .headers(httpHeaders -> HeadersUtil.AddHeadersWithoutLength(httpHeaders, headers))
+                .body(o)
+                .retrieve()
+                .toEntity(String.class);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NoteResponseTo> get(@Valid @PathVariable("id") Long id) {
-        return ResponseEntity.ok(noteService.getById(id));
+    public ResponseEntity<?> get(@RequestHeader HttpHeaders headers,
+                                 @PathVariable Map<String, Object> pathVars) {
+        return restClient.get()
+                .uri(notesPath + "/{id}", pathVars)
+                .headers(httpHeaders -> HeadersUtil.AddHeadersWithoutLength(httpHeaders, headers))
+                .retrieve()
+                .toEntity(String.class);
     }
 
     @PutMapping
-    public ResponseEntity<NoteResponseTo> update(@Valid @RequestBody NoteRequestTo dto) {
-        return ResponseEntity.ok(noteService.update(dto));
+    public ResponseEntity<?> update(@RequestHeader HttpHeaders headers,
+                                    @RequestBody Object o) {
+        return restClient.put()
+                .uri(notesPath)
+                .headers(httpHeaders -> HeadersUtil.AddHeadersWithoutLength(httpHeaders, headers))
+                .body(o)
+                .retrieve()
+                .toEntity(String.class);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@Valid @PathVariable("id") Long id) {
-        noteService.deleteById(id);
+    public ResponseEntity<?> delete(@RequestHeader HttpHeaders headers,
+                                    @PathVariable Map<String, Object> pathVars) {
+        return restClient.delete()
+                .uri(notesPath + "/{id}", pathVars)
+                .headers(httpHeaders -> HeadersUtil.AddHeadersWithoutLength(httpHeaders, headers))
+                .retrieve()
+                .toEntity(String.class);
     }
 }
