@@ -6,3 +6,6 @@ docker postgres start:
 
 docker cassandra start:
     docker run -p 9042:9042 -e CASSANDRA_KEYSPACE=distcomp -e CASSANDRA_DC=datacenter1 -e CASSANDRA_CLUSTER_NAME=myCluster -d cassandra
+    docker exec -it cont bash
+    cqlsh
+    CREATE KEYSPACE distcomp WITH replication = {'class':'SimpleStrategy','replication_factor':'1'};

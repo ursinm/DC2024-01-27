@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="marker",schema = "distcomp")
+@Table(name="tbl_marker",schema = "public")
 public class Marker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

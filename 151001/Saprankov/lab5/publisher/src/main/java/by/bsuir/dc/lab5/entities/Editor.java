@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="editor",schema = "distcomp")
+@Table(name="tbl_editor",schema = "public")
 public class Editor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

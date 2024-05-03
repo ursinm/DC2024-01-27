@@ -67,22 +67,26 @@ public class Listener {
             switch (kafkaMessageType) {
                 case GET_ALL -> {
                     getAll(response);
-                    sender.send("message-response", response);
+                    sender.send(responseTopic, response);
                 }
                 case ONE -> {
                     getOne(request, response);
-                    sender.send("message-response", response);
+                    sender.send(responseTopic, response);
                 }
                 case SAVE -> {
-                    create(request);
+                    try {
+                        create(request);
+                    }catch (Exception e){
+                        log.error("Error saving message", e);
+                    }
                 }
                 case UPDATE -> {
                     update(request, response);
-                    sender.send("message-response", response);
+                    sender.send(responseTopic, response);
                 }
                 case DELETE -> {
                     delete(request, response);
-                    sender.send("message-response", response);
+                    sender.send(responseTopic, response);
                 }
                 default -> {
                     RestError error = RestError.builder()
@@ -90,15 +94,20 @@ public class Listener {
                             .message("Unknown method")
                             .build();
                     response.setError(error);
-                    sender.send("message-response", response);
+                    sender.send(responseTopic, response);
                 }
             }
         }catch (Exception e){
+            log.error("Error, requestId: " + requestId, e);
             if (response.getStatus() == null || response.getError() == null){
                 response.setStatus("error");
                 response.setError(RestError.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).message(e.getMessage()).build());
             }
-            sender.send("message-response", response);
+            if (requestId != null){
+                sender.send(responseTopic, response);
+            }else{
+                log.error("Error, requestId is null: ", e);
+            }
         }
     }
 
@@ -128,9 +137,9 @@ public class Listener {
 
         if (message.isEmpty()){
             RestError error = RestError.builder()
-                            .status(HttpStatus.NOT_FOUND)
-                                    .message("message not found")
-                                            .build();
+                    .status(HttpStatus.NOT_FOUND)
+                    .message("message not found")
+                    .build();
 
             log.info("message not found");
             response.setError(error);
@@ -179,6 +188,7 @@ public class Listener {
             messageService.delete(id);
             response.setStatus("ok");
         }catch (EntityNotFoundException e){
+            log.error("Message not found while DELETE", e);
             response.setStatus("error");
             RestError error = RestError.builder()
                     .status(HttpStatus.NOT_FOUND)

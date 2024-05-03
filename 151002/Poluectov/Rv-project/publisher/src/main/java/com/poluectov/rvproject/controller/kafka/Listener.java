@@ -27,13 +27,15 @@ public class Listener {
         log.info("KAFKA: Message received: {}", response);
 
         UUID rqId = response.getRequestId();
-        synchronized (sendReceiverMap) {
-            if (sendReceiverMap.containsKey(rqId)) {
-                KafkaSendReceiver<KafkaMessageResponseTo> stringSenderReceiver = (KafkaSendReceiver<KafkaMessageResponseTo>) sendReceiverMap.get(rqId);
-                stringSenderReceiver.send(response);
-            } else {
-                //send to redis if another instance of publisher waits for this message
-                redisMessagePublisher.publish(response);
+        if (rqId != null) {
+            synchronized (sendReceiverMap) {
+                if (sendReceiverMap.containsKey(rqId)) {
+                    KafkaSendReceiver<KafkaMessageResponseTo> stringSenderReceiver = (KafkaSendReceiver<KafkaMessageResponseTo>) sendReceiverMap.get(rqId);
+                    stringSenderReceiver.send(response);
+                } else {
+                    //send to redis if another instance of publisher waits for this message
+                    redisMessagePublisher.publish(response);
+                }
             }
         }
     }

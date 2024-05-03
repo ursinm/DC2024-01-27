@@ -9,6 +9,6 @@ import lombok.Setter;
 @Builder
 public class Note {
     Long id;
-    Long tweetId;
+    Long issueId;
     String content;
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Publisher.Entity.DTO.RequestTO;
 using Publisher.Kafka.Model;
 using Publisher.Service.Interface;
@@ -8,7 +9,7 @@ namespace Publisher.Controllers.V1_0
 {
     [Route("api/v1.0/posts")]
     [ApiController]
-    public class PostController(IPostService postService, ) : Controller
+    public class PostController(IPostService postService, IMapper Mapper) : Controller
     {
 
         [HttpGet]

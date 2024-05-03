@@ -5,8 +5,10 @@ import com.poluectov.rvproject.dto.message.MessageResponseTo;
 import com.poluectov.rvproject.model.Message;
 import com.poluectov.rvproject.repository.MessageRepository;
 import com.poluectov.rvproject.repository.exception.EntityNotFoundException;
+import com.poluectov.rvproject.service.IssueService;
 import com.poluectov.rvproject.service.redis.RedisCacheService;
 import com.poluectov.rvproject.utils.dtoconverter.MessageRequestDtoConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Component
+@Slf4j
 public class CachedMessageService extends MessageService {
 
     RedisCacheService<Long, MessageResponseTo> redisCacheService;
@@ -40,13 +43,19 @@ public class CachedMessageService extends MessageService {
     public Optional<MessageResponseTo> update(Long aLong, MessageRequestTo messageRequestTo) {
 
         if (redisCacheService.get(aLong) != null) {
+            MessageResponseTo updated = convert(messageRequestTo);
+            redisCacheService.put(aLong, updated);
             // update async
             executorService.execute(() -> {
-                redisCacheService.put(aLong, convert(messageRequestTo));
-                super.update(aLong, messageRequestTo);
+                try {
+                    super.update(aLong, messageRequestTo);
+                }catch (Exception e) {
+                    log.error("Error updating message", e);
+                    redisCacheService.delete(aLong);
+                }
             });
 
-            return Optional.of(convert(messageRequestTo));
+            return Optional.of(updated);
         }
 
         Optional<MessageResponseTo> messageResponseTo = super.update(aLong, messageRequestTo);

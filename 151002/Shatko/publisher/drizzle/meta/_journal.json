@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1712273137569,
-      "tag": "0000_create_editors_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1712328266203,
-      "tag": "0001_create_stories_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1712334579087,
-      "tag": "0002_create_messages_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1712336402406,
-      "tag": "0003_create_tags_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1712337032193,
-      "tag": "0004_create_stories_to_tags_table",
+      "when": 1714668140213,
+      "tag": "0000_create_tables",
       "breakpoints": true
     }
   ]

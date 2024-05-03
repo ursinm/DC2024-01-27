@@ -1,6 +1,6 @@
 import {
   integer,
-  pgSchema,
+  pgTable,
   serial,
   timestamp,
   varchar,
@@ -10,9 +10,7 @@ import { relations } from "drizzle-orm";
 import { messages } from "./messages.schema";
 import { storiesToGroups } from "./storiesToTags.schema";
 
-const schema = pgSchema("distcomp");
-
-export const stories = schema.table("tbl_stories", {
+export const stories = pgTable("tbl_story", {
   id: serial("id").primaryKey(),
   editorId: integer("editor_id")
     .references(() => editors.id)

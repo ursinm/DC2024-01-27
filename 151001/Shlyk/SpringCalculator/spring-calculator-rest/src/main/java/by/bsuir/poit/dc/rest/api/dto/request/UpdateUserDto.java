@@ -1,7 +1,7 @@
 package by.bsuir.poit.dc.rest.api.dto.request;
 
-import by.bsuir.poit.dc.rest.api.dto.groups.Create;
-import by.bsuir.poit.dc.rest.api.dto.groups.Update;
+import by.bsuir.poit.dc.dto.groups.Create;
+import by.bsuir.poit.dc.dto.groups.Update;
 import by.bsuir.poit.dc.rest.model.User;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;

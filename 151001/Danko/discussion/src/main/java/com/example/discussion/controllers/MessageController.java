@@ -61,12 +61,12 @@ public class MessageController {
     }
 
     @PostMapping
-    public MessageResponseTo save(@RequestHeader("Accept-Language") String lang, @RequestBody MessageRequestTo message) {
+    public MessageResponseTo save(@RequestHeader(value = "Accept-Language", defaultValue = "en") String lang, @RequestBody MessageRequestTo message) {
         return messageService.save(message, lang);
     }
 
     @PutMapping()
-    public MessageResponseTo update(@RequestHeader("Accept-Language") String lang, @RequestBody MessageRequestTo message) {
+    public MessageResponseTo update(@RequestHeader(value = "Accept-Language", defaultValue = "en") String lang, @RequestBody MessageRequestTo message) {
         return messageService.update(message, lang);
     }
 

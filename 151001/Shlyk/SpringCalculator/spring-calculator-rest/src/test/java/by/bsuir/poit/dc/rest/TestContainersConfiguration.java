@@ -1,14 +1,21 @@
 package by.bsuir.poit.dc.rest;
 
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author Paval Shlyk
  * @since 24/02/2024
  */
 @TestConfiguration
+
 //@Testcontainers
 public class TestContainersConfiguration {
+    @Bean
+    public Object mySuperBean() {
+	System.out.println("I'm super bean");
+	return new Object();
+    }
 //        @Bean(initMethod = "start", destroyMethod = "stop")
 //    @Bean
 //    @ServiceConnection

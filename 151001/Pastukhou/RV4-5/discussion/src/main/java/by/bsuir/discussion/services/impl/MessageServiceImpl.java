@@ -148,7 +148,7 @@ public class MessageServiceImpl implements MessageService {
             ProducerRecord<String, MessageActionDto> record = new ProducerRecord<>(messageChangeTopic, null,
                     System.currentTimeMillis(), String.valueOf(messageActionDto.toString()),
                     messageActionDto);
-            kafkaMessageActionTemplate.send(record);
+            //kafkaMessageActionTemplate.send(record);
             return messageResponseDto;
         } else {
             throw new EntityExistsException(Messages.EntityExistsException);
@@ -176,25 +176,28 @@ public class MessageServiceImpl implements MessageService {
         ProducerRecord<String, MessageActionDto> record = new ProducerRecord<>(messageChangeTopic, null,
                 System.currentTimeMillis(), String.valueOf(messageActionDto.toString()),
                 messageActionDto);
-        kafkaMessageActionTemplate.send(record);
+        //kafkaMessageActionTemplate.send(record);
         return messageResponseDto;
     }
 
     @Override
     public Long delete(@NonNull Long id) throws NoEntityExistsException {
         Optional<Message> message = messageRepository.findMessageById(id);
-        messageRepository.deleteMessageByTweetIdAndId(message.map(Message::getTweetId).orElseThrow(() ->
-                new NoEntityExistsException(Messages.NoEntityExistsException)), message.map(Message::getId).
-                orElseThrow(() -> new NoEntityExistsException(Messages.NoEntityExistsException)));
-        MessageActionDto messageActionDto = MessageActionDto.builder().
-                action(MessageActionTypeDto.DELETE).
-                data(String.valueOf(id)).
-                build();
-        ProducerRecord<String, MessageActionDto> record = new ProducerRecord<>(messageChangeTopic, null,
-                System.currentTimeMillis(), String.valueOf(messageActionDto.toString()),
-                messageActionDto);
-        kafkaMessageActionTemplate.send(record);
-        return message.get().getId();
+        if (message.isPresent()) {
+            messageRepository.deleteMessageByTweetIdAndId(message.map(Message::getTweetId).orElseThrow(() ->
+                    new NoEntityExistsException(Messages.NoEntityExistsException)), message.map(Message::getId).
+                    orElseThrow(() -> new NoEntityExistsException(Messages.NoEntityExistsException)));
+            MessageActionDto messageActionDto = MessageActionDto.builder().
+                    action(MessageActionTypeDto.DELETE).
+                    data(String.valueOf(id)).
+                    build();
+            ProducerRecord<String, MessageActionDto> record = new ProducerRecord<>(messageChangeTopic, null,
+                    System.currentTimeMillis(), String.valueOf(messageActionDto.toString()),
+                    messageActionDto);
+            //kafkaMessageActionTemplate.send(record);
+            return message.get().getId();
+        }
+        return -1L;
     }
 
     @Override

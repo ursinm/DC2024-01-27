@@ -30,7 +30,12 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<MessageResponseDto> create(@RequestBody MessageRequestDto message) throws ServiceException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(message));
+        MessageResponseDto m = messageService.create(message);
+        if (m != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(m);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponseDto());
+        }
     }
 
     @GetMapping("/{id}")
@@ -51,6 +56,11 @@ public class MessageController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Long> delete(@PathVariable("id") Long id) throws ServiceException {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(messageService.delete(id));
+        Long rid = messageService.delete(id);
+        if (rid != -1) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(rid);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(rid);
+        }
     }
 }

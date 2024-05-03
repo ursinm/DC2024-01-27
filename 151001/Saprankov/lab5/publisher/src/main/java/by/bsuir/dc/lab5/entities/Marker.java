@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="marker",schema = "distcomp")
+@Table(name="tbl_marker",schema = "public")
 public class Marker implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

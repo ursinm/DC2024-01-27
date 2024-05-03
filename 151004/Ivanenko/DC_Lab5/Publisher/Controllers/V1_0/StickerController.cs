@@ -8,7 +8,7 @@ using Publisher.Service.Interface;
 
 namespace Publisher.Controllers.V1_0
 {
-    [Route("api/v1.0/markers")]
+    [Route("api/v1.0/stickers")]
     [ApiController]
     public class StickerController(IStickerService MarkerService,  IMapper Mapper) :
         AbstractController<Sticker, StickerRequestTO, StickerResponseTO>(MarkerService, Mapper)
