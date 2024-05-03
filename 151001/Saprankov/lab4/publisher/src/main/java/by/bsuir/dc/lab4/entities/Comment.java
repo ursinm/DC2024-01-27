@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="comment",schema = "distcomp")
+@Table(name="tbl_comment",schema = "public")
 public class Comment{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

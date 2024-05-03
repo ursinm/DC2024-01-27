@@ -1,8 +1,5 @@
 package by.bsuir.poit.dc.rest.api.exceptions;
 
-import by.bsuir.poit.dc.rest.api.dto.request.ErrorDto;
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 /**
@@ -22,7 +19,6 @@ public class ResourceException extends RuntimeException {
     }
 
     @Override
-
     public synchronized Throwable fillInStackTrace() {
 	return this;
     }

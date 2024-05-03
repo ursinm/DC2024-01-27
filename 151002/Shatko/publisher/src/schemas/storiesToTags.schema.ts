@@ -1,12 +1,10 @@
 import { relations } from "drizzle-orm";
-import { integer, pgSchema, serial } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial } from "drizzle-orm/pg-core";
 import { editors } from "./editors.schema";
 import { stories } from "./stories.schema";
 import { tags } from "./tags.schema";
 
-const schema = pgSchema("distcomp");
-
-export const storiesToGroups = schema.table("tbl_stories_to_tags", {
+export const storiesToGroups = pgTable("tbl_stories_to_tags", {
   id: serial("id").primaryKey(),
   storyId: integer("story_id")
     .references(() => editors.id)
@@ -27,7 +25,7 @@ export const storiesToGroupsRelations = relations(
       fields: [storiesToGroups.tagId],
       references: [tags.id],
     }),
-  }),
+  })
 );
 
 export type StoryToTag = typeof storiesToGroups.$inferSelect;

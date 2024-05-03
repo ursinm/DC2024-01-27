@@ -8,6 +8,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
@@ -17,10 +20,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1.0/messages")
+@CacheConfig(cacheNames = "messageCache")
 public class MessageController {
 
     @Autowired
     private RestClient restClient;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Autowired
     private KafkaConsumer<String, MessageResponseTo> kafkaConsumer;
@@ -40,11 +47,27 @@ public class MessageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponseTo> getById(@PathVariable Long id) throws NotFoundException  {
+        Cache cache = cacheManager.getCache("messages");
+        if (cache != null) {
+            MessageResponseTo cachedResponse = cache.get(id, MessageResponseTo.class);
+            if (cachedResponse != null) {
+                return ResponseEntity.status(200).body(cachedResponse);
+            }
+        }
         MessageRequestTo messageRequestTo = new MessageRequestTo();
         messageRequestTo.setId(id);
         messageRequestTo.setMethod("GET");
         kafkaSender.sendMessage(messageRequestTo, kafkaTopic_inTopic);
-        return ResponseEntity.status(200).body(listenKafka());
+        MessageResponseTo responseTo = listenKafka();
+        if(responseTo != null) {
+            if(cache != null) {
+                cache.put(id, responseTo);
+            }
+            return ResponseEntity.status(200).body(responseTo);
+        } else {
+            throw new NotFoundException("Message not found", 404L);
+        }
+
     }
 
     @DeleteMapping("/{id}")
@@ -53,6 +76,11 @@ public class MessageController {
         messageRequestTo.setId(id);
         messageRequestTo.setMethod("DELETE");
         kafkaSender.sendMessage(messageRequestTo, kafkaTopic_inTopic);
+        listenKafka();
+        Cache cache = cacheManager.getCache("messages");
+        if(cache != null) {
+            cache.evict(id);
+        }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
@@ -66,6 +94,10 @@ public class MessageController {
 
     @PutMapping()
     public ResponseEntity<MessageResponseTo> update(@RequestHeader(value = "Accept-Language", defaultValue = "en") String acceptLanguageHeader, @RequestBody MessageRequestTo message) throws NotFoundException  {
+        Cache cache = cacheManager.getCache("messages");
+        if(cache != null) {
+            cache.evict(message.getId());
+        }
         message.setCountry(acceptLanguageHeader);
         message.setMethod("PUT");
         kafkaSender.sendMessage(message, kafkaTopic_inTopic);

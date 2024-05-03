@@ -14,6 +14,7 @@ namespace DC_Lab1.DB.BaseDBContext
         public BaseDbContext(DbContextOptions<BaseDbContext> options)
             : base(options)
         {
+
             Database.EnsureCreated();
         }
 
@@ -32,7 +33,7 @@ namespace DC_Lab1.DB.BaseDBContext
         {
             modelBuilder.Entity<Editor>(entity =>
             {
-                entity.ToTable("tbl_Editor");
+                entity.ToTable("tbl_editor");
                 entity.HasIndex(e => e.Login, "IX_Editors_login").IsUnique();
 
                 entity.Property(e => e.Id)
@@ -46,7 +47,7 @@ namespace DC_Lab1.DB.BaseDBContext
 
             modelBuilder.Entity<Post>(entity =>
             {
-                entity.ToTable("tbl_Post");
+                entity.ToTable("tbl_post");
                 entity.Property(e => e.Id)
                     .ValueGeneratedOnAdd()
                     .HasColumnName("id");
@@ -58,7 +59,7 @@ namespace DC_Lab1.DB.BaseDBContext
 
             modelBuilder.Entity<Sticker>(entity =>
             {
-                entity.ToTable("tbl_Sticker");
+                entity.ToTable("tbl_sticker");
                 entity.HasIndex(e => e.Id, "IX_Stickers_id").IsUnique();
 
                 entity.HasIndex(e => e.Name, "IX_Stickers_name").IsUnique();
@@ -71,7 +72,7 @@ namespace DC_Lab1.DB.BaseDBContext
 
             modelBuilder.Entity<Tweet>(entity =>
             {
-                entity.ToTable("tbl_Tweet");
+                entity.ToTable("tbl_tweet");
                 entity.HasIndex(e => e.Title, "IX_Tweets_title").IsUnique();
 
                 entity.Property(e => e.Id)
@@ -83,11 +84,12 @@ namespace DC_Lab1.DB.BaseDBContext
                 entity.Property(e => e.Title).HasColumnName("title");
 
                 entity.HasOne(d => d.Editor).WithMany(p => p.Tweets).HasForeignKey(d => d.EditorId);
+                entity.Property(e => e.EditorId).HasColumnName("editor_id");
             });
 
             modelBuilder.Entity<TweetSticker>(entity =>
             {
-                entity.ToTable("tbl_TweetSticker");
+                entity.ToTable("tbl_tweetSticker");
 
                 entity.Property(e => e.Id)
                     .ValueGeneratedOnAdd()

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.education.bean.Message;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

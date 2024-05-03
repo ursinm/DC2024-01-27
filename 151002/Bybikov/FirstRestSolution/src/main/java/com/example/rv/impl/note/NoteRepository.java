@@ -20,7 +20,7 @@ public class NoteRepository extends MemoryRepository<Note> {
         Note memRepNote = map.get(id);
 
         if (memRepNote != null &&
-                note.getTweetId() != null &&
+                note.getIssueId() != null &&
                 note.getContent().length() > 1 &&
                 note.getContent().length() < 2049
         ) {

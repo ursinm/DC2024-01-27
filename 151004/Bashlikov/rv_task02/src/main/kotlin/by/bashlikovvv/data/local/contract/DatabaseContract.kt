@@ -3,35 +3,35 @@ package by.bashlikovvv.data.local.contract
 object DatabaseContract {
 
     object EditorsTable {
-        const val TABLE_NAME = "editors"
-        const val COLUMN_ID = "editors_id"
-        const val COLUMN_LOGIN = "editors_login"
-        const val COLUMN_PASSWORD = "editors_password"
-        const val COLUMN_FIRSTNAME = "editors_firstname"
-        const val COLUMN_LASTNAME = "editors_lastname"
+        const val TABLE_NAME = "tbl_editor"
+        const val COLUMN_ID = "id"
+        const val COLUMN_LOGIN = "login"
+        const val COLUMN_PASSWORD = "password"
+        const val COLUMN_FIRSTNAME = "firstname"
+        const val COLUMN_LASTNAME = "lastname"
     }
 
     object TweetsTable {
-        const val TABLE_NAME = "tweets"
-        const val COLUMN_ID = "tweets_id"
-        const val COLUMN_EDITOR_ID = "tweets_editor_id"
-        const val COLUMN_TITLE = "tweets_title"
-        const val COLUMN_CONTENT = "tweets_content"
-        const val COLUMN_CREATED = "tweets_created"
-        const val COLUMN_MODIFIED = "tweets_modified"
+        const val TABLE_NAME = "tbl_tweet"
+        const val COLUMN_ID = "id"
+        const val COLUMN_EDITOR_ID = "editor_id"
+        const val COLUMN_TITLE = "title"
+        const val COLUMN_CONTENT = "content"
+        const val COLUMN_CREATED = "created"
+        const val COLUMN_MODIFIED = "modified"
     }
 
     object PostsTable {
-        const val TABLE_NAME = "posts"
-        const val COLUMN_ID = "posts_id"
-        const val COLUMN_TWEET_ID = "posts_tweet_id"
-        const val COLUMN_CONTENT = "posts_content"
+        const val TABLE_NAME = "tbl_post"
+        const val COLUMN_ID = "id"
+        const val COLUMN_TWEET_ID = "tweet_id"
+        const val COLUMN_CONTENT = "content"
     }
 
     object TagsTable {
-        const val TABLE_NAME = "tags"
-        const val COLUMN_ID = "tags_ID"
-        const val COLUMN_NAME = "tags_NAME"
+        const val TABLE_NAME = "tbl_tag"
+        const val COLUMN_ID = "id"
+        const val COLUMN_NAME = "NAME"
     }
 
     object TweetTagsTable {

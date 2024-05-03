@@ -1,12 +1,14 @@
 package by.bsuir.poit.dc.rest.api.dto.mappers;
 
+import by.bsuir.poit.dc.kafka.dto.*;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateNoteDto;
 import by.bsuir.poit.dc.rest.api.dto.response.NoteDto;
 import by.bsuir.poit.dc.rest.dao.NewsRepository;
 import by.bsuir.poit.dc.rest.model.News;
-import by.bsuir.poit.dc.rest.model.Note;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author Paval Shlyk
@@ -19,22 +21,13 @@ public abstract class NoteMapper {
     @Autowired
     private NewsRepository newsRepository;
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "news",
-	source = "newsId",
-	qualifiedByName = "getNewsRef")
-    public abstract Note toEntity(UpdateNoteDto dto);
+    public abstract KafkaUpdateNoteDto buildRequest(
+	UpdateNoteDto dto,
+	List<String> countries);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "news",
-	source = "newsId",
-	qualifiedByName = "getNewsRef")
-    public abstract Note partialUpdate(
-	@MappingTarget Note note,
-	UpdateNoteDto dto);
+    public abstract NoteDto unwrapResponse(KafkaNoteDto dto);
 
-    @Mapping(target = "newsId", source = "news.id")
-    public abstract NoteDto toDto(Note note);
+    public abstract List<NoteDto> unwrapResponseList(List<KafkaNoteDto> list);
 
     @Named("getNewsRef")
     protected News getNewsRef(long newsId) {

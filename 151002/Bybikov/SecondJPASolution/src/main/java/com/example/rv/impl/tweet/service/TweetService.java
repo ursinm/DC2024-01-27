@@ -2,7 +2,6 @@ package com.example.rv.impl.tweet.service;
 
 import com.example.rv.api.exception.DuplicateEntityException;
 import com.example.rv.api.exception.EntityNotFoundException;
-import com.example.rv.api.repository.CrudRepository;
 import com.example.rv.impl.editor.Editor;
 import com.example.rv.impl.editor.EditorRepository;
 import com.example.rv.impl.tweet.Tweet;
@@ -53,9 +52,9 @@ public class TweetService {
     }
 
     public TweetResponseTo saveTweet(TweetRequestTo tweetRequestTo) throws EntityNotFoundException, DuplicateEntityException {
-        Optional<Editor> editor = editorRepository.findById(tweetRequestTo.getEditorId());
+        Optional<Editor> editor = editorRepository.findById(tweetRequestTo.getCreatorId());
         if (editor.isEmpty()) {
-            throw new EntityNotFoundException("Editor", tweetRequestTo.getEditorId());
+            throw new EntityNotFoundException("Editor", tweetRequestTo.getCreatorId());
         }
 
         if (tweetRequestTo.getCreated() == null) {
@@ -82,10 +81,10 @@ public class TweetService {
             throw new EntityNotFoundException(ENTITY_NAME, tweetRequestTo.getId());
         }
 
-        Optional<Editor> editor = editorRepository.findById(tweetRequestTo.getEditorId());
+        Optional<Editor> editor = editorRepository.findById(tweetRequestTo.getCreatorId());
 
         if (editor.isEmpty()) {
-            throw new EntityNotFoundException("Editor", tweetRequestTo.getEditorId());
+            throw new EntityNotFoundException("Editor", tweetRequestTo.getCreatorId());
         }
         if (tweetRequestTo.getCreated() == null) {
             tweetRequestTo.setCreated(new Date());

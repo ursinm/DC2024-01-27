@@ -27,9 +27,9 @@ public interface NewsService {
     @Deprecated
     List<NewsDto> getAll();
 
-    PresenceDto delete(long newsId);
+    PresenceDto existsById(long newsId);
 
-    NoteDto createNote(long newsId, @Valid UpdateNoteDto dto);
+    PresenceDto delete(long newsId);
 
     void attachLabelById(long newsId, @Valid UpdateNewsLabelDto dto);
 
@@ -39,7 +39,6 @@ public interface NewsService {
 
     List<NewsDto> getNewsByLabel(String label);
 
-    List<NoteDto> getNotesByNewsId(long newsId);
 
     List<LabelDto> getLabelsByNewsId(long newsId);
 }

@@ -1,24 +1,36 @@
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import {
+    forwardRef,
     HttpException,
     Inject,
     Injectable,
-    NotFoundException
+    NotFoundException,
 } from "@nestjs/common";
 import { Client, ClientKafka, Transport } from "@nestjs/microservices";
 import { Cache } from "cache-manager";
+import { plainToInstance } from "class-transformer";
 import { firstValueFrom } from "rxjs";
-import { ADD_NEW_COMMENT, DELETE_COMMENT_BY_ID, GET_COMMENT_BY_ID, GET_COMMENT_LIST, UPDATE_COMMENT } from "src/constants/constants";
+import {
+    ADD_NEW_COMMENT,
+    DELETE_COMMENT_BY_ID,
+    GET_COMMENT_BY_ID,
+    GET_COMMENT_LIST,
+    UPDATE_COMMENT,
+} from "src/constants/constants";
+import { TweetService } from "src/tweet/tweet.service";
 import { commentCacheKeys, TTL } from "src/utils/redis/globalRedis";
 import { CommentRequestToCreate } from "../dto/request/CommentRequestToCreate";
 import { CommentRequestToUpdate } from "../dto/request/CommentRequestToUpdate";
 import { Comment } from "../entities/Comment";
-import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class CommentService {
-    constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache){}
-    
+    constructor(
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        @Inject(forwardRef(() => TweetService))
+        private tweetService: TweetService,
+    ) {}
+
     @Client({
         transport: Transport.KAFKA,
         options: {
@@ -54,6 +66,13 @@ export class CommentService {
     async createComment(commentDto: CommentRequestToCreate) {
         let comment = new Comment();
         try {
+            const tweet = await this.tweetService.getById(commentDto.tweetId);
+            if (!tweet) {
+                throw new NotFoundException(
+                    `Tweet с id "${commentDto.tweetId} не существует" `,
+                );
+            }
+
             commentDto.id = Math.floor(Math.random() * (10000 - 100 + 1)) + 100;
             comment = await firstValueFrom(
                 this.client.send<Comment, CommentRequestToCreate>(
@@ -91,10 +110,20 @@ export class CommentService {
                     commentId: id,
                 }),
             );
-            let allComments = await this.cacheManager.get<Comment[]>(commentCacheKeys.comments);
-            allComments = allComments.filter(comment => comment.id !== id);
-            this.cacheManager.set(commentCacheKeys.comments, allComments, TTL);
-            this.cacheManager.del(commentCacheKeys.comments+id);
+            let allComments = await this.cacheManager.get<Comment[]>(
+                commentCacheKeys.comments,
+            );
+            if (allComments) {
+                allComments = allComments.filter(
+                    (comment) => comment.id !== id,
+                );
+                this.cacheManager.set(
+                    commentCacheKeys.comments,
+                    allComments,
+                    TTL,
+                );
+                this.cacheManager.del(commentCacheKeys.comments + id);
+            }
 
             return response;
         } catch (error) {
@@ -111,20 +140,26 @@ export class CommentService {
                 ),
             );
 
-            let allComments = await this.cacheManager.get<Comment[]>(commentCacheKeys.comments);
-            allComments = allComments.map(comment => {
-                if(comment.id === commentDto.id) {
+            let allComments = await this.cacheManager.get<Comment[]>(
+                commentCacheKeys.comments,
+            );
+            allComments = allComments.map((comment) => {
+                if (comment.id === commentDto.id) {
                     comment.content = commentDto.content;
                     comment.tweetId = commentDto.tweetId;
                 }
-                return comment
+                return comment;
             });
             const comment = plainToInstance(Comment, commentDto);
-            comment.country = 'Belarus';
+            comment.country = "Belarus";
             this.cacheManager.set(commentCacheKeys.comments, allComments, TTL);
-            this.cacheManager.set(commentCacheKeys.comments+commentDto.id, comment, TTL);
+            this.cacheManager.set(
+                commentCacheKeys.comments + commentDto.id,
+                comment,
+                TTL,
+            );
 
-            return response
+            return response;
         } catch (error) {
             throw new NotFoundException(
                 `Comment with id: ${commentDto.id} not found`,
