@@ -76,7 +76,7 @@ public class NoteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Long> deleteNote(@RequestHeader HttpHeaders headers, @PathVariable Long id) {
         try {
-            return ResponseEntity.ok(noteService.delete(id));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(noteService.delete(id));
         }
         catch(ClientException ce) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

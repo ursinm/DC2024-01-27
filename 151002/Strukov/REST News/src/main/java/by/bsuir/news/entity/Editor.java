@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_editors")
+@Table(name = "tbl_editor")
 public class Editor implements IEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
