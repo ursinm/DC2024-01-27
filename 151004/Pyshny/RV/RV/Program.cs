@@ -7,16 +7,40 @@ using RV.Services.Mappers;
 using RV.Repositories;
 using RV.Repositories.SQLRepositories;
 using RV.Services.DataProviderServices.Remote;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connection = builder.Configuration.GetConnectionString("Host=localhost;" +
-    "Port=5432;" +
-    "Database=distcomp;" +
-    "Username=postgres;" +
-    "Password=postgres"
-    );
-builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
+var masterConnectionString = new NpgsqlConnectionStringBuilder();
+masterConnectionString.Host = "mypostgres";
+masterConnectionString.Port = 5432;
+masterConnectionString.Username = "postgres";
+masterConnectionString.Password = "postgres";
+using (var connection = new NpgsqlConnection(masterConnectionString.ConnectionString))
+{ 
+    connection.Open();
+    using (var command = new NpgsqlCommand())
+    {
+        command.Connection = connection;
+        command.CommandText = $"SELECT 1 FROM pg_database WHERE datname='distcomp'";
+        var result = command.ExecuteScalar();
+        if (!(result != null && result != DBNull.Value))
+        {
+            command.CommandText = $"CREATE DATABASE \"distcomp\"";
+            command.ExecuteNonQuery();
+            command.CommandText = $"GRANT ALL PRIVILEGES ON DATABASE \"distcomp\" TO \"postgres\"";
+            command.ExecuteNonQuery();
+        }
+    }
+}
+string connectionString = masterConnectionString.ConnectionString;
+var dbContextOptions = new DbContextOptionsBuilder<ApplicationContext>()
+                .UseNpgsql(connectionString).Options;
+var _context = new ApplicationContext(dbContextOptions);
+_context.Database.Migrate();
+_context.Dispose();
+
+builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddTransient<IRepository<User>, SQLUserRepository>();
 builder.Services.AddTransient<IRepository<News>, SQLNewsRepository>();
@@ -25,8 +49,8 @@ builder.Services.AddTransient<IRepository<Sticker>, SQLStickerRepository>();
 
 builder.Services.AddTransient<IUserDataProvider, SQLUserDataProvider>();
 builder.Services.AddTransient<INewsDataProvider, SQLNewsDataProvider>();
-//builder.Services.AddTransient<INoteDataProvider, SQLNoteDataProvider>();
-builder.Services.AddTransient<INoteDataProvider, NoteDataProvider>();
+builder.Services.AddTransient<INoteDataProvider, NoSQLNoteDataProvider>();
+//builder.Services.AddTransient<INoteDataProvider, KafkaNoteDataProvider>();
 builder.Services.AddTransient<IStickerDataProvider, SQLStickerDataProvider>();
 
 builder.Services.AddTransient<IDataProvider, DataProvider>();
@@ -36,6 +60,10 @@ builder.Services.AddAutoMapper(typeof(NewsMapper));
 builder.Services.AddAutoMapper(typeof(NoteMapper));
 builder.Services.AddAutoMapper(typeof(StickerMapper));
 
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = "redis:6379";
+    options.InstanceName = "local";
+});
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -43,10 +71,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-var serviceProvider = app.Services;
-// Получение требуемого сервиса
-//var myService = serviceProvider.GetRequiredService<IDataProvider>();
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

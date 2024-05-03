@@ -1,10 +1,8 @@
 import { relations } from "drizzle-orm";
-import { pgSchema, serial, varchar } from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { stories } from "./stories.schema";
 
-export const schema = pgSchema("distcomp");
-
-export const editors = schema.table("tbl_editors", {
+export const editors = pgTable("tbl_editor", {
   id: serial("id").primaryKey(),
   login: varchar("login", { length: 64 }).notNull().unique(),
   password: varchar("password", { length: 128 }).notNull(),

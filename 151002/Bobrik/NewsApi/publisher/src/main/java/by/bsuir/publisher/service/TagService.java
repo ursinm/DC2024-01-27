@@ -9,6 +9,10 @@ import by.bsuir.publisher.service.exceptions.ResourceStateException;
 import by.bsuir.publisher.service.mapper.TagMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +20,20 @@ import java.util.List;
 
 @Service
 @Data
+@CacheConfig(cacheNames = "tagCache")
 @RequiredArgsConstructor
 public class TagService implements RestService <TagRequestTo, TagResponseTo> {
     private final TagRepository tagRepository;
 
     private final TagMapper tagMapper;
 
+    @Cacheable(cacheNames = "tags")
     @Override
     public List<TagResponseTo> findAll() {
         return tagMapper.getListResponseTo(tagRepository.findAll());
     }
 
+    @Cacheable(cacheNames = "tags", key = "#id", unless = "#result == null")
     @Override
     public TagResponseTo findById(Long id) {
         return tagMapper.getResponseTo(tagRepository
@@ -34,11 +41,13 @@ public class TagService implements RestService <TagRequestTo, TagResponseTo> {
                 .orElseThrow(() -> tagNotFoundException(id)));
     }
 
+    @CacheEvict(cacheNames = "tags", allEntries = true)
     @Override
     public TagResponseTo create(TagRequestTo tagTo) {
         return tagMapper.getResponseTo(tagRepository.save(tagMapper.getTag(tagTo)));
     }
 
+    @CacheEvict(cacheNames = "tags", allEntries = true)
     @Override
     public TagResponseTo update(TagRequestTo tagTo) {
         tagRepository
@@ -47,7 +56,8 @@ public class TagService implements RestService <TagRequestTo, TagResponseTo> {
         return tagMapper.getResponseTo(tagRepository.save(tagMapper.getTag(tagTo)));
     }
 
-    @Override
+    @Caching(evict = { @CacheEvict(cacheNames = "tags", key = "#id"),
+            @CacheEvict(cacheNames = "tags", allEntries = true) })    @Override
     public void removeById(Long id) {
         Tag tag = tagRepository
                 .findById(id)

@@ -1,7 +1,7 @@
 package by.bsuir.poit.dc.rest.api.controllers;
 
-import by.bsuir.poit.dc.rest.api.dto.groups.Create;
-import by.bsuir.poit.dc.rest.api.dto.groups.Update;
+import by.bsuir.poit.dc.dto.groups.Create;
+import by.bsuir.poit.dc.dto.groups.Update;
 import by.bsuir.poit.dc.rest.api.dto.request.UpdateLabelDto;
 import by.bsuir.poit.dc.rest.api.dto.response.LabelDto;
 import by.bsuir.poit.dc.rest.services.LabelService;

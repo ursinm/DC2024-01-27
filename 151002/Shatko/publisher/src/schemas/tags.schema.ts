@@ -1,10 +1,8 @@
 import { relations } from "drizzle-orm";
-import { pgSchema, serial, varchar } from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { storiesToGroups } from "./storiesToTags.schema";
 
-const schema = pgSchema("distcomp");
-
-export const tags = schema.table("tbl_tags", {
+export const tags = pgTable("tbl_tag", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 32 }).notNull().unique(),
 });

@@ -54,11 +54,11 @@ public class ImplMessageService implements MessageService {
         messageToUpdate.setId(requestTo.getId());
         messageToUpdate.setCountry(getCountry(country));
         Optional<Message> message = messageRepository.findById(requestTo.getId()).stream().findFirst();
-        if (message.isEmpty()) {
-            throw new UpdateException("Message not found!", 40004L);
-        } else {
+        try {
             messageRepository.deleteByCountryAndStoryIdAndId(message.get().getCountry(), message.get().getStoryId(), message.get().getId());
             return messageToMessageResponse(messageRepository.save(messageToUpdate));
+        } catch (UpdateException e) {
+            throw new UpdateException("Message not found!", 40004L);
         }
     }
 

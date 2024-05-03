@@ -7,8 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class IssueControllerTests {
@@ -31,7 +34,7 @@ public class IssueControllerTests {
     public void testGetIssueById() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"CreatorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"newTitle3\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -45,13 +48,19 @@ public class IssueControllerTests {
                 .get("/api/v1.0/issues/{id}")
                 .then()
                 .statusCode(200);
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
     public void testDeleteIssue() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"CreatorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"newTitle1\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -66,24 +75,16 @@ public class IssueControllerTests {
                 .delete("/api/v1.0/issues/{id}")
                 .then()
                 .statusCode(204);
-    }
 
-    @Test
-    public void testSaveIssue() {
-        given()
-                .contentType(ContentType.JSON)
-                .body("{ \"CreatorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
-                .when()
-                .post("/api/v1.0/issues")
-                .then()
-                .statusCode(201);
+        System.out.println("Response body: " + response.getBody().asString());
+
     }
 
     @Test
     public void testUpdateIssue() {
         Response response = given()
                 .contentType(ContentType.JSON)
-                .body("{ \"CreatorId\": 7, \"title\": \"title3190\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"newTitle2\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
@@ -92,7 +93,7 @@ public class IssueControllerTests {
 
         long issueId = response.jsonPath().getLong("id");
 
-        String body = "{ \"id\": " + issueId + ", \"CreatorId\": 7, \"title\": \"updatedTitle699\", \"content\": \"updatedContent9402\" }";
+        String body = "{ \"id\": " + issueId + ", \"title\": \"updatedTitle69994\", \"content\": \"updatedContent9402\" }";
 
         given()
                 .contentType(ContentType.JSON)
@@ -101,7 +102,13 @@ public class IssueControllerTests {
                 .put("/api/v1.0/issues")
                 .then()
                 .statusCode(200)
-                .body("title", equalTo("updatedTitle699"));
+                .body("title", equalTo("updatedTitle69994"));
+        given()
+                .pathParam("id", issueId)
+                .when()
+                .delete("/api/v1.0/issues/{id}")
+                .then()
+                .statusCode(204);
     }
 
     @Test
@@ -124,15 +131,15 @@ public class IssueControllerTests {
                 .delete("/api/v1.0/issues/{id}")
                 .then()
                 .statusCode(400)
-                .body("errorMessage", equalTo("The issue has not been deleted"))
-                .body("errorCode", equalTo(40003));
+                .body("errorMessage", equalTo("Issue not found!"))
+                .body("errorCode", equalTo(40004));
     }
 
     @Test
     public void testSaveIssueWithWrongTitle() {
         given()
                 .contentType(ContentType.JSON)
-                .body("{ \"CreatorId\": 7, \"title\": \"x\", \"content\": \"content9594\" }")
+                .body("{\"title\": \"x\", \"content\": \"content9594\" }")
                 .when()
                 .post("/api/v1.0/issues")
                 .then()
