@@ -34,7 +34,7 @@ public class NoteService implements RestService<NoteRequestTo, NoteResponseTo> {
         random = randomInstance;
     }
 
-    private static Long getTimeBasedId() {
+    private static Long getTimeBasedId(){
         return (((System.currentTimeMillis() << 16) | (random.nextLong() & 0xFFFF)));
     }
 

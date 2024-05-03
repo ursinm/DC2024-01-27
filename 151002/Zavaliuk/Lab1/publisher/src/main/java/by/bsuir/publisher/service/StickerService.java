@@ -9,6 +9,10 @@ import by.bsuir.publisher.service.exceptions.ResourceStateException;
 import by.bsuir.publisher.service.mapper.StickerMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +20,20 @@ import java.util.List;
 
 @Service
 @Data
+@CacheConfig(cacheNames = "stickerCache")
 @RequiredArgsConstructor
 public class StickerService implements RestService <StickerRequestTo, StickerResponseTo> {
     private final StickerRepository stickerRepository;
 
     private final StickerMapper stickerMapper;
 
+    @Cacheable(cacheNames = "stickers")
     @Override
     public List<StickerResponseTo> findAll() {
         return stickerMapper.getListResponseTo(stickerRepository.findAll());
     }
 
+    @Cacheable(cacheNames = "stickers", key = "#id", unless = "#result == null")
     @Override
     public StickerResponseTo findById(Long id) {
         return stickerMapper.getResponseTo(stickerRepository
@@ -34,11 +41,13 @@ public class StickerService implements RestService <StickerRequestTo, StickerRes
                 .orElseThrow(() -> stickerNotFoundException(id)));
     }
 
+    @CacheEvict(cacheNames = "stickers", allEntries = true)
     @Override
     public StickerResponseTo create(StickerRequestTo stickerTo) {
         return stickerMapper.getResponseTo(stickerRepository.save(stickerMapper.getSticker(stickerTo)));
     }
 
+    @CacheEvict(cacheNames = "stickers", allEntries = true)
     @Override
     public StickerResponseTo update(StickerRequestTo stickerTo) {
         stickerRepository
@@ -47,7 +56,8 @@ public class StickerService implements RestService <StickerRequestTo, StickerRes
         return stickerMapper.getResponseTo(stickerRepository.save(stickerMapper.getSticker(stickerTo)));
     }
 
-    @Override
+    @Caching(evict = { @CacheEvict(cacheNames = "stickers", key = "#id"),
+            @CacheEvict(cacheNames = "stickers", allEntries = true) })    @Override
     public void removeById(Long id) {
         Sticker sticker = stickerRepository
                 .findById(id)
@@ -60,6 +70,6 @@ public class StickerService implements RestService <StickerRequestTo, StickerRes
     }
 
     private static ResourceStateException stickerStateException() {
-        return new ResourceStateException("Failed to create/update sticker with specified credentials", HttpStatus.CONFLICT.value() * 100 + 34);
+        return new ResourceStateException("Failed to create/update stiicke with specified credentials", HttpStatus.CONFLICT.value() * 100 + 34);
     }
 }
