@@ -1,8 +1,9 @@
-package by.bsuir.news.discussion.controller;
+package by.bsuir.news.controller;
 
-import by.bsuir.news.discussion.dto.request.NoteRequestTo;
-import by.bsuir.news.discussion.dto.response.NoteResponseTo;
-import by.bsuir.news.discussion.service.NoteService;
+import by.bsuir.news.dto.request.NoteRequestTo;
+import by.bsuir.news.dto.response.NoteResponseTo;
+import by.bsuir.news.service.NoteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity saveNote(@RequestBody NoteRequestTo note) {
+    public ResponseEntity saveNote(@Valid @RequestBody NoteRequestTo note) {
         try {
             return new ResponseEntity(noteService.create(note), HttpStatus.CREATED);
         } catch (Exception e) {
@@ -42,7 +43,7 @@ public class NoteController {
     }
 
     @PutMapping
-    public ResponseEntity updateNote(@RequestBody NoteRequestTo note) {
+    public ResponseEntity updateNote(@Valid @RequestBody NoteRequestTo note) {
         try {
             return new ResponseEntity(noteService.update(note), HttpStatus.OK);
         } catch (Exception e) {
